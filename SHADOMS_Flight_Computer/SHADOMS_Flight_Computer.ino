@@ -9,10 +9,13 @@ effectiveness and calibration needs for future MURI research.
 
 The code operates the particle counter power, writes the data of the Plantower to disk,
 regulates temperature using active heating, runs a Coperinicus GPS, and controls uplink
-and downlink with the main HASP gondola.*/
+and downlink with the main HASP gondola.
 
-//Last Modified: Nathan Pharis, 5/29/19 15:29
-//Last Modification: Initial Commit
+In this setup, both the Alphasense and the LOAC are running in a standalone mode where they 
+record their own data.*/
+
+//Last Modified: Nathan Pharis, 5/30/19 17:32
+//Last Modification: Updated Pseudocode and OPC commands
 
 
 
@@ -142,12 +145,8 @@ void setup() {
 
 void loop() {
 //Update Serial
-
-//Update Heating
-
+//Update Sensors
 //Update Data Log
-
-//Update GPS
 }
 
 //THESE NEED TO BE SEPARATE FUNCTIONS, MAYBE ONE OF THE NEW LIBRARIES?

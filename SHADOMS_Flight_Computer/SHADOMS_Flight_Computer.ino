@@ -14,7 +14,7 @@ and downlink with the main HASP gondola.
 In this setup, both the Alphasense and the LOAC are running in a standalone mode where they 
 record their own data.*/
 
-//Last Modified: Nathan Pharis, 5/30/19 17:32
+//Last Modified: Nathan Pharis, 5/31/19 10:48
 //Last Modification: Updated Pseudocode and OPC commands
 
 
@@ -104,7 +104,7 @@ record their own data.*/
 
 
 void setup() {
-//Relay Intiialization- sets up all relays, sets them all to an open state.
+//Relay Initialization- sets up all relays, sets them all to an open state.
   heater.init(0);
   alphaOPC.init(0);
   planOPC.init(0);

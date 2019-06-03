@@ -89,6 +89,8 @@ record their own data.*/
 
 //GPS Definitions
   TinyGPSPlus GPS;                  //GPS object definition
+  bool inFlight = false;
+  unsigned long flightStart;
 
 //LED Definitions
   //Establish patterns for different events

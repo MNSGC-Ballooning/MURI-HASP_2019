@@ -14,8 +14,8 @@ and downlink with the main HASP gondola.
 In this setup, both the Alphasense and the LOAC are running in a standalone mode where they 
 record their own data.*/
 
-//Last Modified: Nathan Pharis, 5/31/19 10:48
-//Last Modification: Updated Pseudocode and OPC commands
+//Last Modified: Nathan Pharis, 6/3/19 13:20
+//Last Modification: Added Flight Timer
 
 
 

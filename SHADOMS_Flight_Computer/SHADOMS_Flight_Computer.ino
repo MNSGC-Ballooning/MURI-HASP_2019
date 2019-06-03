@@ -14,8 +14,8 @@ and downlink with the main HASP gondola.
 In this setup, both the Alphasense and the LOAC are running in a standalone mode where they 
 record their own data.*/
 
-//Last Modified: Nathan Pharis, 6/3/19 13:20
-//Last Modification: Added Flight Timer
+//Last Modified: Nathan Pharis, 6/3/19 14:32
+//Last Modification: Added Sensor Updating Page
 
 
 
@@ -40,9 +40,9 @@ record their own data.*/
   #define powerLED #                //LED pin which blinks to indicates power*****
   #define fixLED #                  //LED pin which blinks to indicate GPS fix*****
   #define stateLED #                //LED pin which blinks to indicate an active data recording status******
-  #define wireBus1 #                //Temperature sensor 1 pin
-  #define wireBus2 #                //Temperature sensor 2 pin
-  #define wireBus3 #                //Temperature sensor 3 pin
+  #define wireBus1 #                //Temperature sensor 1 pin - Internal Ambient
+  #define wireBus2 #                //Temperature sensor 2 pin - External Ambient
+  #define wireBus3 #                //Temperature sensor 3 pin - OPCs
   #define heater_ON #               //Heater relay pins
   #define heater_OFF #              //^^^
   #define alphaOPC_ON #             //Alphasense OPC relay pins
@@ -51,15 +51,15 @@ record their own data.*/
   #define planOPC_OFF #             //^^^
   #define LOAC_ON #                 //LOAC OPC power relay pins
   #define LOAC_OFF #                //^^^
-  #define stateLOAC_ON #            //LOAC OPC state relay pins
-  #define stateLOAC_OFF #           //^^^
+  //#define stateLOAC_ON #          //LOAC OPC state relay pins - This function will be integrated with the LOAC Off switch
+  //#define stateLOAC_OFF #         //^^^
   
 //Relay Definitions
   LatchRelay heater(heater_ON, heater_OFF);             //Define heater relay object
   LatchRelay alphaOPC(alphaOPC_ON, alphaOPC_OFF);       //Define Alphasense OPC relay object
   LatchRelay planOPC(planOPC_ON, planOPC_OFF);          //Define Plantower OPC relay object
   LatchRelay LOAC(LOAC_ON, LOAC_OFF);                   //Define LOAC OPC power relay object
-  LatchRelay stateLOAC(stateLOAC_ON,stateLOAC_OFF);     //Define LOAC OPC state relay object
+  //LatchRelay stateLOAC(stateLOAC_ON,stateLOAC_OFF);   //Define LOAC OPC state relay object
   
 //Active Heating Definitions
   float cold =  280.0;              //Minimum acceptable temperature of the OPC
@@ -146,9 +146,7 @@ void setup() {
 
 
 void loop() {
-//Update Serial
-//Update Sensors
-//Update Data Log
+  systemUpdate();
 }
 
 //THESE NEED TO BE SEPARATE FUNCTIONS, MAYBE ONE OF THE NEW LIBRARIES?

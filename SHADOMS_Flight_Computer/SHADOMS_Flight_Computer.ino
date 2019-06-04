@@ -14,8 +14,8 @@ and downlink with the main HASP gondola.
 In this setup, both the Alphasense and the LOAC are running in a standalone mode where they 
 record their own data.*/
 
-//Last Modified: Nathan Pharis, 6/3/19 14:32
-//Last Modification: Added Sensor Updating Page
+//Last Modified: Nathan Pharis, 6/4/19 18:51
+//Last Modification: Added light actions
 
 
 
@@ -37,7 +37,7 @@ record their own data.*/
 
 //Pin Definitions
   #define chipSelect #              //SD card pin
-  #define powerLED #                //LED pin which blinks to indicates power*****
+  #define sdLED #                   //LED pin which blinks to indicates SD*****
   #define fixLED #                  //LED pin which blinks to indicate GPS fix*****
   #define stateLED #                //LED pin which blinks to indicate an active data recording status******
   #define wireBus1 #                //Temperature sensor 1 pin - Internal Ambient
@@ -60,6 +60,7 @@ record their own data.*/
   LatchRelay planOPC(planOPC_ON, planOPC_OFF);          //Define Plantower OPC relay object
   LatchRelay LOAC(LOAC_ON, LOAC_OFF);                   //Define LOAC OPC power relay object
   //LatchRelay stateLOAC(stateLOAC_ON,stateLOAC_OFF);   //Define LOAC OPC state relay object
+  bool dataCollection = false;
   
 //Active Heating Definitions
   float cold =  280.0;              //Minimum acceptable temperature of the OPC
@@ -85,14 +86,18 @@ record their own data.*/
   File flightLog;
   String data;
   String header = "Time, HASP pressure, HASP temp, HASP GPS, GPS, Temperature outside, T inside, T OPC";
-  bool SDcard = true;
+  bool SDlog = false;
 
 //GPS Definitions
   TinyGPSPlus GPS;                  //GPS object definition
   bool inFlight = false;
   unsigned long flightStart;
+  bool GPSfix = false;
 
 //LED Definitions
+  bool fixLight = false;
+  bool sdLight = false;
+  bool stateLight = false;
   //Establish patterns for different events
 
 
@@ -111,10 +116,10 @@ void setup() {
   alphaOPC.init(0);
   planOPC.init(0);
   LOAC.init(0);
-  stateLOAC.init(0);
+  //stateLOAC.init(0);
 
 //LED Initialization- sets all LED pins to output mode
-  pinMode(powerLED, OUTPUT);
+  pinMode(sdLED, OUTPUT);
   pinMode(fixLED, OUTPUT);
   pinMode(stateLED, OUTPUT);
 

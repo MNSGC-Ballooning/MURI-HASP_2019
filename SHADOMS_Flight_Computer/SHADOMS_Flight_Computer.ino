@@ -14,8 +14,7 @@ and downlink with the main HASP gondola.
 In this setup, both the Alphasense and the LOAC are running in a standalone mode where they 
 record their own data.*/
 
-//Last Modified: Nathan Pharis, 6/4/19 18:51
-//Last Modification: Added light actions
+//Written in June 2019
 
 
 
@@ -36,24 +35,27 @@ record their own data.*/
   #include <LatchRelay.h>           //Relay control
 
 //Pin Definitions
-  #define chipSelect #              //SD card pin
-  #define sdLED #                   //LED pin which blinks to indicates SD*****
-  #define fixLED #                  //LED pin which blinks to indicate GPS fix*****
-  #define stateLED #                //LED pin which blinks to indicate an active data recording status******
-  #define wireBus1 #                //Temperature sensor 1 pin - Internal Ambient
-  #define wireBus2 #                //Temperature sensor 2 pin - External Ambient
-  #define wireBus3 #                //Temperature sensor 3 pin - OPCs
-  #define heater_ON #               //Heater relay pins
-  #define heater_OFF #              //^^^
-  #define alphaOPC_ON #             //Alphasense OPC relay pins
-  #define alphaOPC_OFF #            //^^^
-  #define planOPC_ON #              //Plantower OPC relay pins
-  #define planOPC_OFF #             //^^^
-  #define LOAC_ON #                 //LOAC OPC power relay pins
-  #define LOAC_OFF #                //^^^
+  #define sdLED 22                  //LED pin which blinks to indicates SD*****
+  #define fixLED 21                 //LED pin which blinks to indicate GPS fix*****
+  #define stateLED 20               //LED pin which blinks to indicate an active data recording status******
+  #define wireBus1 29               //Temperature sensor 1 pin - Internal Ambient
+  #define wireBus2 30               //Temperature sensor 2 pin - External Ambient
+  #define wireBus3 31               //Temperature sensor 3 pin - OPCs
+  #define heater_ON 24              //Heater relay pins
+  #define heater_OFF 25             //^^^
+  #define alphaOPC_ON 5             //Alphasense OPC relay pins
+  #define alphaOPC_OFF 6            //^^^
+  #define planOPC_ON 26             //Plantower OPC relay pins
+  #define planOPC_OFF 27            //^^^
+  #define LOAC_ON 7                 //LOAC OPC power relay pins
+  #define LOAC_OFF 8                //^^^
   //#define stateLOAC_ON #          //LOAC OPC state relay pins - This function will be integrated with the LOAC Off switch
   //#define stateLOAC_OFF #         //^^^
-  
+  #define HASP_RX 0                 //HASP Recieve Pin                SERIAL 1
+  #define HASP_TX 1                 //HASP Transmission Pin
+  #define GPS_RX 9                  //GPS Recieve Pin                 SERIAL 2
+  #define GPS_TX 10                 //GPS Recieve Pin
+
 //Relay Definitions
   LatchRelay heater(heater_ON, heater_OFF);             //Define heater relay object
   LatchRelay alphaOPC(alphaOPC_ON, alphaOPC_OFF);       //Define Alphasense OPC relay object
@@ -83,13 +85,14 @@ record their own data.*/
   
 //Data Log Definitions
   //Log Plantower, temperature, GPS, HASP data
-  File flightLog;
-  String data;
-  String header = "Time, HASP pressure, HASP temp, HASP GPS, GPS, Temperature outside, T inside, T OPC";
-  bool SDlog = false;
+  const in chipSelect = BUILTIN_SDCARD;               //Access on board micro-SD
+  File fLog;                                          //This part of the code establishes the file and
+  String data;                                        //sets up the CSV format.
+  String header = "Time, HASP temp, HASP GPS, GPS, Temperature outside, T inside, T OPC";
+  bool SDcard = true;
 
 //GPS Definitions
-  TinyGPSPlus GPS;                  //GPS object definition
+  TinyGPSPlus GPS;                                   //GPS object definition
   bool inFlight = false;
   unsigned long flightStart;
   bool GPSfix = false;
@@ -132,7 +135,7 @@ void setup() {
   //HASP Stuff
 
 //Data Log Initialization
-  pinMode(chipSelect, OUTPUT);
+  //pinMode(chipSelect, OUTPUT);
   //Other stuff too
 
 //GPS Initialization

@@ -95,7 +95,10 @@ record their own data.*/
   TinyGPSPlus GPS;                                      //GPS object definition
   bool inFlight = false;
   unsigned long flightStart;
-  bool GPSfix = false;
+  //bool GPSfix = false;               //unneccessary as GPS.Fix will determine if the GPS has a fix
+  unsigned long lastGPS = 0;
+  unsigned long GPSstartTime = 0;    //when the GPS starts, time in seconds of last GPS update.
+  uint8_t days = 0;                  //if we're flying overnight
 
 //LED Definitions
   bool fixLight = false;                              
@@ -132,7 +135,8 @@ void setup() {
   temperature3.begin();
   
 //Serial Initialization
-  Serial1.begin(1200);                                  //Initializes HASP serial port at 1200 baud.
+  Serial1.begin(1200); //Initializes HASP serial port at 1200 baud.      
+  Serial2.begin(4800); //Initializes serial port for GPS communication
 
 //Data Log Initialization
   //pinMode(chipSelect, OUTPUT);
@@ -140,6 +144,7 @@ void setup() {
 
 //GPS Initialization
   //Copernicus stuff
+  SoftwareSerial GPS_Serial(9,10);
 
 }
 

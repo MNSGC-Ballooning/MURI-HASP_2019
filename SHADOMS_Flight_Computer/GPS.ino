@@ -19,6 +19,19 @@ String getalt() {
   return alt;
 }
 
+void FlightCheck() { //Function that repeatedly checks if Payload is in flight.
+  if (GPS.Fix && (GPS.altitude.feet() > 5000)  && (GPS.location.lng != 0)) {
+    FlightCheckCounter++;
+    if (FlightCheckCounter >= 5) { //5 FlightCheckCounter hits in a row needed to set inFlight to true
+      inFlight = true; 
+      flightStart = millis();
+    }
+  }
+  else {
+    FlightCheckCounter = 0;
+  }
+
+}
 
 
 void updateGPS() {                    //Function that updates GPS every second and accounts for

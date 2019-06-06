@@ -93,12 +93,13 @@ record their own data.*/
 
 //GPS Definitions
   TinyGPSPlus GPS;                                      //GPS object definition
-  bool inFlight = false;
-  unsigned long flightStart;
-  //bool GPSfix = false;               //unneccessary as GPS.Fix will determine if the GPS has a fix
+  bool inFlight = false;             //Bool that determines if the payload is in flight. Used with FlightCheck function
+  unsigned long flightStart = 0;     //Time passed since inFLight became true     
+  //bool GPSfix = false;             //unneccessary as GPS.Fix will determine if the GPS has a fix
   unsigned long lastGPS = 0;
   unsigned long GPSstartTime = 0;    //when the GPS starts, time in seconds of last GPS update.
   uint8_t days = 0;                  //if we're flying overnight
+  byte FlightCheckCounter = 0;       //If this reaches 5, then inFLight should be set to true.
 
 //LED Definitions
   bool fixLight = false;                              

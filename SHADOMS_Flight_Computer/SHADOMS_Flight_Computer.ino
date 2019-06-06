@@ -85,20 +85,20 @@ record their own data.*/
   
 //Data Log Definitions
   //Log Plantower, temperature, GPS, HASP data
-  const in chipSelect = BUILTIN_SDCARD;               //Access on board micro-SD
-  File fLog;                                          //This part of the code establishes the file and
-  String data;                                        //sets up the CSV format.
+  const in chipSelect = BUILTIN_SDCARD;                 //Access on board micro-SD
+  File fLog;                                            //This part of the code establishes the file and
+  String data;                                          //sets up the CSV format.
   String header = "Time, HASP temp, HASP GPS, GPS, Temperature outside, T inside, T OPC";
   bool SDcard = true;
 
 //GPS Definitions
-  TinyGPSPlus GPS;                                   //GPS object definition
+  TinyGPSPlus GPS;                                      //GPS object definition
   bool inFlight = false;
   unsigned long flightStart;
   bool GPSfix = false;
 
 //LED Definitions
-  bool fixLight = false;
+  bool fixLight = false;                              
   bool sdLight = false;
   bool stateLight = false;
   //Establish patterns for different events
@@ -107,13 +107,13 @@ record their own data.*/
 
 
 
-/////INITIALIZE CODE\\\\\
+/////INITIALIZE CODE\\\\\                              
 
 
 
 
 
-void setup() {
+void setup() {                                       
 //Relay Initialization- sets up all relays, sets them all to an open state.
   heater.init(0);
   alphaOPC.init(0);
@@ -132,7 +132,7 @@ void setup() {
   temperature3.begin();
   
 //Serial Initialization
-  //HASP Stuff
+  Serial1.begin(1200);                                  //Initializes HASP serial port at 1200 baud.
 
 //Data Log Initialization
   //pinMode(chipSelect, OUTPUT);

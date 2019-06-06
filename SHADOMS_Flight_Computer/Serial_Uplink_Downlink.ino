@@ -1,9 +1,9 @@
 //HASP STUFF
 
 /* HEX COMMAND VALUES
-00 00 - System reset
-00 01 - OPC Activation
-00 10 - OPC Shutdown
+0C C0 - System reset
+00 AA - OPC Activation
+BB 00 - OPC Shutdown
  */
 
 //// Data Downlink ////
@@ -11,8 +11,8 @@
 void Data_Downlink(String Sensor_Data, int mission_time) // sensor data is the stuff we want to send (i.e. pressure,temp,etc.) 
 {
   // pull sensor data (should all be strings)
-  pressure = Sensor_Data[0];
-  temp = Sensor_Data[1];
+  temp = Sensor_Data[0];
+  GPS = Sensor_Data[1];
   LOAC_state = Sensor_Data[2];
   Alphasense_state = Sensor_Data[3];
   Plantower_state = Sensor_Data[4];
@@ -69,6 +69,10 @@ void Read_Uplink_Command()
    
       case 0xBB:                                // case for shutdown command
         standbyMode();                          // again, not sure how to implement this...
+        break;
+
+      case 0xCC:
+        systemReset();
         break;
         
     }

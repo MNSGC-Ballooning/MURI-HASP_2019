@@ -25,7 +25,14 @@ void systemUpdate(){
     
      //GPS Update
 
-     //PJ ADD UPDATE GPS FUNCTION
+     
+    //GPS Update
+    updateGPS();                                        //Internal GPS clock checks to see if it has rolled over from
+                                                        //one day to another and accounts for it if so.
+
+    //For logging GPS data, need to use SDprintGPS(), which is a void function that prints GPS data to SD as a string
+    //The print() function in SDprintGPS() can be removed if need be, and the function can serve to just change the
+    //data string, which could be printed in a different function if that makes things easier.
   
      if (GPSfix && !fixLight) {                         //If the GPS has a fix and the light is not active, this
       digitalWrite(fixLED, HIGH);                       //will activate the light.
@@ -34,7 +41,7 @@ void systemUpdate(){
       digitalWrite(fixLED, LOW);                        //this will deactivate the light.
       fixLight = false;
      }
-
+  
      //Data Log Update
 
 

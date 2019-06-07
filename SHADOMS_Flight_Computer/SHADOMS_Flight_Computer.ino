@@ -62,12 +62,12 @@ record their own data.*/
   LatchRelay planOPC(planOPC_ON, planOPC_OFF);          //Define Plantower OPC relay object
   LatchRelay LOAC(LOAC_ON, LOAC_OFF);                   //Define LOAC OPC power relay object
   //LatchRelay stateLOAC(stateLOAC_ON,stateLOAC_OFF);   //Define LOAC OPC state relay object
-  bool dataCollection  = false;
+  bool dataCollection = false;
   
 //Active Heating Definitions
   float cold =  280.0;                                  //Minimum acceptable temperature of the OPC
   float hot = 290.0;                                    //Maximum acceptable temperature of the OPC
-  bool coldOPC  = false;
+  bool coldOPC = false;
 
 //Temperature Sensor Definitions
   OneWire oneWire1(wireBus1);                           //Temperature sensor 1 data interface
@@ -94,12 +94,18 @@ record their own data.*/
 //GPS Definitions
   TinyGPSPlus GPS;                                      //GPS object definition
   bool inFlight = false;                                //Bool that determines if the payload is in flight. Used with FlightCheck function
-  unsigned long flightStart = 0;                        //Time passed since inFLight became true     
-  //bool GPSfix = false;                                //unneccessary as GPS.Fix will determine if the GPS has a fix
-  unsigned long lastGPS = 0;
-  unsigned long GPSstartTime = 0;                       //when the GPS starts, time in seconds of last GPS update.
-  uint8_t days = 0;                                     //if we're flying overnight
-  byte FlightCheckCounter = 0;                          //If this reaches 5, then inFLight should be set to true.
+  unsigned long flightStart = 0;                        //Time passed since inFlight became true
+  byte FlightCheckCounter = 0;                          //If this reaches 5, then inFLight should be set to true
+  
+  unsigned long lastGPS = 0;                            //Time in seconds since the last GPS update
+  unsigned long GPSstartTime = 0;                       //When the GPS starts, time in seconds of last GPS update
+  uint8_t days = 0;                                     //If we're flying overnight this serves as a coutner for time keeping
+ 
+  String data = "";                                     //Initializes data string that prints GPS data to the SD card
+  String faillatitude = "0.00";                         //Printed latitude if GPS does not have a fix or any data
+  String faillongitude; = "0.000000";                   //Printed longitude if GPS does not have a fix or any data
+  String failalt; = "0.000000";                         //Printed altitude if GPS does not have a fix or any 
+
 
 //LED Definitions
   bool fixLight = false;                                //These booleans are for the light activation and deactivation logic  

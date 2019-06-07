@@ -20,7 +20,7 @@ record their own data.*/
 
 
 
-/////ESTABLISH PREREQUISITE DEFINITIONS\\\\\
+//-----ESTABLISH PREREQUISITE DEFINITIONS-----\\
 
 
 
@@ -107,7 +107,7 @@ record their own data.*/
 
 
 
-/////INITIALIZE CODE\\\\\                              
+//-----INITIALIZE CODE-----\\                              
 
 
 
@@ -147,7 +147,7 @@ void setup() {
 
 
 
-/////ACTIVE CODE\\\\\
+//-----ACTIVE CODE-----\\
 
 
 

@@ -4,6 +4,8 @@
 0C C0 - System reset
 00 AA - OPC Activation
 BB 00 - OPC Shutdown
+
+//To send packets of data, we might need to establish a buffer, and then fill that buffer with bytes, and then send the buffer?
  */
 
 //// Data Downlink ////

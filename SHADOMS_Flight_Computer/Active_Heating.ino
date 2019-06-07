@@ -1,6 +1,6 @@
 //Active Heating Operation
 void activeHeat(){
-  if (150 < t3 < cold) {            //Check if the temperature of the OPCs exceed the minimum
+  if ((150 < t3) && (t3 < cold)) {            //Check if the temperature of the OPCs exceed the minimum
     coldOPC=true;                   //or maximum heating temperatures.
   } else if (t3 > hot) {
     coldOPC=false;

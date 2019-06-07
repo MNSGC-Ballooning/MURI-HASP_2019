@@ -11,6 +11,7 @@ void systemUpdate(){
     lastCycle=millis();                                 //millis gives the current time. Both are in ms.
 
     //Serial Update
+    //****I think this would be best at the bottom of the updater****
    
     //Temperature Update
     temperature1.requestTemperatures();                 //Lines 14-16 request temperatures from the sensors.
@@ -37,6 +38,13 @@ void systemUpdate(){
      //Data Log Update
 
 
+     //Serial Update
+
+     Data_Downlink(); // send down packet of data
+     Read_Uplink_Command(); // check if command i
+     s sent then follow command
+
+     //LED updates
 
      if (dataCollection && !stateLight) {               //If the OPCs are powered and the light is not active,
       digitalWrite(stateLED, HIGH);                     //this will activate the light.

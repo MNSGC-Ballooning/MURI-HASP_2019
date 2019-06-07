@@ -62,12 +62,12 @@ record their own data.*/
   LatchRelay planOPC(planOPC_ON, planOPC_OFF);          //Define Plantower OPC relay object
   LatchRelay LOAC(LOAC_ON, LOAC_OFF);                   //Define LOAC OPC power relay object
   //LatchRelay stateLOAC(stateLOAC_ON,stateLOAC_OFF);   //Define LOAC OPC state relay object
-  bool dataCollection = false;
+  bool dataCollection  = false;
   
 //Active Heating Definitions
   float cold =  280.0;                                  //Minimum acceptable temperature of the OPC
   float hot = 290.0;                                    //Maximum acceptable temperature of the OPC
-  bool coldOPC = false;
+  bool coldOPC  = false;
 
 //Temperature Sensor Definitions
   OneWire oneWire1(wireBus1);                           //Temperature sensor 1 data interface

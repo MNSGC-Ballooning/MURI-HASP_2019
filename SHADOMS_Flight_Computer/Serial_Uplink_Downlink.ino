@@ -1,68 +1,78 @@
 //HASP STUFF
 
 /* HEX COMMAND VALUES
-0C C0 - System reset
-00 AA - OPC Activation
-BB 00 - OPC Shutdown
+1C AA - System reset    // first byte has to be ID and checksum (1C) second byte is reset command (AA)
+1C BB - OPC Activation  // first byte has to be ID and checksum (1C) second byte is activation command (BB)
+1C CC - OPC Shutdown    // first byte has to be ID and checksum (1C) second byte is shutdown command (CC)
 
 //To send packets of data, we might need to establish a buffer, and then fill that buffer with bytes, and then send the buffer?
  */
 
-//// Data Downlink ////
-
-void Data_Downlink(String Sensor_Data, int mission_time) // sensor data is the stuff we want to send (i.e. pressure,temp,etc.) 
-{
-  // pull sensor data (should all be strings)
-  temp = Sensor_Data[0];
-  GPS = Sensor_Data[1];
-  LOAC_state = Sensor_Data[2];
-  Alphasense_state = Sensor_Data[3];
-  Plantower_state = Sensor_Data[4];
-  
+///// Data Downlink /////
+void Data_Downlink()
+{ 
   // send a 2 byte checksum at the beginning and at the endv
-  // not entirely sure if this is how to go about sending characters
-  uint8_t checksum_byte_1 = U; // beginning checksum
+  uint8_t checksum_byte_1 = U; // beginning checksum .......... pretty sure i can set these as characters. but maybe not
   uint8_t checksum_byte_2 = M; // beginning checksum
-
   uint8_t checksum_byte_3 = @; // end checksum
   uint8_t checksum_byte_4 = @; // end checksum
 
-  // Send first checksums
-  Serial1.write(String(checksum_byte_1));
-  Serial1.write(String(checksum_byte_2));
+  // send all data as one long string so it is all at once? i dont know best way to do this
 
-  // send mission timestamp
-  Serial.write(String(mission_time)); // mission time could just be like an instanteous reading from millis() or something
+  // assign first checksums
+  String check1 = String(checksum_byte_1); //initial checksum 1
+  String check2 = String(checksum_byte_2); //initial checksum 2
 
-  // send data
-  Serial1.write("Pressure: " + pressure + " Temperature: " + temp + " LOAC: " + LOAC_state + " Alphasense: " + Alphasense_state + " Plantower: " + Plantower_state);
-  // not sure if it works in this format... I hope it does
+  // assign timestamp
+  String timestamp = logTime; // HH:MM:SS timestamp 
 
-  // send 2 byte checksum at the end
-  Serial1.write(String(checksum_byte_3));
-  Serial1.write(String(checksum_byte_4));
+  // assign data
+  String GPS = "Alt: " + String(alt) + " Lat: " + String(latitude) + " Long: " + String(longitude); // need to know what these variable should be
+  String Temp = "t1: " + String(t1) + " t2: " + String(t2) + " t3: " + String(t3); 
+  if(Inflight)
+  {
+    String flightState = "True";
+  }
+  else
+  {
+    String flightState = "False";
+  }
+  if(dataCollection)
+  {
+    String OPCState = "True";
+  }
+  else
+  {
+    String OPCState = "False";
+  }
+  
+  // assign end checksums
+  String check3 = String(checksum_byte_3);
+  String check4 = String(checksum_byte_4);
+
+  // combine strings into 1 long one
+  String Data_packet = check1 + check2 + " " + timestamp + " " + GPS + " " + Temp + " " + flightState + " "  OPCState + " " + check3 + check4;
+
+  // send the data packet string
+  Serial1.write(Data_packet);
+  
 }
 
-//// Uplink Commands ////
-
+///// Uplink Command /////
 void Read_Uplink_Command()
 {
-  uint8_t full_command_string[7];               //incoming command array. 1 spot for each byte
+  uint8_t command_byte; // byte for the command
+  uint8_t ID_byte; // byte for ID and checksum byte
 
   while(Serial1.available() > 0)
   {
-    for(int i=0;i<7;i++)
-    {
-      full_command_string[i] = Serial1.read();  //read a byte into the command array
-    }
+      ID_byte = Serial1.read();  //read first byte to ID variable
+      command_byte = Serial1.read(); // read second byte to command variable
   }
 
-  uint8_t ID_checksum = full_command_string[2]; // byte with payload ID (1) and checksum (going with C in this case)
-  uint8_t command = full_command_string[3];     // byte with command
-
-  if(ID_checksum == 0x1C)                       //check to see id checksum is correct, if not, command is ignored
+  if(ID_byte == 0x1C) //check to see id checksum is correct, if not, command is ignored
   {
-    switch(command)
+    switch(command_byte)
     {
       case 0xAA:                                // case for startup command
         activeMode();                           // not sure how to implement this...
@@ -80,6 +90,7 @@ void Read_Uplink_Command()
   }
 }
 
+///// Command Functions /////
 void systemReset(){                      //This will reset the system
   standbyMode();
   heater.setState(0);

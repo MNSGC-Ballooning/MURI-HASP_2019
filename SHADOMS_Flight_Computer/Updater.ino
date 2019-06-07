@@ -20,9 +20,11 @@ void systemUpdate(){
     t2 = temperature2.getTempCByIndex(0) + 273.15;      //and converts those temperatures from degrees Celcius
     t3 = temperature3.getTempCByIndex(0) + 273.15;      //to Kelvin.
 
+    activeHeat();
+    
      //GPS Update
 
-
+     //PJ ADD UPDATE GPS FUNCTION
   
      if (GPSfix && !fixLight) {                         //If the GPS has a fix and the light is not active, this
       digitalWrite(fixLED, HIGH);                       //will activate the light.

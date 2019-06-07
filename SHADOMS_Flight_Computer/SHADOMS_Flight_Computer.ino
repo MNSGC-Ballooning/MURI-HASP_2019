@@ -162,5 +162,3 @@ void setup() {
 void loop() {
   systemUpdate();
 }
-
-//THESE NEED TO BE SEPARATE FUNCTIONS, MAYBE ONE OF THE NEW LIBRARIES?

@@ -1,33 +1,33 @@
 //GPS Operation
 
-String getlat() {
+String getlat() { //Function that returns latitude as a string.
   String latitude = "";
   latitude = String(GPS.location.lat(), 6);
   return latitude;
 }
 
-String getlong() {
+String getlong() { //Function that returns longitude as a string.
   String longitude = "":
   longitude = String(GPS.location.lng(), 6);
   return longitude;
 }
 
-String getalt() {
+String getalt() { // Function that returns altitude as a string.
   String alt = "";
   alt = String(GPS.altitude.feet());
   return alt;
 }
 
 void FlightCheck() { //Function that repeatedly checks if Payload is in flight.
-  if (GPS.Fix && (GPS.altitude.feet() > 5000)  && (GPS.location.lng != 0)) {
-    FlightCheckCounter++;
+  if (GPS.Fix && (GPS.altitude.feet() > 5000)  && (GPS.location.lng != 0)) { //HASP vehicle takeoff altitude is at roughly 4000 feet.
+    FlightCheckCounter++; //If three conditions are met, FlightCheckComputer gets a hit.
     if (FlightCheckCounter >= 5) { //5 FlightCheckCounter hits in a row needed to set inFlight to true
-      inFlight = true; 
-      flightStart = millis();
+      inFlight = true; //Bool that indicates if the payload is in flight.
+      flightStart = millis(); //flightStart holds the time when inFlight becomes true since the batteries for the payload are powered on
     }
   }
   else {
-    FlightCheckCounter = 0;
+    FlightCheckCounter = 0; //If the three conditions aren't met, FlightCheckCounter loses all of its hits.
   }
 
 }
@@ -38,9 +38,9 @@ void updateGPS() {                    //Function that updates GPS every second a
     GPS.encode(GPS_serial.read());
     }
   if (GPS.altitude.isUpdated() || GPS.location.isUpdated()) {
-    if (!firstFix && GPS.Fix) {    
+    if (!firstFix && GPS.Fix) {     
       GPSstartTime = GPS.time.hour() * 3600 + GPS.time.minute() * 60 + GPS.time.second();
-      firstFix = true;
+      firstFix = true;  //Time in second of GPS clock will now be compared to GPS Start Time
       }
     }
   if (getGPStime() > lastGPS) {    //if it's been more than a second

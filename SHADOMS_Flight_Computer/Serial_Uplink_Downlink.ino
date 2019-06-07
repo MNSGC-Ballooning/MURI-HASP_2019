@@ -43,7 +43,6 @@ void Data_Downlink(String Sensor_Data, int mission_time) // sensor data is the s
   Serial1.write(String(checksum_byte_4));
 }
 
-
 //// Uplink Commands ////
 
 void Read_Uplink_Command()
@@ -81,17 +80,6 @@ void Read_Uplink_Command()
   }
 }
 
-/*
-void uplinkCommand(String COMMAND) {     //This function will analyze the command from the
-  if (COMMAND==HEX0) {
-    systemReset();
-  } else if (COMMAND==HEX1) {            //HASP uplink and utilize the command to update the
-    activeMode();                        //the state of the payload.
-  } else if (COMMAND==HEX2) {
-    standbyMode();
-  }
-}
-*/
 void systemReset(){                      //This will reset the system
   standbyMode();
   heater.setState(0);

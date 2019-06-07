@@ -50,18 +50,6 @@ void systemUpdate(){
      } else if (!SDlog && sdLight){                    //If data is not being logged and the light is active,
       digitalWrite(sdLED, LOW);                        //this will deactivate the light.
       sdLight = false;
-     }
-
-
-
-
-
-
-
-
-
-
-
-     
+     }  
   }
 }

@@ -1,6 +1,5 @@
 //GPS Operation
 
-
 String getlat() {
   String latitude = "";
   latitude = String(GPS.location.lat(), 6);
@@ -32,7 +31,6 @@ void FlightCheck() { //Function that repeatedly checks if Payload is in flight.
   }
 
 }
-
 
 void updateGPS() {                    //Function that updates GPS every second and accounts for
   static bool firstFix = false;       //clock rollover at midnight (23:59:59 to 00:00:00)

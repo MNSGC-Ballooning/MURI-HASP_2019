@@ -34,13 +34,13 @@ void FlightCheck() {                                                            
 void SDprintGPS() {                                                             //Function that takes GPS data and prints it to the SD card
 
   if (GPS.Fix && GPS.altitude.feet() != 0) {                                    //If GPS has a fix with good data (may need more parameters to define "good data", GPS data is printed
-    data = getlat() + ", " + getlong() + ", " + getalt();
+    GPSdata = getlat() + ", " + getlong() + ", " + getalt();
   }
   else {                                                                        //If GPS has bad data or doesn't have a fix, zeros are printed for all three variables
-    data = failaltitude + ", " + faillongitude " ", " + failalt;    
+    GPSdata = failaltitude + ", " + faillongitude " ", " + failalt;    
   }
 
-  datalog.print(data);
+  datalog.print(GPSdata);
 }
 
 

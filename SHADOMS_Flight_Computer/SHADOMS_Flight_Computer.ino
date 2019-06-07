@@ -101,7 +101,7 @@ record their own data.*/
   unsigned long GPSstartTime = 0;                       //When the GPS starts, time in seconds of last GPS update
   uint8_t days = 0;                                     //If we're flying overnight this serves as a coutner for time keeping
  
-  String data = "";                                     //Initializes data string that prints GPS data to the SD card
+  String GPSdata = "";                                  //Initializes data string that prints GPS data to the SD card
   String faillatitude = "0.00";                         //Printed latitude if GPS does not have a fix or any data
   String faillongitude; = "0.000000";                   //Printed longitude if GPS does not have a fix or any data
   String failalt; = "0.000000";                         //Printed altitude if GPS does not have a fix or any 

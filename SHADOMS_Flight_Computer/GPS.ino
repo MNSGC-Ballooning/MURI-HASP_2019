@@ -29,8 +29,21 @@ void FlightCheck() {                                                            
   else {
     FlightCheckCounter = 0;                                                     //If the three conditions aren't met, FlightCheckCounter loses all of its hits.
   }
-
 }
+
+void SDprintGPS() {                                                             //Function that takes GPS data and prints it to the SD card
+
+  if (GPS.Fix && GPS.altitude.feet() != 0) {                                    //If GPS has a fix with good data (may need more parameters to define "good data", GPS data is printed
+    data = getlat() + ", " + getlong() + ", " + getalt();
+  }
+  else {                                                                        //If GPS has bad data or doesn't have a fix, zeros are printed for all three variables
+    data = failaltitude + ", " + faillongitude " ", " + failalt;    
+  }
+
+  datalog.print(data);
+}
+
+
 
 void updateGPS() {                                                              //Function that updates GPS every second and accounts for
   static bool firstFix = false;                                                 //clock rollover at midnight (23:59:59 to 00:00:00)

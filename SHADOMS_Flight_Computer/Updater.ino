@@ -45,6 +45,9 @@ void systemUpdate(){
      //Data Log Update
 
 
+     //Plantower Update (needs to be seperate since plantower updates every 2.3s)
+
+
      //Serial Update
 
      Data_Downlink(); // send down packet of data

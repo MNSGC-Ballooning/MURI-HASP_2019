@@ -148,6 +148,69 @@ void setup() {
 //Data Log Initialization
   //pinMode(chipSelect, OUTPUT);
   //Other stuff too
+  while(!Serial){ //Wait for serial port to connect
+    ;
+  }
+
+  Serial.print("Initializing SD card...");   //Tells us if the SD card faled to open:
+  if (!SD.begin(chipSelect)) {
+    Serial.println("Initialization Failed!");
+    SDcard = false;
+  }
+  SDcard = true;
+  Serial.println("Initialization done."); //This "for" loop checks to see if there are any previous files on
+  for (int i = 0; i < 100; i++) {         //the SD card already with the generated name
+    
+    Fname = String("fLog" + String(i/10) + String(i%10) + ".csv");  //has new name for file to make sure file name is not already used
+    if (!SD.exists(Fname.c_str())){   //does not run if same SD name exists
+      break; 
+    }
+  }
+  
+  Serial.println("Temperature Logger created: " + Fname);  
+  tLog = SD.open(Fname.c_str(), FILE_WRITE);
+  String FHeader = "T Outside,T Inside,T OPC";    //temperature headers
+  tLog.println(FHeader);//Set up temp log format and header
+  tLog.close();
+  Serial.println("Temp Logger header added");
+
+//Plantower Initialization
+  Serial.begin(115200);
+  Serial.println("Hello, there.");
+  Serial.println();
+  Serial.println("Setting up Plantower OPC...");
+  Serial.println();
+
+  // set pinmodes
+  pinMode(led, OUTPUT);
+  pinMode(rx, INPUT); 
+  
+  // sensor baud rate is 9600
+  pmsSerial.begin(9600);
+  
+
+  Serial.print("Initializing SD card...");
+  // Check if card is present/initalized: 
+  if (!SD.begin(CS)){
+  Serial.println("card initialization FAILED - something is wrong..."); // card not present or initialization failed
+  while (1); // dont do anything more
+  }
+  
+  Serial.println("card initialization PASSED... bon voyage!"); // initialization successful
+
+  // Initialize file:
+  ptLog = SD.open(filename, FILE_WRITE); // open file
+  
+  if (ptLog) {
+    Serial.println( filename + " opened...");
+    ptLog.close();
+    Serial.println("File initialized... begin data logging!");
+  }
+  else {
+    Serial.println("error opening file");
+    return;
+  }
+
 
 //GPS Initialization
   //Copernicus stuff

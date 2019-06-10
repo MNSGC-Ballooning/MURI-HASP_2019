@@ -16,8 +16,8 @@
 ////////// BEGIN CODE //////////
 
 // define digital pins
-int rx  = 26;          // Pin 2 on Arduino from TXD pin on Pt
-int tx  = 27;          // Pin 3 on Arduino from nothing
+int rx  = 26;          // Pin 2 on Arduino from TXD pin on Pt                               All of this stuff should be in the main setup-
+int tx  = 27;          // Pin 3 on Arduino from nothing                                     It cannot sit separately
 
 // more definitions
 String dataLog;                   // used for data logging
@@ -85,7 +85,7 @@ void setup() {
 
 /// begin loop
 void loop() {
-  digitalWrite(led,HIGH);
+  digitalWrite(led,HIGH);                             //which LED is this??
   FT = millis();
 
 // log sample number, in flight time

@@ -1,18 +1,9 @@
 //Loop Updater
 
-//Update Serial
-//Update Temperature Sensors
-//Update GPS
-//Update Data Log
-
-void systemUpdate(){
-  static unsigned long lastCycle = 0;                   //This regulates the loop, so that it runs consistently
+void systemUpdate(){                                    //This regulates the loop, so that it runs consistently
   if (millis() - lastCycle >= 1000) {                   //at 1Hz. lastCycle gives the previous time, and
     lastCycle=millis();                                 //millis gives the current time. Both are in ms.
 
-    //Serial Update
-    //****I think this would be best at the bottom of the updater****
-   
     //Temperature Update
     temperature1.requestTemperatures();                 //Lines 14-16 request temperatures from the sensors.
     temperature2.requestTemperatures();
@@ -22,10 +13,7 @@ void systemUpdate(){
     t3 = temperature3.getTempCByIndex(0) + 273.15;      //to Kelvin.
 
     activeHeat();
-    
-     //GPS Update
 
-     
     //GPS Update
     updateGPS();                                        //Internal GPS clock checks to see if it has rolled over from
                                                         //one day to another and accounts for it if so.
@@ -43,10 +31,6 @@ void systemUpdate(){
      }
   
      //Data Log Update
-
-
-     //Plantower Update (needs to be seperate since plantower updates every 2.3s)
-
 
      //Serial Update
 
@@ -71,5 +55,11 @@ void systemUpdate(){
       digitalWrite(sdLED, LOW);                        //this will deactivate the light.
       sdLight = false;
      }  
+  }
+
+  if (millis() - planCycle >= 2300) {                   //This regulates the plantower loop to every 2.3 seconds.
+    planCycle=millis();
+
+    planUpdate();
   }
 }

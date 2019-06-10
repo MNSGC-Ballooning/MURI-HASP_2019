@@ -85,7 +85,7 @@ record their own data.*/
   
 //Data Log Definitions
   //Log Plantower, temperature, GPS, HASP data
-  const in chipSelect = BUILTIN_SDCARD;                 //Access on board micro-SD
+  const int chipSelect = BUILTIN_SDCARD;                //Access on board micro-SD
   File fLog;                                            //This part of the code establishes the file and
   String data;                                          //sets up the CSV format.
   String header = "Time, HASP temp, HASP GPS, GPS, Temperature outside, T inside, T OPC";
@@ -106,13 +106,14 @@ record their own data.*/
   String faillongitude; = "0.000000";                   //Printed longitude if GPS does not have a fix or any data
   String failalt; = "0.000000";                         //Printed altitude if GPS does not have a fix or any 
 
-
 //LED Definitions
   bool fixLight = false;                                //These booleans are for the light activation and deactivation logic  
   bool sdLight = false;
   bool stateLight = false;
 
-
+//Updater Definitions
+  static unsigned long lastCycle = 0;
+  static unsigned long planCycle = 0;
 
 
 
@@ -142,8 +143,8 @@ void setup() {
   temperature3.begin();
   
 //Serial Initialization
-  Serial1.begin(1200);               //Initializes HASP serial port at 1200 baud.      
-  Serial2.begin(4800);               //Initializes serial port for GPS communication
+  Serial1.begin(1200);                                                 //Initializes HASP serial port at 1200 baud.      
+  Serial2.begin(4800);                                                 //Initializes serial port for GPS communication
 
 //Data Log Initialization
   //pinMode(chipSelect, OUTPUT);
@@ -152,51 +153,51 @@ void setup() {
     ;
   }
 
-  Serial.print("Initializing SD card...");   //Tells us if the SD card faled to open:
+  Serial.print("Initializing SD card...");                             //Tells us if the SD card faled to open:
   if (!SD.begin(chipSelect)) {
     Serial.println("Initialization Failed!");
     SDcard = false;
   }
   SDcard = true;
-  Serial.println("Initialization done."); //This "for" loop checks to see if there are any previous files on
-  for (int i = 0; i < 100; i++) {         //the SD card already with the generated name
+  Serial.println("Initialization done.");                              //This "for" loop checks to see if there are any previous files on
+  for (int i = 0; i < 100; i++) {                                      //the SD card already with the generated name
     
-    Fname = String("fLog" + String(i/10) + String(i%10) + ".csv");  //has new name for file to make sure file name is not already used
-    if (!SD.exists(Fname.c_str())){   //does not run if same SD name exists
+    Fname = String("fLog" + String(i/10) + String(i%10) + ".csv");     //has new name for file to make sure file name is not already used
+    if (!SD.exists(Fname.c_str())){                                    //does not run if same SD name exists
       break; 
     }
   }
   
-  Serial.println("Temperature Logger created: " + Fname);  
+  Serial.println("Temperature Logger created: " + Fname);                   //  what is going on here??
   tLog = SD.open(Fname.c_str(), FILE_WRITE);
-  String FHeader = "T Outside,T Inside,T OPC";    //temperature headers
-  tLog.println(FHeader);//Set up temp log format and header
+  String FHeader = "T Outside,T Inside,T OPC";                          //temperature headers
+  tLog.println(FHeader);                                                //Set up temp log format and header
   tLog.close();
   Serial.println("Temp Logger header added");
 
 //Plantower Initialization
   Serial.begin(115200);
-  Serial.println("Hello, there.");
+  Serial.println("Hello, there.");                                            // do we need all of these serial prints?
   Serial.println();
   Serial.println("Setting up Plantower OPC...");
   Serial.println();
 
   // set pinmodes
-  pinMode(led, OUTPUT);
+  pinMode(led, OUTPUT);                                                       // what is going on here??
   pinMode(rx, INPUT); 
   
   // sensor baud rate is 9600
-  pmsSerial.begin(9600);
+  pmsSerial.begin(9600);                                                      //Do we need a pmsSerial???????????????????????????
   
 
   Serial.print("Initializing SD card...");
   // Check if card is present/initalized: 
   if (!SD.begin(CS)){
-  Serial.println("card initialization FAILED - something is wrong..."); // card not present or initialization failed
-  while (1); // dont do anything more
+  Serial.println("card initialization FAILED - something is wrong...");       //Card not present or initialization failed
+  while (1); // dont do anything more                                         //Infinite loop???????
   }
   
-  Serial.println("card initialization PASSED... bon voyage!"); // initialization successful
+  Serial.println("card initialization PASSED... bon voyage!");                // initialization successful
 
   // Initialize file:
   ptLog = SD.open(filename, FILE_WRITE); // open file
@@ -214,8 +215,7 @@ void setup() {
 
 //GPS Initialization
   //Copernicus stuff
-  SoftwareSerial GPS_Serial(9,10);  //This will establish the serial port on the Copernicus breakout board
-
+  SoftwareSerial GPS_Serial(9,10);                                            //This will establish the serial port on the Copernicus breakout board
 }
 
 

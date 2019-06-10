@@ -42,46 +42,46 @@ struct pms5003data {
   };
 struct pms5003data data;
 
-///// begin setup
-//void setup() {
-//  
-//  Serial.begin(115200);
-//  Serial.println("Hello, there.");
-//  Serial.println();
-//  Serial.println("Setting up Plantower OPC...");
-//  Serial.println();
-//
-//  // set pinmodes
-//  pinMode(led, OUTPUT);
-//  pinMode(rx, INPUT); 
-//  
-//  // sensor baud rate is 9600
-//  pmsSerial.begin(9600);
-//  
-//
-//  Serial.print("Initializing SD card...");
-//  // Check if card is present/initalized: 
-//  if (!SD.begin(CS)){
-//  Serial.println("card initialization FAILED - something is wrong..."); // card not present or initialization failed
-//  while (1); // dont do anything more
-//  }
-//  
-//  Serial.println("card initialization PASSED... bon voyage!"); // initialization successful
-//
-//  // Initialize file:
-//  ptLog = SD.open(filename, FILE_WRITE); // open file
-//  
-//  if (ptLog) {
-//    Serial.println( filename + " opened...");
-//    ptLog.close();
-//    Serial.println("File initialized... begin data logging!");
-//  }
-//  else {
-//    Serial.println("error opening file");
-//    return;
-//  }
-//
-//}
+/// begin setup
+void setup() {
+  
+  Serial.begin(115200);
+  Serial.println("Hello, there.");
+  Serial.println();
+  Serial.println("Setting up Plantower OPC...");
+  Serial.println();
+
+  // set pinmodes
+  pinMode(led, OUTPUT);
+  pinMode(rx, INPUT); 
+  
+  // sensor baud rate is 9600
+  pmsSerial.begin(9600);
+  
+
+  Serial.print("Initializing SD card...");
+  // Check if card is present/initalized: 
+  if (!SD.begin(CS)){
+  Serial.println("card initialization FAILED - something is wrong..."); // card not present or initialization failed
+  while (1); // dont do anything more
+  }
+  
+  Serial.println("card initialization PASSED... bon voyage!"); // initialization successful
+
+  // Initialize file:
+  ptLog = SD.open(filename, FILE_WRITE); // open file
+  
+  if (ptLog) {
+    Serial.println( filename + " opened...");
+    ptLog.close();
+    Serial.println("File initialized... begin data logging!");
+  }
+  else {
+    Serial.println("error opening file");
+    return;
+  }
+
+}
 
 /// begin loop
 void loop() {
@@ -189,6 +189,7 @@ boolean readPMSdata(Stream *s) {
 }
 
 // Reads in time from Arduino clock (seconds) and converts it to hr:min:sec; written by: Simon Peterson 
+
 //String flightTime(unsigned long t) {
 //  String fTime = "";
 //  fTime += (String(t / 3600) + ":");

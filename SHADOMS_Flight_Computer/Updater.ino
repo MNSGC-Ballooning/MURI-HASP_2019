@@ -60,6 +60,6 @@ void systemUpdate(){                                    //This regulates the loo
   if (millis() - planCycle >= 2300) {                   //This regulates the plantower loop to every 2.3 seconds.
     planCycle=millis();
 
-    planUpdate();
+    writeSensorsSD();
   }
 }

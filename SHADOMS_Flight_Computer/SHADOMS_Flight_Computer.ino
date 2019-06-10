@@ -54,7 +54,9 @@ record their own data.*/
   #define HASP_RX 0                 //HASP Recieve Pin                SERIAL 1
   #define HASP_TX 1                 //HASP Transmission Pin
   #define GPS_RX 9                  //GPS Recieve Pin                 SERIAL 2
-  #define GPS_TX 10                 //GPS Recieve Pin
+  #define GPS_TX 10                 //GPS Transmission Pin
+  //#define PMS_RX #                //PMS Recieve Pin                 SERIAL 5?
+  //#define PMS_TX #                //PMS Transmission Pin
 
 //Relay Definitions
   LatchRelay heater(heater_ON, heater_OFF);             //Define heater relay object
@@ -90,6 +92,9 @@ record their own data.*/
   String data;                                          //sets up the CSV format.
   String header = "Time, HASP temp, HASP GPS, GPS, Temperature outside, T inside, T OPC";
   bool SDcard = true;
+
+//Plantower Definitions
+
 
 //GPS Definitions
   TinyGPSPlus GPS;                                      //GPS object definition
@@ -176,19 +181,14 @@ void setup() {
   Serial.println("Temp Logger header added");
 
 //Plantower Initialization
-  Serial.begin(115200);
+  Serial.begin(9600);
   Serial.println("Hello, there.");                                            // do we need all of these serial prints?
   Serial.println();
   Serial.println("Setting up Plantower OPC...");
   Serial.println();
-
-  // set pinmodes
-  pinMode(led, OUTPUT);                                                       // what is going on here??
-  pinMode(rx, INPUT); 
   
   // sensor baud rate is 9600
-  pmsSerial.begin(9600);                                                      //Do we need a pmsSerial???????????????????????????
-  
+  pmsSerial.begin(9600);                                                      //Do we need a pmsSerial?
 
   Serial.print("Initializing SD card...");
   // Check if card is present/initalized: 

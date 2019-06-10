@@ -53,10 +53,3 @@ void writeSensorsSD(){
 void loop() {
   writeSensorsSD();
 }
-
-//Data Logging
-
-//update
-void updateSD() {
-
-}

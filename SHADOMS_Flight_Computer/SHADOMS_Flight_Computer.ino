@@ -1,7 +1,7 @@
 //HASP SHADOMS Payload Flight Computer
 //Version 1.0
 
-/*This code operates the Teensy 3.6 Microcontroller on the 2019 HASP flight.
+/*This code operates the Teensy 3.5/3.6 Microcontroller on the 2019 HASP flight.
 The goal of this flight is to collect data from the Plantower PMS-5003, the Alphasense OPC N3,
 and the LOAC-R. Then, this data will be compared to examine how each particle detector operates
 in the conditions of the upper atmosphere. This examination will be utilized to determine counter
@@ -20,7 +20,7 @@ record their own data.*/
 
 
 
-/////ESTABLISH PREREQUISITE DEFINITIONS\\\\\
+//---ESTABLISH PREREQUISITE DEFINITIONS---\\
 
 
 
@@ -56,8 +56,14 @@ record their own data.*/
   #define HASP_TX 1                 //HASP Transmission Pin
   #define GPS_RX 9                  //GPS Recieve Pin                 SERIAL 2
   #define GPS_TX 10                 //GPS Transmission Pin
-  //#define PMS_RX #                //PMS Recieve Pin                 SERIAL 5?
-  //#define PMS_TX #                //PMS Transmission Pin
+  #define PMS_RX 34                 //PMS Recieve Pin                 SERIAL 5?, or software serial
+  #define PMS_TX 33                 //PMS Transmission Pin
+
+//Constant Definitions
+  #define UPDATE_RATE 1000                               //These definitions are the rates of the individual portions of the
+  #define PLAN_RATE 2300                                 //systemUpdate function.
+  #define COLD 280.0                                     //Minimum acceptable temperature of the OPC
+  #define HOT 290.0                                      //Maximum acceptable temperature of the OPC
 
 //Relay Definitions
   LatchRelay heater(heater_ON, heater_OFF);             //Define heater relay object
@@ -68,8 +74,6 @@ record their own data.*/
   bool dataCollection = false;
   
 //Active Heating Definitions
-  float cold =  280.0;                                  //Minimum acceptable temperature of the OPC
-  float hot = 290.0;                                    //Maximum acceptable temperature of the OPC
   bool coldOPC = false;
 
 //Temperature Sensor Definitions
@@ -85,6 +89,9 @@ record their own data.*/
   
 //Serial Definitions
   //HASP Uplink and downlink data
+  String flightState = "";
+  String OPCState = "";
+  byte packet[32] = {0};
   
 //Data Log Definitions
   //Log Plantower, temperature, GPS, HASP data
@@ -92,17 +99,16 @@ record their own data.*/
   File fLog;                                            //This part of the code establishes the file and
   String data;                                          //sets up the CSV format.
   String Fname = "";
-  String header = "Time, HASP temp, HASP GPS, GPS, Temperature outside, T inside, T OPC";
+  String header = "Time, GPS, T outside, T inside, T OPC";
   bool SDcard = true;
 
 //Plantower Definitions
-  String dataLog;                   // used for data logging
-  int nhits=1;                      // used to count successful data transmissions    
-  int ntot=1;                       // used to count total attempted transmissions
-  String filename = "ptLog.csv";    // file name that data wil be written to
-  chipSelect = BUILTIN_SDCARD;       //Access on board micro-SD
-  File ptLog;                       // file that data is written to 
-  SoftwareSerial pmsSerial(rx,tx);  //serial comms software
+  String dataLog;                                        // used for data logging
+  int nhits=1;                                           // used to count successful data transmissions    
+  int ntot=1;                                            // used to count total attempted transmissions
+  String filename = "ptLog.csv";                         // file name that data wil be written to
+  File ptLog;                                            // file that data is written to 
+  SoftwareSerial pmsSerial(PMS_RX,PMS_TX);               //serial comms software                         THIS MAY NEED TO BE REAL SERIAL
   struct pms5003data {
     uint16_t framelen;
     uint16_t pm10_standard, pm25_standard, pm100_standard;
@@ -111,7 +117,7 @@ record their own data.*/
     uint16_t unused;
     uint16_t checksum;
   };
-  struct pms5003data data;
+  pms5003data planData;                            //This struct will organize the plantower bins into seperate parts of the data
   
 //GPS Definitions
   TinyGPSPlus GPS;                                      //GPS object definition
@@ -125,22 +131,23 @@ record their own data.*/
  
   String GPSdata = "";                                  //Initializes data string that prints GPS data to the SD card
   String faillatitude = "0.00";                         //Printed latitude if GPS does not have a fix or any data
-  String faillongitude; = "0.000000";                   //Printed longitude if GPS does not have a fix or any data
-  String failalt; = "0.000000";                         //Printed altitude if GPS does not have a fix or any 
+  String faillongitude = "0.000000";                    //Printed longitude if GPS does not have a fix or any data
+  String failalt = "0.000000";                          //Printed altitude if GPS does not have a fix or any 
 
 //LED Definitions
   bool fixLight = false;                                //These booleans are for the light activation and deactivation logic  
   bool sdLight = false;
   bool stateLight = false;
 
-//Updater Definitions
-  static unsigned long lastCycle = 0;
-  static unsigned long planCycle = 0;
+//Updater Definitions                                   //These values help to regulate the speed of the updater function
+  unsigned long lastCycle = 0;
+  unsigned long planCycle = 0;
+  
+  
 
 
 
-
-/////INITIALIZE CODE\\\\\                              
+//---INITIALIZE CODE---\\                              
 
 
 
@@ -167,12 +174,10 @@ void setup() {
 //Serial Initialization
   Serial1.begin(1200);                                                 //Initializes HASP serial port at 1200 baud.      
   Serial2.begin(4800);                                                 //Initializes serial port for GPS communication
-  Serial.begin(9600);                                                  //Initializes serial port for Plantower
+  Serial5.begin(9600);                                                 //Initializes serial port for Plantower
 
 //Data Log Initialization
-  //pinMode(chipSelect, OUTPUT);
-  //Other stuff too
-  while(!Serial){ //Wait for serial port to connect
+  while(!Serial){                                                      //Wait for serial port to connect
     ;
   }
 
@@ -191,33 +196,33 @@ void setup() {
     }
   }
   
-  Serial.println("Temperature Logger created: " + Fname);                   //  what is going on here??
+  Serial.println("Temperature Logger created: " + Fname);                 
   fLog = SD.open(Fname.c_str(), FILE_WRITE);
-  String FHeader = "T Outside,T Inside,T OPC, Time";                          //temperature headers with time
-  fLog.println(FHeader);                                                  //Set up temp log format and header
+  String FHeader = "time, T Outside,T Inside,T OPC";                        //temperature headers with time
+  fLog.println(FHeader);                                                    //Set up temp log format and header
   fLog.close();
   Serial.println("Temp Logger header added");
 
 //Plantower Initialization
-  Serial.println("Hello, there.");                                            // do we need all of these serial prints?
+  Serial.println("Hello, there.");                                            
   Serial.println();
   Serial.println("Setting up Plantower OPC...");
   Serial.println();
   
   // sensor baud rate is 9600
-  pmsSerial.begin(9600);                                                      //Do we need a pmsSerial?
+  pmsSerial.begin(9600);                                                      
 
   Serial.print("Initializing SD card...");
   // Check if card is present/initalized: 
-  if (!SD.begin(CS)){
+  if (!SD.begin()){
   Serial.println("card initialization FAILED - something is wrong...");       //Card not present or initialization failed
-  return; // dont do anything more                                         //Infinite loop???????
+  return; // dont do anything more                                         
   }
   
-  Serial.println("card initialization PASSED");                // initialization successful
+  Serial.println("card initialization PASSED");                                //Initialization successful
 
   // Initialize file:
-  ptLog = SD.open(filename, FILE_WRITE); // open file
+  ptLog = SD.open(filename.c_str(), FILE_WRITE);                               // open file
   
   if (ptLog) {
     Serial.println( filename + " opened...");
@@ -239,7 +244,7 @@ void setup() {
 
 
 
-/////ACTIVE CODE\\\\\
+//---ACTIVE CODE---\\
 
 
 

@@ -16,31 +16,31 @@
 ////////// BEGIN CODE //////////
 
 /// begin loop
-void loop() {
-  digitalWrite(led,HIGH);                             //which LED is this??
-  FT = millis();
+void pmsUpdate() {
+//  digitalWrite(led,HIGH);                             //which LED is this??
+//  FT = millis();
 
 // log sample number, in flight time
     dataLog = "";
     dataLog += ntot;
     dataLog += ",";
-    dataLog += logTime();  //in flight time from Flight_Timer 
+    dataLog += logTime();                              //in flight time from Flight_Timer 
     dataLog += ",";
     
   if (readPMSdata(&pmsSerial)) {
 
 // if data is receieved, log it
-    dataLog += data.particles_03um;
+    dataLog += planData.particles_03um;
     dataLog += ",";
-    dataLog += data.particles_05um;
+    dataLog += planData.particles_05um;
     dataLog += ",";
-    dataLog += data.particles_10um;
+    dataLog += planData.particles_10um;
     dataLog += ",";
-    dataLog += data.particles_25um;
+    dataLog += planData.particles_25um;
     dataLog += ",";
-    dataLog += data.particles_50um;
+    dataLog += planData.particles_50um;
     dataLog += ",";
-    dataLog += data.particles_100um;
+    dataLog += planData.particles_100um;
     dataLog += ",";
     
 // samples of data collected
@@ -50,15 +50,15 @@ void loop() {
     ntot = ntot+1;
 
 // write data
-    ptLog = SD.open(filename, FILE_WRITE); // open file
+    ptLog = SD.open(filename.c_str(), FILE_WRITE);            //Open file
 
  if (ptLog) {
-    //Serial.println("tempLog.csv opened..."); // file open successfully 
+    //Serial.println("tempLog.csv opened...");        //File open successfully 
     ptLog.println(dataLog);
     ptLog.close();
   }
   else {
-    Serial.println("error opening file"); // file open failed
+    Serial.println("error opening file");             //File open failed
     return;
   }
   
@@ -110,9 +110,9 @@ boolean readPMSdata(Stream *s) {
   }
  
   // put it into a nice struct :)
-  memcpy((void *)&data, (void *)buffer_u16, 30);
+  memcpy((void *)&planData, (void *)buffer_u16, 30);
  
-  if (sum != data.checksum) {
+  if (sum != planData.checksum) {
     Serial.println("Checksum failure");
     return false;
   }

@@ -33,6 +33,7 @@ record their own data.*/
   #include <DallasTemperature.h>    //Dallas temperature control
   #include <TinyGPS++.h>            //GPS control
   #include <LatchRelay.h>           //Relay control
+  #include <SoftwareSerial.h>       //Software serial comms
 
 //Pin Definitions
   #define sdLED 22                  //LED pin which blinks to indicates SD*****
@@ -90,12 +91,28 @@ record their own data.*/
   const int chipSelect = BUILTIN_SDCARD;                //Access on board micro-SD
   File fLog;                                            //This part of the code establishes the file and
   String data;                                          //sets up the CSV format.
+  String Fname = "";
   String header = "Time, HASP temp, HASP GPS, GPS, Temperature outside, T inside, T OPC";
   bool SDcard = true;
 
 //Plantower Definitions
-
-
+  String dataLog;                   // used for data logging
+  int nhits=1;                      // used to count successful data transmissions    
+  int ntot=1;                       // used to count total attempted transmissions
+  String filename = "ptLog.csv";    // file name that data wil be written to
+  chipSelect = BUILTIN_SDCARD;       //Access on board micro-SD
+  File ptLog;                       // file that data is written to 
+  SoftwareSerial pmsSerial(rx,tx);  //serial comms software
+  struct pms5003data {
+    uint16_t framelen;
+    uint16_t pm10_standard, pm25_standard, pm100_standard;
+    uint16_t pm10_env, pm25_env, pm100_env;
+    uint16_t particles_03um, particles_05um, particles_10um, particles_25um, particles_50um, particles_100um;
+    uint16_t unused;
+    uint16_t checksum;
+  };
+  struct pms5003data data;
+  
 //GPS Definitions
   TinyGPSPlus GPS;                                      //GPS object definition
   bool inFlight = false;                                //Bool that determines if the payload is in flight. Used with FlightCheck function
@@ -150,6 +167,7 @@ void setup() {
 //Serial Initialization
   Serial1.begin(1200);                                                 //Initializes HASP serial port at 1200 baud.      
   Serial2.begin(4800);                                                 //Initializes serial port for GPS communication
+  Serial.begin(9600);                                                  //Initializes serial port for Plantower
 
 //Data Log Initialization
   //pinMode(chipSelect, OUTPUT);
@@ -174,14 +192,13 @@ void setup() {
   }
   
   Serial.println("Temperature Logger created: " + Fname);                   //  what is going on here??
-  tLog = SD.open(Fname.c_str(), FILE_WRITE);
-  String FHeader = "T Outside,T Inside,T OPC";                          //temperature headers
-  tLog.println(FHeader);                                                //Set up temp log format and header
-  tLog.close();
+  fLog = SD.open(Fname.c_str(), FILE_WRITE);
+  String FHeader = "T Outside,T Inside,T OPC, Time";                          //temperature headers with time
+  fLog.println(FHeader);                                                  //Set up temp log format and header
+  fLog.close();
   Serial.println("Temp Logger header added");
 
 //Plantower Initialization
-  Serial.begin(9600);
   Serial.println("Hello, there.");                                            // do we need all of these serial prints?
   Serial.println();
   Serial.println("Setting up Plantower OPC...");
@@ -194,10 +211,10 @@ void setup() {
   // Check if card is present/initalized: 
   if (!SD.begin(CS)){
   Serial.println("card initialization FAILED - something is wrong...");       //Card not present or initialization failed
-  while (1); // dont do anything more                                         //Infinite loop???????
+  return; // dont do anything more                                         //Infinite loop???????
   }
   
-  Serial.println("card initialization PASSED... bon voyage!");                // initialization successful
+  Serial.println("card initialization PASSED");                // initialization successful
 
   // Initialize file:
   ptLog = SD.open(filename, FILE_WRITE); // open file

@@ -15,74 +15,6 @@
 
 ////////// BEGIN CODE //////////
 
-// define digital pins
-int rx  = 26;          // Pin 2 on Arduino from TXD pin on Pt                               All of this stuff should be in the main setup-
-int tx  = 27;          // Pin 3 on Arduino from nothing                                     It cannot sit separately
-
-// more definitions
-String dataLog;                   // used for data logging
-int nhits=1;                      // used to count successful data transmissions    
-int ntot=1;                       // used to count total attempted transmissions
-String filename = "ptLog.csv";    // file name that data wil be written to
-chipSelect = BUILTIN_SDCARD;       //Access on board micro-SD
-File ptLog;                       // file that data is written to 
-
-// library for software serial comms
-#include <SoftwareSerial.h>
-SoftwareSerial pmsSerial(rx,tx);
-
-// define data structure for PT
-struct pms5003data {
-    uint16_t framelen;
-    uint16_t pm10_standard, pm25_standard, pm100_standard;
-    uint16_t pm10_env, pm25_env, pm100_env;
-    uint16_t particles_03um, particles_05um, particles_10um, particles_25um, particles_50um, particles_100um;
-    uint16_t unused;
-    uint16_t checksum;
-  };
-struct pms5003data data;
-
-/// begin setup
-void setup() {
-  
-  Serial.begin(115200);
-  Serial.println("Hello, there.");
-  Serial.println();
-  Serial.println("Setting up Plantower OPC...");
-  Serial.println();
-
-  // set pinmodes
-  pinMode(led, OUTPUT);
-  pinMode(rx, INPUT); 
-  
-  // sensor baud rate is 9600
-  pmsSerial.begin(9600);
-  
-
-  Serial.print("Initializing SD card...");
-  // Check if card is present/initalized: 
-  if (!SD.begin(CS)){
-  Serial.println("card initialization FAILED - something is wrong..."); // card not present or initialization failed
-  while (1); // dont do anything more
-  }
-  
-  Serial.println("card initialization PASSED... bon voyage!"); // initialization successful
-
-  // Initialize file:
-  ptLog = SD.open(filename, FILE_WRITE); // open file
-  
-  if (ptLog) {
-    Serial.println( filename + " opened...");
-    ptLog.close();
-    Serial.println("File initialized... begin data logging!");
-  }
-  else {
-    Serial.println("error opening file");
-    return;
-  }
-
-}
-
 /// begin loop
 void loop() {
   digitalWrite(led,HIGH);                             //which LED is this??
@@ -92,7 +24,7 @@ void loop() {
     dataLog = "";
     dataLog += ntot;
     dataLog += ",";
-    dataLog += timer;  //in flight time from Flight_Timer 
+    dataLog += logTime();  //in flight time from Flight_Timer 
     dataLog += ",";
     
   if (readPMSdata(&pmsSerial)) {

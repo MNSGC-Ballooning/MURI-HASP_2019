@@ -1,3 +1,5 @@
+#include <TinyGPS++.h>
+
 //HASP SHADOMS Payload Flight Computer
 //Version 1.0
 

@@ -27,7 +27,7 @@ void pmsUpdate() {
     dataLog += logTime();                              //in flight time from Flight_Timer 
     dataLog += ",";
     
-  if (readPMSdata(&pmsSerial)) {
+  if (readPMSdata(&Serial5)) {
 
 // if data is receieved, log it
     dataLog += planData.particles_03um;
@@ -50,15 +50,15 @@ void pmsUpdate() {
     ntot = ntot+1;
 
 // write data
-    ptLog = SD.open(filename.c_str(), FILE_WRITE);            //Open file
+    ptLog = SD.open(filename.c_str(), FILE_WRITE);     //Open file
 
  if (ptLog) {
-    //Serial.println("tempLog.csv opened...");        //File open successfully 
+    //Serial.println("tempLog.csv opened...");         //File open successfully 
     ptLog.println(dataLog);
     ptLog.close();
   }
   else {
-    Serial.println("error opening file");             //File open failed
+    Serial.println("error opening file");              //File open failed
     return;
   }
   

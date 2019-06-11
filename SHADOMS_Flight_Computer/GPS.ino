@@ -19,7 +19,7 @@ String getalt() {                             //Function that returns altitude a
 }
 
 void FlightCheck() {                                                            //Function that repeatedly checks if Payload is in flight.
-  if (GPS.Fix && (GPS.altitude.feet() > 5000)  && (GPS.location.lng() != 0)) {    //HASP vehicle takeoff altitude is at roughly 4000 feet.
+  if (GPS.Fix && (GPS.altitude.feet() > 5000)  && (GPS.location.lng() != 0)) {  //HASP vehicle takeoff altitude is at roughly 4000 feet.
     FlightCheckCounter++;                                                       //If three conditions are met, FlightCheckComputer gets a hit.
     if (FlightCheckCounter >= 5) {                                              //5 FlightCheckCounter hits in a row needed to set inFlight to true
       inFlight = true;                                                          //Bool that indicates if the payload is in flight.

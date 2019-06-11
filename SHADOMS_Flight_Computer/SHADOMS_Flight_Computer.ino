@@ -33,7 +33,7 @@ record their own data.*/
   #include <DallasTemperature.h>    //Dallas temperature control
   #include <TinyGPS++.h>            //GPS control
   #include <LatchRelay.h>           //Relay control
-  #include <SoftwareSerial.h>       //Software serial comms
+  //#include <SoftwareSerial.h>       //Software serial comms
 
 //Pin Definitions
   #define sdLED 22                  //LED pin which blinks to indicates SD*****
@@ -56,7 +56,7 @@ record their own data.*/
   #define HASP_TX 1                 //HASP Transmission Pin
   #define GPS_RX 9                  //GPS Recieve Pin                 SERIAL 2
   #define GPS_TX 10                 //GPS Transmission Pin
-  #define PMS_RX 34                 //PMS Recieve Pin                 SERIAL 5?, or software serial
+  #define PMS_RX 34                 //PMS Recieve Pin                 SERIAL 5
   #define PMS_TX 33                 //PMS Transmission Pin
 
 //Constant Definitions
@@ -108,7 +108,7 @@ record their own data.*/
   int ntot=1;                                            // used to count total attempted transmissions
   String filename = "ptLog.csv";                         // file name that data wil be written to
   File ptLog;                                            // file that data is written to 
-  SoftwareSerial pmsSerial(PMS_RX,PMS_TX);               //serial comms software                         THIS MAY NEED TO BE REAL SERIAL
+  //SoftwareSerial pmsSerial(PMS_RX,PMS_TX);             //serial comms software                         
   struct pms5003data {
     uint16_t framelen;
     uint16_t pm10_standard, pm25_standard, pm100_standard;
@@ -207,10 +207,7 @@ void setup() {
   Serial.println("Hello, there.");                                            
   Serial.println();
   Serial.println("Setting up Plantower OPC...");
-  Serial.println();
-  
-  // sensor baud rate is 9600
-  pmsSerial.begin(9600);                                                      
+  Serial.println();                                                    
 
   Serial.print("Initializing SD card...");
   // Check if card is present/initalized: 
@@ -237,7 +234,7 @@ void setup() {
 
 //GPS Initialization
   //Copernicus stuff
-  SoftwareSerial GPS_Serial(9,10);                                            //This will establish the serial port on the Copernicus breakout board
+  //SoftwareSerial GPS_Serial(9,10);                                            //This will establish the serial port on the Copernicus breakout board
 }
 
 

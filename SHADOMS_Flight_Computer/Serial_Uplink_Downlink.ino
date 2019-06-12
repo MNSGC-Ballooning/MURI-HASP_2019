@@ -53,7 +53,7 @@ void Data_Downlink()
 
   // combine strings into 1 long one
   String dataPacket = check1 + check2 + timestamp + GPS + Temp + flightState + OPCState + check3 + check4;
-  dataPacket.getBytes(packet, 32);                 //convert string to bytes
+  dataPacket.getBytes(packet, DWN_BYTES);       //convert string to bytes
 
   // send the data packet string
   for (int i = 0; i<32; i++) {
@@ -64,16 +64,16 @@ void Data_Downlink()
 ///// Uplink Command /////
 void Read_Uplink_Command()
 {
-  uint8_t command_byte = 0; // byte for the command
-  uint8_t ID_byte = 0; // byte for ID and checksum byte
+  uint8_t command_byte = 0;                     // byte for the command
+  uint8_t ID_byte = 0;                          // byte for ID and checksum byte
 
-  while(Serial1.available() > 0)
+  while(Serial1.available() > 1)
   {
-      ID_byte = Serial1.read();  //read first byte to ID variable
-      command_byte = Serial1.read(); // read second byte to command variable
+      ID_byte = Serial1.read();                 //read first byte to ID variable
+      command_byte = Serial1.read();            // read second byte to command variable
   }
 
-  if(ID_byte == 0x1C) //check to see id checksum is correct, if not, command is ignored
+  if(ID_byte == 0x1C)                           //check to see id checksum is correct, if not, command is ignored
   {
     switch(command_byte)
     {

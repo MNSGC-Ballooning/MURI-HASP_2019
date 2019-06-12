@@ -64,6 +64,7 @@ record their own data.*/
   #define PLAN_RATE 2300                                 //systemUpdate function.
   #define COLD 280.0                                     //Minimum acceptable temperature of the OPC
   #define HOT 290.0                                      //Maximum acceptable temperature of the OPC
+  #define DWN_BYTES 32                                   //Number of downlink bytes
 
 //Relay Definitions
   LatchRelay heater(heater_ON, heater_OFF);             //Define heater relay object

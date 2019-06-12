@@ -22,13 +22,7 @@ void systemUpdate(){                                    //This regulates the loo
     //The print() function in SDprintGPS() can be removed if need be, and the function can serve to just change the
     //data string, which could be printed in a different function if that makes things easier.
   
-     if (GPS.Fix && !fixLight) {                        //If the GPS has a fix and the light is not active, this
-      digitalWrite(fixLED, HIGH);                       //will activate the light.
-      fixLight = true;
-     } else if (!GPS.Fix && fixLight){                  //If the GPS does not have a fix and the light is active,
-      digitalWrite(fixLED, LOW);                        //this will deactivate the light.
-      fixLight = false;
-     }
+     flightCheck();                                     //The flight check variable will identify when the payload is in flight.
   
      //Data Log Update
 
@@ -36,8 +30,8 @@ void systemUpdate(){                                    //This regulates the loo
 
      //Serial Update
 
-     Data_Downlink(); // send down packet of data
-     Read_Uplink_Command(); // check if command is sent then follow command
+     Data_Downlink();                                   //Send down packet of data
+     Read_Uplink_Command();                             //Check if command is sent then follow command
 
      //LED updates
 
@@ -56,11 +50,19 @@ void systemUpdate(){                                    //This regulates the loo
       digitalWrite(sdLED, LOW);                        //this will deactivate the light.
       sdLight = false;
      }  
+
+     if (GPS.Fix && !fixLight) {                        //If the GPS has a fix and the light is not active, this
+      digitalWrite(fixLED, HIGH);                       //will activate the light.
+      fixLight = true;
+     } else if (!GPS.Fix && fixLight){                  //If the GPS does not have a fix and the light is active,
+      digitalWrite(fixLED, LOW);                        //this will deactivate the light.
+      fixLight = false;
+     }
   }
 
   if (millis() - planCycle >= PLAN_RATE) {             //This regulates the plantower loop to every 2.3 seconds.
     planCycle=millis();
 
-    pmsUpdate();
+    pmsUpdate();                                       //This will update the plantower data log.
   }
 }

@@ -18,12 +18,12 @@ String getalt() {                             //Function that returns altitude a
   return alt;
 }
 
-void FlightCheck() {                                                            //Function that repeatedly checks if Payload is in flight.
+void flightCheck() {                                                              //Function that repeatedly checks if Payload is in flight.
   if (GPS.Fix && (GPS.altitude.feet() > 5000)  && (GPS.location.lng() != 0)) {    //HASP vehicle takeoff altitude is at roughly 4000 feet.
-    FlightCheckCounter++;                                                       //If three conditions are met, FlightCheckComputer gets a hit.
-    if (FlightCheckCounter >= 5) {                                              //5 FlightCheckCounter hits in a row needed to set inFlight to true
-      inFlight = true;                                                          //Bool that indicates if the payload is in flight.
-      flightStart = millis();                                                   //flightStart holds the time when inFlight becomes true since the batteries for the payload are powered on
+    FlightCheckCounter++;                                                         //If three conditions are met, FlightCheckComputer gets a hit.
+    if (FlightCheckCounter >= 5) {                                                //5 FlightCheckCounter hits in a row needed to set inFlight to true
+      inFlight = true;                                                            //Bool that indicates if the payload is in flight.
+      flightStart = millis();                                                     //flightStart holds the time when inFlight becomes true since the batteries for the payload are powered on
     }
   }
   else {
@@ -31,7 +31,7 @@ void FlightCheck() {                                                            
   }
 }
 
-String SDprintGPS() {                                                            //Function that takes GPS data and prints it to the SD card
+String SDprintGPS() {                                                           //Function that takes GPS data and prints it to the SD card
 
   if (GPS.Fix && GPS.altitude.feet() != 0) {                                    //If GPS has a fix with good data (may need more parameters to define "good data", GPS data is printed
     GPSdata = getlat() + ", " + getlong() + ", " + getalt();
@@ -42,8 +42,6 @@ String SDprintGPS() {                                                           
 
   return GPSdata;
 }
-
-
 
 void updateGPS() {                                                              //Function that updates GPS every second and accounts for
   static bool firstFix = false;                                                 //clock rollover at midnight (23:59:59 to 00:00:00)
@@ -66,9 +64,9 @@ unsigned int getGPStime() {
 }
 
 int getLastGPS() { 
-                                                                     //returns time in seconds between last successful fix and initial fix. Used to match with altitude data
-  static bool newDay  = false;                                       //variable in case we're flying late at night (clock rollover)
-  if (!newDay && lastGPS < GPSstartTime) {
+                                                                                //returns time in seconds between last successful fix and initial fix.
+  static bool newDay  = false;                                                  //Used to match with altitude data variable in case we're flying late at
+  if (!newDay && lastGPS < GPSstartTime) {                                      //night (clock rollover).
     days++;
     newDay = true;
   }

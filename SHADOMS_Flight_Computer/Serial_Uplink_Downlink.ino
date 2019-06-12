@@ -17,7 +17,7 @@ void Data_Downlink()
   uint8_t checksum_byte_3 = '@';                                            // end checksum
   uint8_t checksum_byte_4 = '@';                                            // end checksum
 
-                                                                            // send all data as one long string so it is all at once? i dont know best way to do this
+// send all data as one long string so it is all at once? i dont know best way to do this
 
   // assign first checksums
   String check1 = String(checksum_byte_1);                                  //initial checksum 1
@@ -53,7 +53,7 @@ void Data_Downlink()
 
   // combine strings into 1 long one
   String dataPacket = check1 + check2 + timestamp + GPS + Temp + flightState + OPCState + check3 + check4;
-  dataPacket.getBytes(packet, 32);                 //convert string to bytes
+  dataPacket.getBytes(packet, DWN_BYTES);       //convert string to bytes
 
   // send the data packet string
   for (int i = 0; i<32; i++) {
@@ -64,16 +64,16 @@ void Data_Downlink()
 ///// Uplink Command /////
 void Read_Uplink_Command()
 {
-  uint8_t command_byte = 0; // byte for the command
-  uint8_t ID_byte = 0; // byte for ID and checksum byte
+  uint8_t command_byte = 0;                     // byte for the command
+  uint8_t ID_byte = 0;                          // byte for ID and checksum byte
 
-  while(Serial1.available() > 0)
+  while(Serial1.available() > 1)
   {
-      ID_byte = Serial1.read();  //read first byte to ID variable
-      command_byte = Serial1.read(); // read second byte to command variable
+      ID_byte = Serial1.read();                 //read first byte to ID variable
+      command_byte = Serial1.read();            // read second byte to command variable
   }
 
-  if(ID_byte == 0x1C) //check to see id checksum is correct, if not, command is ignored
+  if(ID_byte == 0x1C)                           //check to see id checksum is correct, if not, command is ignored
   {
     switch(command_byte)
     {
@@ -94,7 +94,7 @@ void Read_Uplink_Command()
 }
 
 ///// Command Functions /////
-void systemReset(){                      //This will reset the system
+void systemReset(){                             //This will reset the system
   standbyMode();
   heater.setState(0);
   //Close data log
@@ -102,16 +102,16 @@ void systemReset(){                      //This will reset the system
   activeMode();
 }
 
-void activeMode(){                       //This will activate all of the particle detectors.
+void activeMode(){                             //This will activate all of the particle detectors.
   LOAC.setState(1);
   alphaOPC.setState(1);
   planOPC.setState(1);
 }
 
-void standbyMode(){                     //This will shut down all of the particle detectors.
-  //stateLOAC.setState(1);              //To turn off the LOAC, the recording state has to be
-  //delay (12000);                      //shut down before it can be powered down. This will be
-  //stateLOAC.setState(0);              //done (somehow) in the hardware.
+void standbyMode(){                           //This will shut down all of the particle detectors.
+  //stateLOAC.setState(1);                    //To turn off the LOAC, the recording state has to be
+  //delay (12000);                            //shut down before it can be powered down. This will be
+  //stateLOAC.setState(0);                    //done (somehow) in the hardware.
   LOAC.setState(0);
   alphaOPC.setState(0);
   planOPC.setState(0);

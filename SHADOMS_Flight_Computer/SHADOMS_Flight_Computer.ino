@@ -35,7 +35,7 @@ record their own data.*/
   #include <DallasTemperature.h>    //Dallas temperature control
   #include <TinyGPS++.h>            //GPS control
   #include <LatchRelay.h>           //Relay control
-  #include <SoftwareSerial.h>       //Software serial comms
+  //#include <SoftwareSerial.h>       //Software serial comms
 
 //Pin Definitions
   #define sdLED 22                  //LED pin which blinks to indicates SD*****
@@ -58,14 +58,15 @@ record their own data.*/
   #define HASP_TX 1                 //HASP Transmission Pin
   #define GPS_RX 9                  //GPS Recieve Pin                 SERIAL 2
   #define GPS_TX 10                 //GPS Transmission Pin
-  #define PMS_RX 34                 //PMS Recieve Pin                 SERIAL 5?, or software serial
+  #define PMS_RX 34                 //PMS Recieve Pin                 SERIAL 5
   #define PMS_TX 33                 //PMS Transmission Pin
 
 //Constant Definitions
-  #define UPDATE_RATE 1000                               //These definitions are the rates of the individual portions of the
-  #define PLAN_RATE 2300                                 //systemUpdate function.
-  #define COLD 280.0                                     //Minimum acceptable temperature of the OPC
-  #define HOT 290.0                                      //Maximum acceptable temperature of the OPC
+  #define UPDATE_RATE 1000                              //These definitions are the rates of the individual portions of the
+  #define PLAN_RATE 2300                                //systemUpdate function.
+  #define COLD 280.0                                    //Minimum acceptable temperature of the OPC
+  #define HOT 290.0                                     //Maximum acceptable temperature of the OPC
+  #define DWN_BYTES 32                                  //Number of downlink bytes
 
 //Relay Definitions
   LatchRelay heater(heater_ON, heater_OFF);             //Define heater relay object
@@ -97,9 +98,9 @@ record their own data.*/
   
 //Data Log Definitions
   //Log Plantower, temperature, GPS, HASP data
-  const int chipSelect = BUILTIN_SDCARD;                //Access on board micro-SD
-  File fLog;                                            //This part of the code establishes the file and
-  String data;                                          //sets up the CSV format.
+  const int chipSelect = BUILTIN_SDCARD;                 //Access on board micro-SD
+  File fLog;                                             //This part of the code establishes the file and
+  String data;                                           //sets up the CSV format.
   String Fname = "";
   String header = "Time, GPS, T outside, T inside, T OPC";
   bool SDcard = true;
@@ -110,7 +111,7 @@ record their own data.*/
   int ntot=1;                                            // used to count total attempted transmissions
   String filename = "ptLog.csv";                         // file name that data wil be written to
   File ptLog;                                            // file that data is written to 
-  SoftwareSerial pmsSerial(PMS_RX,PMS_TX);               //serial comms software                         THIS MAY NEED TO BE REAL SERIAL
+  //SoftwareSerial pmsSerial(PMS_RX,PMS_TX);             //serial comms software                         
   struct pms5003data {
     uint16_t framelen;
     uint16_t pm10_standard, pm25_standard, pm100_standard;
@@ -119,29 +120,29 @@ record their own data.*/
     uint16_t unused;
     uint16_t checksum;
   };
-  pms5003data planData;                            //This struct will organize the plantower bins into seperate parts of the data
+  pms5003data planData;                                  //This struct will organize the plantower bins into seperate parts of the data
   
 //GPS Definitions
-  TinyGPSPlus GPS;                                      //GPS object definition
-  bool inFlight = false;                                //Bool that determines if the payload is in flight. Used with FlightCheck function
-  unsigned long flightStart = 0;                        //Time passed since inFlight became true
-  byte FlightCheckCounter = 0;                          //If this reaches 5, then inFLight should be set to true
+  TinyGPSPlus GPS;                                       //GPS object definition
+  bool inFlight = false;                                 //Bool that determines if the payload is in flight. Used with FlightCheck function
+  unsigned long flightStart = 0;                         //Time passed since inFlight became true
+  byte FlightCheckCounter = 0;                           //If this reaches 5, then inFLight should be set to true
   
-  unsigned long lastGPS = 0;                            //Time in seconds since the last GPS update
-  unsigned long GPSstartTime = 0;                       //When the GPS starts, time in seconds of last GPS update
-  uint8_t days = 0;                                     //If we're flying overnight this serves as a coutner for time keeping
+  unsigned long lastGPS = 0;                             //Time in seconds since the last GPS update
+  unsigned long GPSstartTime = 0;                        //When the GPS starts, time in seconds of last GPS update
+  uint8_t days = 0;                                      //If we're flying overnight this serves as a coutner for time keeping
  
-  String GPSdata = "";                                  //Initializes data string that prints GPS data to the SD card
-  String faillatitude = "0.00";                         //Printed latitude if GPS does not have a fix or any data
-  String faillongitude = "0.000000";                    //Printed longitude if GPS does not have a fix or any data
-  String failalt = "0.000000";                          //Printed altitude if GPS does not have a fix or any 
+  String GPSdata = "";                                   //Initializes data string that prints GPS data to the SD card
+  String faillatitude = "0.00";                          //Printed latitude if GPS does not have a fix or any data
+  String faillongitude = "0.000000";                     //Printed longitude if GPS does not have a fix or any data
+  String failalt = "0.000000";                           //Printed altitude if GPS does not have a fix or any 
 
 //LED Definitions
-  bool fixLight = false;                                //These booleans are for the light activation and deactivation logic  
+  bool fixLight = false;                                 //These booleans are for the light activation and deactivation logic  
   bool sdLight = false;
   bool stateLight = false;
 
-//Updater Definitions                                   //These values help to regulate the speed of the updater function
+//Updater Definitions                                    //These values help to regulate the speed of the updater function
   unsigned long lastCycle = 0;
   unsigned long planCycle = 0;
   
@@ -197,11 +198,11 @@ void setup() {
       break; 
     }
   }
-  
+
   Serial.println("Temperature Logger created: " + Fname);                 
   fLog = SD.open(Fname.c_str(), FILE_WRITE);
-  String FHeader = "time, T Outside,T Inside,T OPC";                        //temperature headers with time
-  fLog.println(FHeader);                                                    //Set up temp log format and header
+  String FHeader = "time, T Outside,T Inside,T OPC";                   //temperature headers with time
+  fLog.println(FHeader);                                               //Set up temp log format and header
   fLog.close();
   Serial.println("Temp Logger header added");
 
@@ -209,22 +210,19 @@ void setup() {
   Serial.println("Hello, there.");                                            
   Serial.println();
   Serial.println("Setting up Plantower OPC...");
-  Serial.println();
-  
-  // sensor baud rate is 9600
-  pmsSerial.begin(9600);                                                      
+  Serial.println();                                                    
 
   Serial.print("Initializing SD card...");
   // Check if card is present/initalized: 
   if (!SD.begin()){
-  Serial.println("card initialization FAILED - something is wrong...");       //Card not present or initialization failed
+  Serial.println("card initialization FAILED - something is wrong...");        //Card not present or initialization failed
   return; // dont do anything more                                         
   }
   
   Serial.println("card initialization PASSED");                                //Initialization successful
 
   // Initialize file:
-  ptLog = SD.open(filename.c_str(), FILE_WRITE);                               // open file
+  ptLog = SD.open(filename.c_str(), FILE_WRITE);                               //Open file
   
   if (ptLog) {
     Serial.println( filename + " opened...");
@@ -239,7 +237,7 @@ void setup() {
 
 //GPS Initialization
   //Copernicus stuff
-  SoftwareSerial GPS_Serial(9,10);                                            //This will establish the serial port on the Copernicus breakout board
+  //SoftwareSerial GPS_Serial(9,10);                                          //This will establish the serial port on the Copernicus breakout board
 }
 
 
@@ -253,5 +251,5 @@ void setup() {
 
 
 void loop() {
-  systemUpdate();
+  systemUpdate();                                                            //This function will update the full loop
 }

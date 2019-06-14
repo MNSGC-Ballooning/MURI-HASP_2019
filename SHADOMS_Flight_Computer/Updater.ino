@@ -5,10 +5,10 @@ void systemUpdate(){                                    //This regulates the loo
     lastCycle=millis();                                 //millis gives the current time. Both are in ms.
 
     //Temperature Update
-    temperature1.requestTemperatures();                 //Lines 14-16 request temperatures from the sensors.
+    temperature1.requestTemperatures();                 //Request temperatures from the sensors.
     temperature2.requestTemperatures();
     temperature3.requestTemperatures();
-    t1 = temperature1.getTempCByIndex(0) + 273.15;      //Lines 17-19 pull the temperatures from the objects,
+    t1 = temperature1.getTempCByIndex(0) + 273.15;      //Pull the temperatures from the objects,
     t2 = temperature2.getTempCByIndex(0) + 273.15;      //and converts those temperatures from degrees Celcius
     t3 = temperature3.getTempCByIndex(0) + 273.15;      //to Kelvin.
 
@@ -43,11 +43,11 @@ void systemUpdate(){                                    //This regulates the loo
       stateLight = false;
      }
 
-     if (SDcard && !sdLight) {                          //If the data is being logged and the light is not active,
-      digitalWrite(sdLED, HIGH);                       //this will activate the light.
+     if (sdLogging && !sdLight) {                       //If the data is being logged and the light is not active,
+      digitalWrite(sdLED, HIGH);                        //this will activate the light.
       sdLight = true;
-     } else if (!SDcard && sdLight){                    //If data is not being logged and the light is active,
-      digitalWrite(sdLED, LOW);                        //this will deactivate the light.
+     } else if (!sdLogging && sdLight){                 //If data is not being logged and the light is active,
+      digitalWrite(sdLED, LOW);                         //this will deactivate the light.
       sdLight = false;
      }  
 

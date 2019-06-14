@@ -97,8 +97,6 @@ void Read_Uplink_Command()
 void systemReset(){                             //This will reset the system
   standbyMode();
   heater.setState(0);
-  //Close data log
-  //Open new data log
   activeMode();
 }
 
@@ -106,10 +104,12 @@ void activeMode(){                             //This will activate all of the p
   LOAC.setState(1);
   alphaOPC.setState(1);
   planOPC.setState(1);
+  dataCollection = true;
 }
 
 void standbyMode(){                           //This will shut down all of the particle detectors.
   LOAC.setState(0);                           //To turn off the LOAC, the recording state has to be
   alphaOPC.setState(0);                       //shut down before it can be powered down. This will be
   planOPC.setState(0);                        //done (somehow) in the hardware.
+  dataCollection = false;
 }

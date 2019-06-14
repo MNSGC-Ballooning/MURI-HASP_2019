@@ -20,7 +20,7 @@ record their own data.*/
 //Version 1.1
 /*Updated the serial port system to impliment hardware serial connections in place of software serial.
 This will allow for the system to interface with multiple serial systems simaltaneously. This version also
-updated the serial interface with the HASP gondala, replacing the previous psuedocode.*/
+implemented the serial interface with the HASP gondala and established meanings for the LEDs.*/
 
 //Version 1.0
 /*This is the initial code after the first stage of debugging.*/
@@ -44,7 +44,7 @@ updated the serial interface with the HASP gondala, replacing the previous psued
   #include <LatchRelay.h>           //Relay control
 
 //Pin Definitions
-  #define sdLED 22                  //LED pin which blinks to indicates SD*****
+  #define sdLED 22                  //LED pin which blinks to indicates data logging to the SD*****
   #define fixLED 21                 //LED pin which blinks to indicate GPS fix*****
   #define stateLED 20               //LED pin which blinks to indicate an active data recording status******
   #define wireBus1 29               //Temperature sensor 1 pin - Internal Ambient
@@ -107,6 +107,7 @@ updated the serial interface with the HASP gondala, replacing the previous psued
   String Fname = "";
   String header = "Time, GPS, T outside, T inside, T OPC";
   bool SDcard = true;
+  bool sdLogging = false;
 
 //Plantower Definitions
   String dataLog;                                        // used for data logging

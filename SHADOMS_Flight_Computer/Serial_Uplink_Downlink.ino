@@ -109,10 +109,7 @@ void activeMode(){                             //This will activate all of the p
 }
 
 void standbyMode(){                           //This will shut down all of the particle detectors.
-  //stateLOAC.setState(1);                    //To turn off the LOAC, the recording state has to be
-  //delay (12000);                            //shut down before it can be powered down. This will be
-  //stateLOAC.setState(0);                    //done (somehow) in the hardware.
-  LOAC.setState(0);
-  alphaOPC.setState(0);
-  planOPC.setState(0);
+  LOAC.setState(0);                           //To turn off the LOAC, the recording state has to be
+  alphaOPC.setState(0);                       //shut down before it can be powered down. This will be
+  planOPC.setState(0);                        //done (somehow) in the hardware.
 }

@@ -16,6 +16,15 @@ record their own data.*/
 
 //Written in June 2019
 
+//Version History
+//Version 1.1
+/*Updated the serial port system to impliment hardware serial connections in place of software serial.
+This will allow for the system to interface with multiple serial systems simaltaneously. This version also
+implemented the serial interface with the HASP gondala and established meanings for the LEDs.*/
+
+//Version 1.0
+/*This is the initial code after the first stage of debugging.*/
+
 
 
 
@@ -33,10 +42,9 @@ record their own data.*/
   #include <DallasTemperature.h>    //Dallas temperature control
   #include <TinyGPS++.h>            //GPS control
   #include <LatchRelay.h>           //Relay control
-  //#include <SoftwareSerial.h>       //Software serial comms
 
 //Pin Definitions
-  #define sdLED 22                  //LED pin which blinks to indicates SD*****
+  #define sdLED 22                  //LED pin which blinks to indicates data logging to the SD*****
   #define fixLED 21                 //LED pin which blinks to indicate GPS fix*****
   #define stateLED 20               //LED pin which blinks to indicate an active data recording status******
   #define wireBus1 29               //Temperature sensor 1 pin - Internal Ambient
@@ -50,8 +58,6 @@ record their own data.*/
   #define planOPC_OFF 27            //^^^
   #define LOAC_ON 7                 //LOAC OPC power relay pins
   #define LOAC_OFF 8                //^^^
-  //#define stateLOAC_ON #          //LOAC OPC state relay pins - This function will be integrated with the LOAC Off switch
-  //#define stateLOAC_OFF #         //^^^
   #define HASP_RX 0                 //HASP Recieve Pin                SERIAL 1
   #define HASP_TX 1                 //HASP Transmission Pin
   #define GPS_RX 9                  //GPS Recieve Pin                 SERIAL 2
@@ -71,7 +77,6 @@ record their own data.*/
   LatchRelay alphaOPC(alphaOPC_ON, alphaOPC_OFF);       //Define Alphasense OPC relay object
   LatchRelay planOPC(planOPC_ON, planOPC_OFF);          //Define Plantower OPC relay object
   LatchRelay LOAC(LOAC_ON, LOAC_OFF);                   //Define LOAC OPC power relay object
-  //LatchRelay stateLOAC(stateLOAC_ON,stateLOAC_OFF);   //Define LOAC OPC state relay object
   bool dataCollection = false;
   
 //Active Heating Definitions
@@ -102,6 +107,7 @@ record their own data.*/
   String Fname = "";
   String header = "Time, GPS, T outside, T inside, T OPC";
   bool SDcard = true;
+  bool sdLogging = false;
 
 //Plantower Definitions
   String dataLog;                                        // used for data logging
@@ -109,7 +115,7 @@ record their own data.*/
   int ntot=1;                                            // used to count total attempted transmissions
   String filename = "ptLog.csv";                         // file name that data wil be written to
   File ptLog;                                            // file that data is written to 
-  //SoftwareSerial pmsSerial(PMS_RX,PMS_TX);             //serial comms software                         
+                  
   struct pms5003data {
     uint16_t framelen;
     uint16_t pm10_standard, pm25_standard, pm100_standard;
@@ -160,7 +166,6 @@ void setup() {
   alphaOPC.init(0);
   planOPC.init(0);
   LOAC.init(0);
-  //stateLOAC.init(0);
 
 //LED Initialization- sets all LED pins to output mode
   pinMode(sdLED, OUTPUT);
@@ -214,7 +219,7 @@ void setup() {
   // Check if card is present/initalized: 
   if (!SD.begin()){
   Serial.println("card initialization FAILED - something is wrong...");        //Card not present or initialization failed
-  return; // dont do anything more                                         
+  return;                                                                      //Don't do anything more                                         
   }
   
   Serial.println("card initialization PASSED");                                //Initialization successful
@@ -231,11 +236,6 @@ void setup() {
     Serial.println("error opening file");
     return;
   }
-
-
-//GPS Initialization
-  //Copernicus stuff
-  //SoftwareSerial GPS_Serial(9,10);                                          //This will establish the serial port on the Copernicus breakout board
 }
 
 

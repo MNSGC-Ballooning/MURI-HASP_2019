@@ -11,54 +11,93 @@
 ///// Data Downlink /////
 void Data_Downlink()
 { 
-  // send a 2 byte checksum at the beginning and at the endv
-  uint8_t checksum_byte_1 = 'U';                                            // beginning checksum .......... pretty sure i can set these as characters. but maybe not
-  uint8_t checksum_byte_2 = 'M';                                            // beginning checksum
-  uint8_t checksum_byte_3 = '@';                                            // end checksum
-  uint8_t checksum_byte_4 = '@';                                            // end checksum
+  // send a 2 byte checksum at the beginning and at the end
+  byte checksum_byte_1 = 'U';                                            // beginning checksum .......... pretty sure i can set these as characters. but maybe not
+  byte checksum_byte_2 = 'M';                                            // beginning checksum
+  byte checksum_byte_3 = '@';                                            // end checksum
+  byte checksum_byte_4 = '@';                                            // end checksum
 
 // send all data as one long string so it is all at once? i dont know best way to do this
 
-  // assign first checksums
-  String check1 = String(checksum_byte_1);                                  //initial checksum 1
-  String check2 = String(checksum_byte_2);                                  //initial checksum 2
-
   // assign timestamp
-  String timestamp = logTime();                                             // HH:MM:SS timestamp 
+  String timestamp = logTime(); // HH:MM:SS timestamp (8 char string)
 
-  // assign data
-  String GPS = getlat() + getlong() + getalt();                             // need to know what these variable should be
-  String Temp = String(t1) + String(t2) + String(t3); 
+  float lat = float(GPS.location.lat()); // get data in float
+  String latSign;
+  if(lat < 0)
+  {
+    latSign = "1"; // if negative, sign flag = 1
+    lat = lat*(-1); // remove "-"
+  }
+  else
+  {
+    latSign = "0"; // if positive, sign flag = 0
+  }
+  String s1 = String(lat); // covert to string
+  while(s1.length() < 5)
+  {
+    s1 = "0"+s1; //if less than 5 char, left fill with 0
+  }
+  
+  float lng = float(GPS.location.lng()); // get data in float
+  String lngSign;
+  if(lng < 0)
+  {
+    lngSign = "1"; // if negative, sign flag = 1
+    lng = lng*(-1); // remove "-"
+  }
+  else
+  {
+    lngSign = "0"; // if positive, sign flag = 0
+  }
+  String s2 = String(lng); //convert to string
+  while(s2.length() < 6)
+  {
+    s1 = "0"+s1; //if less than 6 char, left fill with 0
+  }
+  
+  float alt = float(GPS.altitude.feet());
+  String s3 = String(alt); //convert to string
+  while(s3.length() < 9)
+  {
+    s1 = "0"+s1; //if less than 9 char, left fill with 0
+  }
+
+  String s4 = String(t1); // 6 char string
+  String s5 = String(t2); // 6 char string
+  String s6 = String(t3); // 6 char string   
   
   if(inFlight)
   {
-    flightState = "True";
+    flightState = "1";
   }
   else
   {
-    flightState = "False";
+    flightState = "0";
   }
   if(dataCollection)
   {
-    OPCState = "True";
+    OPCState = "1";
   }
   else
   {
-    OPCState = "False";
+    OPCState = "0";
   }
-  
-  // assign end checksums
-  String check3 = String(checksum_byte_3);
-  String check4 = String(checksum_byte_4);
 
   // combine strings into 1 long one
-  String dataPacket = check1 + check2 + timestamp + GPS + Temp + flightState + OPCState + check3 + check4;
-  dataPacket.getBytes(packet, DWN_BYTES);       //convert string to bytes
+  String dataPacket = timestamp + s1 + s2 + s3 + s4 + s5 + s6 + latSign + lngSign + flightState + OPCState;
+  dataPacket.getBytes(packet, DWN_BYTES);       //convert string to bytes (should be 50 bytes)
 
   // send the data packet string
-  for (int i = 0; i<32; i++) {
-  Serial1.write(packet[i]);
+  Serial.write(checksum_byte_1); // start with checksums 1 & 2
+  Serial.write(checksum_byte_2);
+  for (int i = 0; i<50; i++) // send the bytes in the data string
+  {
+    Serial1.write(packet[i]);
   }
+  Serial.write(checksum_byte_3); // checksums 3 & 4
+  Serial.write(checksum_byte_4);
+
 }
 
 ///// Uplink Command /////

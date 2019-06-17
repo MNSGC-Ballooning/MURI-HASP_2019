@@ -1,3 +1,5 @@
+#include <TinyGPS++.h>
+
 //HASP SHADOMS Payload Flight Computer
 //Version 1.1
 
@@ -70,7 +72,7 @@ implemented the serial interface with the HASP gondala and established meanings 
   #define PLAN_RATE 2300                                //systemUpdate function.
   #define COLD 280.0                                    //Minimum acceptable temperature of the OPC
   #define HOT 290.0                                     //Maximum acceptable temperature of the OPC
-  #define DWN_BYTES 32                                  //Number of downlink bytes
+  #define DWN_BYTES 51                                  //Number of downlink bytes + 1 (the +1 makes it work)
 
 //Relay Definitions
   LatchRelay heater(heater_ON, heater_OFF);             //Define heater relay object
@@ -97,7 +99,7 @@ implemented the serial interface with the HASP gondala and established meanings 
   //HASP Uplink and downlink data
   String flightState = "";
   String OPCState = "";
-  byte packet[32] = {0};
+  byte packet[50] = {0}; //50 char/bytes in the string (54 with checksum)
   
 //Data Log Definitions
   //Log Plantower, temperature, GPS, HASP data

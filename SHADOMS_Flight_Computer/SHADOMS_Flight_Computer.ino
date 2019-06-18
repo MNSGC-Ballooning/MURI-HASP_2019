@@ -58,6 +58,8 @@ implemented the serial interface with the HASP gondala and established meanings 
   #define planOPC_OFF 27            //^^^
   #define LOAC_ON 7                 //LOAC OPC power relay pins
   #define LOAC_OFF 8                //^^^
+ //#define LS_ON #                  //Powerdown for LOAC State
+ //#define LS_OFF #                 //End powerdown for LOAC State
   #define HASP_RX 0                 //HASP Recieve Pin                SERIAL 1
   #define HASP_TX 1                 //HASP Transmission Pin
   #define GPS_RX 9                  //GPS Recieve Pin                 SERIAL 2
@@ -77,6 +79,7 @@ implemented the serial interface with the HASP gondala and established meanings 
   LatchRelay alphaOPC(alphaOPC_ON, alphaOPC_OFF);       //Define Alphasense OPC relay object
   LatchRelay planOPC(planOPC_ON, planOPC_OFF);          //Define Plantower OPC relay object
   LatchRelay LOAC(LOAC_ON, LOAC_OFF);                   //Define LOAC OPC power relay object
+  //LatchRelay loacState(LS_ON, LS_OFF)                 //Define LOAC State shutdown relay object
   bool dataCollection = false;
   
 //Active Heating Definitions
@@ -166,6 +169,7 @@ void setup() {
   alphaOPC.init(0);
   planOPC.init(0);
   LOAC.init(0);
+  //loacState.init(0);
 
 //LED Initialization- sets all LED pins to output mode
   pinMode(sdLED, OUTPUT);

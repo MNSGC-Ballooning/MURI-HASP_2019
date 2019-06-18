@@ -1,9 +1,16 @@
 //Loop Updater
 
-void systemUpdate(){                                    //This regulates the loop, so that it runs consistently
-  if (millis() - lastCycle >= UPDATE_RATE) {            //at 1Hz. lastCycle gives the previous time, and
-    lastCycle=millis();                                 //millis gives the current time. Both are in ms.
+void systemUpdate(){                                   
+    if (millis() - planCycle >= PLAN_RATE) {            //This regulates the plantower loop to every 2.3 seconds.
+    planCycle=millis();
 
+    pmsUpdate();                                       //This will update the plantower data log.
+  }
+  
+  
+  if (millis() - lastCycle >= UPDATE_RATE) {            //This regulates the loop, so that it runs consistently
+    lastCycle=millis();                                 //at 1Hz. lastCycle gives the previous time, and
+                                                        //millis gives the current time. Both are in ms.
     //Temperature Update
     temperature1.requestTemperatures();                 //Request temperatures from the sensors.
     temperature2.requestTemperatures();
@@ -58,11 +65,5 @@ void systemUpdate(){                                    //This regulates the loo
       digitalWrite(fixLED, LOW);                        //this will deactivate the light.
       fixLight = false;
      }
-  }
-
-  if (millis() - planCycle >= PLAN_RATE) {             //This regulates the plantower loop to every 2.3 seconds.
-    planCycle=millis();
-
-    pmsUpdate();                                       //This will update the plantower data log.
   }
 }

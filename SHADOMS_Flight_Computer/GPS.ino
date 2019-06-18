@@ -24,6 +24,7 @@ void flightCheck() {                                                            
     if (FlightCheckCounter >= 5) {                                                //5 FlightCheckCounter hits in a row needed to set inFlight to true
       inFlight = true;                                                            //Bool that indicates if the payload is in flight.
       flightStart = millis();                                                     //flightStart holds the time when inFlight becomes true since the batteries for the payload are powered on
+      activeMode();
     }
   }
   else {

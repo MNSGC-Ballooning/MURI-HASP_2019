@@ -58,9 +58,9 @@ and a LOAC-R. The program will run the particle counters and collect data for 20
 
 void setup() {
 //Relay Initialization- sets up all relays, sets them all to an open state.
-  alphaOPC.init(0);
-  planOPC.init(0);
-  LOAC.init(0);
+  alphaOPC.init(1);
+  planOPC.init(1);
+  LOAC.init(1);
   //loacState.init(0);
 
 //Serial Initialization

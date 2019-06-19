@@ -60,12 +60,16 @@ implemented the serial interface with the HASP gondala and established meanings 
   #define LOAC_OFF 8                //^^^
  //#define LS_ON #                  //Powerdown for LOAC State
  //#define LS_OFF #                 //End powerdown for LOAC State
+  
+//Serial Pins
+/*  
   #define HASP_RX 0                 //HASP Recieve Pin                SERIAL 1
   #define HASP_TX 1                 //HASP Transmission Pin
   #define GPS_RX 9                  //GPS Recieve Pin                 SERIAL 2
   #define GPS_TX 10                 //GPS Transmission Pin
   #define PMS_RX 34                 //PMS Recieve Pin                 SERIAL 5
-  #define PMS_TX 33                 //PMS Transmission Pin
+  #define PMS_TX 33                 //PMS Transmission Pin (Unused) 
+*/
 
 //Constant Definitions
   #define UPDATE_RATE 1000                              //These definitions are the rates of the individual portions of the
@@ -79,7 +83,7 @@ implemented the serial interface with the HASP gondala and established meanings 
   LatchRelay alphaOPC(alphaOPC_ON, alphaOPC_OFF);       //Define Alphasense OPC relay object
   LatchRelay planOPC(planOPC_ON, planOPC_OFF);          //Define Plantower OPC relay object
   LatchRelay LOAC(LOAC_ON, LOAC_OFF);                   //Define LOAC OPC power relay object
-  //LatchRelay loacState(LS_ON, LS_OFF)                 //Define LOAC State shutdown relay object
+  //LatchRelay loacState(LS_ON, LS_OFF);                //Define LOAC State shutdown relay object
   bool dataCollection = false;
   
 //Active Heating Definitions
@@ -100,7 +104,7 @@ implemented the serial interface with the HASP gondala and established meanings 
   //HASP Uplink and downlink data
   String flightState = "";
   String OPCState = "";
-  byte packet[50] = {0}; //50 char/bytes in the string (54 with checksum)
+  byte packet[DWN_BYTES] = {0}; //50 char/bytes in the string (54 with checksum)
   
 //Data Log Definitions
   //Log Plantower, temperature, GPS, HASP data
@@ -113,11 +117,11 @@ implemented the serial interface with the HASP gondala and established meanings 
   bool sdLogging = false;
 
 //Plantower Definitions
-  String dataLog;                                        // used for data logging
-  int nhits=1;                                           // used to count successful data transmissions    
-  int ntot=1;                                            // used to count total attempted transmissions
-  String filename = "ptLog.csv";                         // file name that data wil be written to
-  File ptLog;                                            // file that data is written to 
+  String dataLog;                                        //Used for data logging
+  int nhits=1;                                           //Used to count successful data transmissions    
+  int ntot=1;                                            //Used to count total attempted transmissions
+  String filename = "ptLog.csv";                         //File name that data wil be written to
+  File ptLog;                                            //File that data is written to 
                   
   struct pms5003data {
     uint16_t framelen;
@@ -126,8 +130,7 @@ implemented the serial interface with the HASP gondala and established meanings 
     uint16_t particles_03um, particles_05um, particles_10um, particles_25um, particles_50um, particles_100um;
     uint16_t unused;
     uint16_t checksum;
-  };
-  pms5003data planData;                                  //This struct will organize the plantower bins into seperate parts of the data
+  } planData;                                            //This struct will organize the plantower bins into seperate parts of the data
   
 //GPS Definitions
   TinyGPSPlus GPS;                                       //GPS object definition

@@ -1,12 +1,13 @@
-//HASP STUFF
+//Serial Uplink and Downlink
 
-/* HEX COMMAND VALUES
+//HEX COMMAND VALUES
+/*
 1C AA - System reset    // first byte has to be ID and checksum (1C) second byte is reset command (AA)
 1C BB - OPC Activation  // first byte has to be ID and checksum (1C) second byte is activation command (BB)
 1C CC - OPC Shutdown    // first byte has to be ID and checksum (1C) second byte is shutdown command (CC)
 
-//To send packets of data, we might need to establish a buffer, and then fill that buffer with bytes, and then send the buffer?
- */
+To send packets of data, we might need to establish a buffer, and then fill that buffer with bytes, and then send the buffer?
+*/
 
 ///// Data Downlink /////
 void Data_Downlink()

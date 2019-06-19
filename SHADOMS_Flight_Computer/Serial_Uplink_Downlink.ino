@@ -151,8 +151,8 @@ void standbyMode(){                           //This will shut down all of the p
   dataCollection = false;
   alphaOPC.setState(0);
   planOPC.setState(0);
-  //loacState.setState(1);                      //To turn off the LOAC, the recording state has to be
-  //delay(12000);                               //shut down before it can be powered down. 
-  //loacState.setState(0);
+  digitalWrite(LS_PD, HIGH);                  //To turn off the LOAC, the recording state has to be
+  delay(12000);                               //shut down before it can be powered down. 
+  digitalWrite(LS_PD, LOW);
   LOAC.setState(0);                           
 }

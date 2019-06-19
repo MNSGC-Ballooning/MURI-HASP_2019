@@ -58,8 +58,7 @@ implemented the serial interface with the HASP gondala and established meanings 
   #define planOPC_OFF 27            //^^^
   #define LOAC_ON 7                 //LOAC OPC power relay pins
   #define LOAC_OFF 8                //^^^
- //#define LS_ON #                  //Powerdown for LOAC State
- //#define LS_OFF #                 //End powerdown for LOAC State
+  #define LS_PD 35                  //LOAC state shutdown transistor
   
 //Serial Pins
 /*  
@@ -77,13 +76,13 @@ implemented the serial interface with the HASP gondala and established meanings 
   #define COLD 280.0                                    //Minimum acceptable temperature of the OPC
   #define HOT 290.0                                     //Maximum acceptable temperature of the OPC
   #define DWN_BYTES 51                                  //Number of downlink bytes + 1 (the +1 makes it work)
+  #define KELVIN 273.15                                 //Number to convert Celcius to Kelvin
 
 //Relay Definitions
   LatchRelay heater(heater_ON, heater_OFF);             //Define heater relay object
   LatchRelay alphaOPC(alphaOPC_ON, alphaOPC_OFF);       //Define Alphasense OPC relay object
   LatchRelay planOPC(planOPC_ON, planOPC_OFF);          //Define Plantower OPC relay object
   LatchRelay LOAC(LOAC_ON, LOAC_OFF);                   //Define LOAC OPC power relay object
-  //LatchRelay loacState(LS_ON, LS_OFF);                //Define LOAC State shutdown relay object
   bool dataCollection = false;
   
 //Active Heating Definitions
@@ -172,8 +171,10 @@ void setup() {
   alphaOPC.init(0);
   planOPC.init(0);
   LOAC.init(0);
-  //loacState.init(0);
 
+//State Pin Shutdown Initialization
+  pinMode(LS_PD, OUTPUT);                                              //This pin will allow for a transistor gate to be
+                                                                       //opened, triggering LOAC shutdown.
 //LED Initialization- sets all LED pins to output mode
   pinMode(sdLED, OUTPUT);
   pinMode(fixLED, OUTPUT);

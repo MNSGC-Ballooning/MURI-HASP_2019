@@ -15,9 +15,9 @@ void systemUpdate(){
     temperature1.requestTemperatures();                 //Request temperatures from the sensors.
     temperature2.requestTemperatures();
     temperature3.requestTemperatures();
-    t1 = temperature1.getTempCByIndex(0) + 273.15;      //Pull the temperatures from the objects,
-    t2 = temperature2.getTempCByIndex(0) + 273.15;      //and converts those temperatures from degrees Celcius
-    t3 = temperature3.getTempCByIndex(0) + 273.15;      //to Kelvin.
+    t1 = temperature1.getTempCByIndex(0) + KELVIN;      //Pull the temperatures from the objects,
+    t2 = temperature2.getTempCByIndex(0) + KELVIN;      //and converts those temperatures from degrees Celcius
+    t3 = temperature3.getTempCByIndex(0) + KELVIN;      //to Kelvin.
 
     activeHeat();
 

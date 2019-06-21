@@ -71,12 +71,12 @@ implemented the serial interface with the HASP gondala and established meanings 
 */
 
 //Constant Definitions
-  #define UPDATE_RATE 1000                              //These definitions are the rates of the individual portions of the
-  #define PLAN_RATE 2300                                //systemUpdate function.
-  #define COLD 280.0                                    //Minimum acceptable temperature of the OPC
-  #define HOT 290.0                                     //Maximum acceptable temperature of the OPC
-  #define DWN_BYTES 51                                  //Number of downlink bytes + 1 (the +1 makes it work)
-  #define KELVIN 273.15                                 //Number to convert Celcius to Kelvin
+  #define UPDATE_RATE 1000          //These definitions are the rates of the individual portions of the
+  #define PLAN_RATE 2300            //systemUpdate function.
+  #define DWN_BYTES 51              //Number of downlink bytes + 1 (the +1 makes it work)
+  #define COLD 280.0                //Minimum acceptable temperature of the OPC
+  #define HOT 290.0                 //Maximum acceptable temperature of the OPC
+  #define KELVIN 273.15             //Number to convert Celcius to Kelvin
 
 //Relay Definitions
   LatchRelay heater(heater_ON, heater_OFF);             //Define heater relay object

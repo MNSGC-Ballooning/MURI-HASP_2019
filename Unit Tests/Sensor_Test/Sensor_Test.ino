@@ -1,4 +1,4 @@
-//Active Heating
+//Sensor Testing
 
 //Libraries
   #include <LatchRelay.h>           //Relay Control

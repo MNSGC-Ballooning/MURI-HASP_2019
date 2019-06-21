@@ -47,20 +47,23 @@ void loop()
   {
     Serial.write(CS); // send checksum and command 1
     Serial.write(C1);
-    i++;
+    Serial.println("Command 1 sent");
+    i=2;
   }
   else if(i==2)
   {
     Serial.write(CS); // send checksum and command 2
     Serial.write(C2);
-    i++;  
+    Serial.println("Command 2 sent");
+    i=3;  
   }
   else if(i==3)
   {
     Serial.write(CS); // send checksum and command 3
     Serial.write(C3);
-    i=0;  
+    Serial.println("Command 3 sent");
+    i=1;  
   }
-  delay(500);
+  delay(1500);
   
 }

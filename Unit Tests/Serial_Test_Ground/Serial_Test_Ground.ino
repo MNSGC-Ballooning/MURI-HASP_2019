@@ -41,7 +41,8 @@ void loop()
     Serial.print(Cdata[j]); 
   }
   Serial.println();
-  
+
+  delay(1000);
   // send 1 of 3 commands 
   if(i==1)
   {
@@ -64,6 +65,6 @@ void loop()
     Serial.println("Command 3 sent");
     i=1;  
   }
-  delay(1500);
+  delay(1000);
   
 }

@@ -12,13 +12,13 @@
   #define wireBus3 31               //Temperature sensor 3 pin - OPCs
   #define heater_ON 24              //Heater relay pins
   #define heater_OFF 25             //^^^
-  #define LED_1 20                  //Temp light 1
-  #define LED_2 21                  //Temp light 2
-  #define LED_3 22                  //Temp light 3
+  #define LED_1 21                  //Temp light 1
+  #define LED_2 22                  //Temp light 2
+  #define LED_3 23                  //Temp light 3
 
 //Constants
-  #define COLD 280.0                //Minimum acceptable temperature of the OPC
-  #define HOT 290.0                 //Maximum acceptable temperature of the OPC
+  #define COLD 300.0                //Minimum acceptable temperature of the OPC
+  #define HOT 305.0                 //Maximum acceptable temperature of the OPC
   #define KELVIN 273.15             //Number to convert Celcius to Kelvin
 
 //Active Heating Definitions
@@ -63,21 +63,21 @@ void loop() {
   Serial.println("t3 = " + String(t3)); 
 
 for (int i = 0; i<2; i++){
-  if (t1 > 280) 
+   if (t1 > 280) 
     digitalWrite(LED_1, HIGH); 
-  if (t2 > 280)
+   if (t2 > 280)
     digitalWrite(LED_2, HIGH); 
-  if (t3 > 280) 
+   if (t3 > 280) 
     digitalWrite(LED_3, HIGH); 
   
    delay (750);
    
    if (t1 > 280) 
-     digitalWrite(LED_1, LOW); 
+    digitalWrite(LED_1, LOW); 
    if (t2 > 280) 
-     digitalWrite(LED_2, LOW); 
+    digitalWrite(LED_2, LOW); 
    if (t3 > 280) 
-     digitalWrite(LED_3, LOW); 
+    digitalWrite(LED_3, LOW); 
   
    delay(750);
 }

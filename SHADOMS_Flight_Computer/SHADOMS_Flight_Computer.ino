@@ -17,6 +17,10 @@ record their own data.*/
 //Written in June 2019
 
 //Version History
+//Version 1.2
+/*Passed initial unit tests for board temperature and temperature sensor systems. This version also updates
+the plantower logging system, updates the LED pins, and fixes various bugs/unclean code.*/
+
 //Version 1.1
 /*Updated the serial port system to impliment hardware serial connections in place of software serial.
 This will allow for the system to interface with multiple serial systems simaltaneously. This version also
@@ -37,16 +41,15 @@ implemented the serial interface with the HASP gondala and established meanings 
 
 //Libraries
   #include <SD.h>                   //Writing to SD card
-  #include <SPI.h>                  //Serial connections
   #include <OneWire.h>              //Dallas data control
   #include <DallasTemperature.h>    //Dallas temperature control
   #include <TinyGPS++.h>            //GPS control
   #include <LatchRelay.h>           //Relay control
 
 //Pin Definitions
-  #define sdLED 22                  //LED pin which blinks to indicates data logging to the SD*****
-  #define fixLED 21                 //LED pin which blinks to indicate GPS fix*****
-  #define stateLED 20               //LED pin which blinks to indicate an active data recording status******
+  #define sdLED 23                  //LED pin which blinks to indicates data logging to the SD*****
+  #define fixLED 22                 //LED pin which blinks to indicate GPS fix*****
+  #define stateLED 21               //LED pin which blinks to indicate an active data recording status******
   #define wireBus1 29               //Temperature sensor 1 pin - Internal Ambient
   #define wireBus2 30               //Temperature sensor 2 pin - External Ambient
   #define wireBus3 31               //Temperature sensor 3 pin - OPCs

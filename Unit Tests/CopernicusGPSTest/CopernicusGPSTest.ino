@@ -50,19 +50,22 @@ byte FlightCheckCounter = 0;                          //If this reaches 5, then 
 String getlat() {                             //Function that returns latitude as a string.
   String latitude = "";
   latitude = String(GPS.location.lat(), 6);
-  return latitude; }
+  return latitude; 
+  }
 
 
 String getlong() {                            //Function that returns longitude as a string.
   String longitude = "";
   longitude = String(GPS.location.lng(), 6);
-  return longitude; }
+  return longitude; 
+  }
 
 
 String getalt() {                             //Function that returns altitude as a string.
   String alt = "";
   alt = String(GPS.altitude.feet());
-  return alt; }
+  return alt; 
+  }
 
 
 void FlightCheck() {                                                              //Function that repeatedly checks if Payload is in flight.
@@ -91,8 +94,15 @@ void writeSensorsSD(){
 //***SD will only print good data if the inFlight condtion is satisfied. This can easily be fixed by deleting that condition requirement.***
 
 String SDprintGPS() {                                                            //Function that takes GPS data and prints it to the SD card
-  if (inFlight && GPS.Fix && GPS.altitude.feet() != 0) {                         //If GPS has a fix with good data (may need more parameters to define "good data", GPS data is printed
+  if (GPS.Fix && GPS.altitude.feet() != 0) {                         //If GPS has a fix with good data (may need more parameters to define "good data", GPS data is printed
     GPSdata = getlat() + ", " + getlong() + ", " + getalt();
+
+    if (inFlight) {
+      GPSdata += ", inFlight true";
+    }
+    else if (!inFlight) {
+      GPSdata += ", inFlight not true";
+    }
   }
   else {                                                                         //If GPS has bad data or doesn't have a fix, zeros are printed for all three variables
     GPSdata = faillatitude + ", " + faillongitude + ", " + failalt;    
@@ -146,7 +156,7 @@ void setup() {
   
   if(!SD.begin(chipSelect)) {                               //attempt to start SD communication
     Serial.println("Card failed, or not present");          //print out error if failed; remind user to check card
-    for (byte i = 0; i < 10; i++) {                         //also flash error LED rapidly for 2 seconds, then leave it on
+    for (byte i = 0; i < 25; i++) {                         //also flash error LED rapidly for 5 seconds, then leave it on
       digitalWrite(sdLED, HIGH);
       delay(100);
       digitalWrite(sdLED, LOW);
@@ -171,7 +181,7 @@ void setup() {
     
   if (!SDactive) {
       Serial.println("No available file names; clear SD card to enable logging");
-      for (byte i = 0; i < 4; i++) {                        //flash LED more slowly if error is too many files (unlikely to happen)
+      for (byte i = 0; i < 10; i++) {                        //flash LED more slowly if error is too many files (unlikely to happen)
         digitalWrite(sdLED, HIGH);
         delay(250);
         digitalWrite(sdLED, LOW);

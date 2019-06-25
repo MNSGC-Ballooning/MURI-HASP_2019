@@ -17,14 +17,14 @@
 
 /// begin loop
 void pmsUpdate() {
-//  digitalWrite(led,HIGH);                             //which LED is this??
+//  digitalWrite(led,HIGH);                               //which LED is this??
 //  FT = millis();
 
 // log sample number, in flight time
     dataLog = "";
     dataLog += ntot;
     dataLog += ",";
-    dataLog += logTime();                              //in flight time from Flight_Timer 
+    dataLog += flightTime();                              //in flight time from Flight_Timer 
     dataLog += ",";
     
   if (readPMSdata(&Serial5)) {

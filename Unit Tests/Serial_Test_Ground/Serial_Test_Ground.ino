@@ -27,16 +27,20 @@ void setup()
 void loop() 
 {
   // read downlink data
+  delay(500);
+  
   int k = 0;
-  while(Serial.available() > 0 && k<54) // may need to make this stop after the 54 bytes have been read but idk
+  while(Serial.available() && k<55) // may need to make this stop after the 54 bytes have been read but idk
   {
+    //Serial.println("here");
     Idata[k] = Serial.read();
     k++;
   }
+  delay(500);
   // print downlink data to serial monitor
   for(int j=0;j<54;j++) // 54 bytes of data
   {
-    Cdata[j] = Idata[j]; // convert int data to char 
+    Cdata[j] = Idata[j]; // convert int data to char M
                          // might be redundant, I can probably just say "Cdata = Serial.read();"
     Serial.print(Cdata[j]); 
   }
@@ -65,6 +69,6 @@ void loop()
     Serial.println("Command 3 sent");
     i=1;  
   }
-  delay(1000);
-  
+  delay(2000);
+ 
 }

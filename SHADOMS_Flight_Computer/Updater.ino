@@ -1,4 +1,5 @@
 //Loop Updater
+ 
 
 void systemUpdate(){                                   
    if (millis() - planCycle >= PLAN_RATE) {             //This regulates the plantower loop to every 2.3 seconds.
@@ -7,6 +8,8 @@ void systemUpdate(){
     pmsUpdate();                                        //This will update the plantower data log string.
   }
 
+  fixLEDupdater();                                      //Runs the fixLED through loops depending on if it has a GPS fix or not 
+  
   
   if (millis() - lastCycle >= UPDATE_RATE) {            //This regulates the loop, so that it runs consistently
     lastCycle=millis();                                 //at 1Hz. lastCycle gives the previous time, and
@@ -50,12 +53,6 @@ void systemUpdate(){
       stateLight = false;
      }
 
-     if (GPS.Fix && !fixLight) {                        //If the GPS has a fix and the light is not active, this
-      digitalWrite(fixLED, HIGH);                       //will activate the light.
-      fixLight = true;
-     } else if (!GPS.Fix && fixLight){                  //If the GPS does not have a fix and the light is active,
-      digitalWrite(fixLED, LOW);                        //this will deactivate the light.
-      fixLight = false;
-     }
+     
   }
 }

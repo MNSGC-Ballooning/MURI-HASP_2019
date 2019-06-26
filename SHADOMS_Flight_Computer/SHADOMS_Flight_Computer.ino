@@ -80,6 +80,9 @@ implemented the serial interface with the HASP gondala and established meanings 
 //Constant Definitions
   #define UPDATE_RATE 2300          //These definitions are the rates of the individual portions of the
   #define PLAN_RATE 2300            //systemUpdate function.
+  #define FIXLED_LOOP 20000         //FixLED cycles every 20 seconds
+  #define FIXLED_RATE 500           //FixLED is either on or off for 500ms
+  #define NOFIXLED_RATE 1500        //When there is no GPS fix, FixLED cycles as on or off for 1.5s  
   #define DWN_BYTES 51              //Number of downlink bytes + 1 (the +1 makes it work)
   #define COLD 280.0                //Minimum acceptable temperature of the OPC
   #define HOT 290.0                 //Maximum acceptable temperature of the OPC
@@ -142,18 +145,32 @@ implemented the serial interface with the HASP gondala and established meanings 
   
 //GPS Definitions
   TinyGPSPlus GPS;                                      //GPS object definition
+
+//FlightChecker() variables
   bool inFlight = false;                                //Bool that determines if the payload is in flight. Used with FlightCheck function
   unsigned long flightStart = 0;                        //Time passed since inFlight became true
   byte FlightCheckCounter = 0;                          //If this reaches 5, then inFLight should be set to true
-  
+
+//Variables for UpdateGPS()
   unsigned long lastGPS = 0;                             //Time in seconds since the last GPS update
   unsigned long GPSstartTime = 0;                        //When the GPS starts, time in seconds of last GPS update
   uint8_t days = 0;                                      //If we're flying overnight this serves as a coutner for time keeping
+
+//timers and other variables for fixLED
+  unsigned long fixLED_loop_timer = 0;                   //timer to ensure that the fixLED will do "something" every 15 second loop
+  unsigned long fixLED_length_timer = 0;                 //timer to ensure that the fixLED will blink at a constant rate
+  uint8_t satnum = 0;                                    //indicates the number of satellites that the GPS has a lock on
+  uint8_t nofix_blink_counter = 0;                       //instructs fixLED how many times to blink if GPS doesn't have a fix
+  bool fixLEDon = false;                                 //indicates if the fixLED is on or not
+  bool GPSfix = false;                                   //indicates if the GPS has a fix so the fixLED knows what loop sequence to follow
+                                                         //necessary as if GPS loses fix in the middle of fixLED loop, strange sequences could happen
  
-  String GPSdata = "";                                  //Initializes data string that prints GPS data to the SD card
-  String faillatitude = "0.00";                         //Printed latitude if GPS does not have a fix or any data
-  String faillongitude = "0.000000";                    //Printed longitude if GPS does not have a fix or any data
-  String failalt = "0.000000";                          //Printed altitude if GPS does not have a fix or any 
+//strings that populate GPS data strings
+  String GPSdata = "";                                   //Initializes data string that prints GPS data to the SD card
+  String flightstring = "False";                         //Indicates if inFlight is active or not
+  String faillatitude = "0.00";                          //Printed latitude if GPS does not have a fix or any data
+  String faillongitude = "0.000000";                     //Printed longitude if GPS does not have a fix or any data
+  String failalt = "0.000000";                           //Printed altitude if GPS does not have a fix or any 
 
 //LED Definitions
   bool fixLight = false;                                //These booleans are for the light activation and deactivation logic  

@@ -1,5 +1,25 @@
 //GPS Operation
 
+/*     The following three functions are here in the unlikely case that we want to implement them later
+String getdate() {
+  String datetime = "";
+  datetime = String(GPS.date.month()) + "/" + String(GPS.date.day()) + "/" + String(GPS.date.year());
+  return datetime;
+}
+
+String gettime() {
+  String timestamp = "";
+  timestamp = String(GPS.time.hour()) + ":" + String(GPS.time.minute()) + ":" + String(GPS.time.second());
+  return timestamp; 
+}
+
+String getsat() {
+  String sat = "";
+  sat = String(GPS.satellites.value());
+  return sat;
+}
+*/
+
 String getlat() {                             //Function that returns latitude as a string.
   String latitude = "";
   latitude = String(GPS.location.lat(), 6);
@@ -18,6 +38,7 @@ String getalt() {                             //Function that returns altitude a
   return alt;
 }
 
+
 void flightCheck() {                                                              //Function that repeatedly checks if Payload is in flight.
   if (GPS.Fix && (GPS.altitude.feet() > 5000)  && (GPS.location.lng() != 0)) {    //HASP vehicle takeoff altitude is at roughly 4000 feet.
     FlightCheckCounter++;                                                         //If three conditions are met, FlightCheckComputer gets a hit.
@@ -28,21 +49,66 @@ void flightCheck() {                                                            
     }
   }
   else {
-    FlightCheckCounter = 0;                                                     //If the three conditions aren't met, FlightCheckCounter loses all of its hits.
+    FlightCheckCounter = 0;                                                       //If the three conditions aren't met, FlightCheckCounter loses all of its hits.
   }
 }
 
-String SDprintGPS() {                                                           //Function that takes GPS data and prints it to the SD card
-
-  if (GPS.Fix && GPS.altitude.feet() != 0) {                                    //If GPS has a fix with good data (may need more parameters to define "good data", GPS data is printed
+String printGPS() {                                                               //Function that takes GPS data and prints it to the SD card
+  if (GPS.Fix && GPS.altitude.feet() != 0) {                                      //If GPS has a fix with good data (may need more parameters to define "good data", GPS data is printed
     GPSdata = getlat() + ", " + getlong() + ", " + getalt();
+
   }
-  else {                                                                        //If GPS has bad data or doesn't have a fix, zeros are printed for all three variables
-    GPSdata = faillatitude + ", " + faillongitude + ", " + failalt;    
+  else {                                                                          //If GPS has bad data or doesn't have a fix, zeros are printed for all three variables
+    GPSdata = faillatitude + ", " + faillongitude + ", " + failalt;   
   }
 
   return GPSdata;
 }
+
+void fixLEDupdater() {
+  
+  if (millis() - fixLED_loop_timer >= FIXLED_LOOP) {    //FixLED cycle updates every 20 seconds
+    fixLED_loop_timer = millis();
+    fixLED_length_timer = millis();
+    if (GPS.Fix && GPS.altitude.feet() != 0 ) {         //This will send loop down the "Fix" path
+      GPSfix = true;
+      satnum = GPS.satellites.value();                  //Number of times "Fix" path will blink equals number of satellites that have a lock
+    }
+    else {                                              //This will send loop down the "No Fix" path
+      GPSfix = false;
+      nofix_blink_counter = 3;                          //"No Fix" path will be a series of 3 blinks
+    }
+  }
+
+  if ((millis() - fixLED_length_timer >= FIXLED_RATE) && GPSfix) {        //"Fix" Path
+    fixLED_length_timer = millis();                     //Resets LED length timer
+    if (!fixLEDon && satnum > 0) {                      //Only occurs if number of blinks occured is less than the number of satellites locked
+      digitalWrite(fixLED, HIGH);     
+      fixLEDon = true;                                  //LED is now on
+      satnum--;                                         //satnum variable is decreased
+    }
+    else {
+      digitalWrite(fixLED, LOW);                        
+      fixLEDon = false;                                 //LED is now off
+    }
+  }
+
+  if ((millis() - fixLED_length_timer >= NOFIXLED_RATE) && !GPSfix) {     //"No Fix" Path
+    fixLED_length_timer = millis();                     //Resets LED length timer
+    if (!fixLEDon && nofix_blink_counter > 0) {         //Only occurs if number of blinks occurred is less than 3
+      digitalWrite(fixLED, HIGH);
+      fixLEDon = true;                                  //LED is now on
+      nofix_blink_counter--;                            //nofix blink counter is decreased
+    }
+    else {
+      digitalWrite(fixLED, LOW);
+      fixLEDon = false;                                 //LED is now off
+    }
+  }
+}
+
+
+
 
 void updateGPS() {                                                              //Function that updates GPS every second and accounts for
   static bool firstFix = false;                                                 //clock rollover at midnight (23:59:59 to 00:00:00)
@@ -50,7 +116,7 @@ void updateGPS() {                                                              
     GPS.encode(Serial2.read());
     }
   if (GPS.altitude.isUpdated() || GPS.location.isUpdated()) {
-    if (!firstFix && GPS.Fix) {     
+    if (!firstFix && GPS.Fix && (GPS.altitude.feet() != 0)) {     
       GPSstartTime = GPS.time.hour() * 3600 + GPS.time.minute() * 60 + GPS.time.second();
       firstFix = true;                                                          //Time in second of GPS clock will now be compared to GPS Start Time
       }
@@ -64,8 +130,7 @@ unsigned int getGPStime() {
   return (GPS.time.hour() * 3600 + GPS.time.minute() * 60 + GPS.time.second());
 }
 
-int getLastGPS() { 
-                                                                                //returns time in seconds between last successful fix and initial fix.
+int getLastGPS() {                                                              //returns time in seconds between last successful fix and initial fix.
   static bool newDay  = false;                                                  //Used to match with altitude data variable in case we're flying late at
   if (!newDay && lastGPS < GPSstartTime) {                                      //night (clock rollover).
     days++;

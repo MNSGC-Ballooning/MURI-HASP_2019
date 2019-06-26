@@ -1,6 +1,4 @@
 // code to run on payload for serial test
-
-
 #define C1LED 21
 #define C2LED 22
 #define C3LED 23
@@ -37,9 +35,9 @@ void setup()
   pinMode(C2LED,OUTPUT);
   pinMode(C3LED,OUTPUT);
 
-  //Serial1.begin(1200);
-  delay(100);
-  Serial1.begin(1200);
+  Serial.begin(9600);
+  Serial1.begin(1200, SERIAL_8N2); //CHANGE AT HASP??
+
 
   digitalWrite(C1LED,HIGH);
   digitalWrite(C2LED,HIGH);
@@ -52,61 +50,63 @@ void setup()
 
 void loop()
 {
-  dataPacket.getBytes(packet, DWN_BYTES);       //convert string to bytes (should be 50 bytes)
+ /* dataPacket.getBytes(packet, DWN_BYTES);       //convert string to bytes (should be 50 bytes)
   
   // send the data packet string
   Serial1.write(checksum_byte_1); // start with checksums 1 & 2
-  Serial.print(checksum_byte_1);
+  //Serial.print(checksum_byte_1);
   Serial1.write(checksum_byte_2);
-  Serial.print(checksum_byte_2);
+  //Serial.print(checksum_byte_2);
   for (int i = 0; i<50; i++) // send the bytes in the data string
   {
     Serial1.write(packet[i]);
-    Serial.print(packet[i]);
+ //   Serial.print(packet[i]);
   }
   Serial1.write(checksum_byte_3); // checksums 3 & 4
-  Serial.print(checksum_byte_3);
+//  Serial.print(checksum_byte_3);
   Serial1.write(checksum_byte_4);
-  Serial.println(checksum_byte_4);
+ // Serial.println(checksum_byte_4);
   //digitalWrite(C1LED,HIGH);
   delay(3000);
   //digitalWrite(C1LED,LOW);
-
+*/
   ///// Uplink Command /////
   uint8_t command_byte = 0;                     // byte for the command
   uint8_t ID_byte = 0;                          // byte for ID and checksum byte
 
- if(Serial1.available()) //************************** this may need to change to just !=0
-  {
-      digitalWrite(C3LED,HIGH);
-      ID_byte = Serial1.read();                 //read first byte to ID variable
-      command_byte = Serial1.read();            // read second byte to command variable
-      Serial.print(ID_byte);
-      Serial.print(command_byte);
-      delay(500);
-      digitalWrite(C3LED,LOW);
+if (Serial1.available()>1) //************************** this may need to change to just !=0
+  {    
+      ID_byte = Serial1.read();                 //read first byte to ID variable 
+      delay(7.5);
+      command_byte = Serial1.read();
+      Serial.println(ID_byte); 
+      Serial.println(command_byte);
   }
+  
+   //   digitalWrite(C3LED,HIGH);
+   //   delay(500);
+   //   digitalWrite(C3LED,LOW);
 
-  if(ID_byte == 28)                           
+  if(ID_byte == 0x1C)                           
   {
-    if(command_byte == 170)
+    if(command_byte == 0xAA)
     {
       digitalWrite(C1LED,HIGH);
-      delay(1000);
+  //    delay(1000);
       digitalWrite(C1LED,LOW);
     }
-    else if(command_byte == 187)
+    else if(command_byte == 0xBB)
     {
       digitalWrite(C2LED,HIGH);
-      delay(500);
+  //    delay(500);
       digitalWrite(C2LED,LOW);                          
     }
-    else if(command_byte == 204)
+    else if(command_byte == 0xCC)
     {
       digitalWrite(C3LED,HIGH);
-      delay(500);
+    //  delay(500);
       digitalWrite(C3LED,LOW);
     }
   }
-  delay(500);
+ // delay(500);
 }

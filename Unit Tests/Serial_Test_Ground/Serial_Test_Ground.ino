@@ -20,13 +20,14 @@ char Cdata [54]; // 54 bytes of data (char)
 
 void setup() 
 {
-  Serial.begin(1200); // initialize serial connection to HASP baud rate
+  Serial.begin(1200, SERIAL_8N1); // initialize serial connection to HASP baud rate
   delay(100);
 }
 
 void loop() 
 {
   // read downlink data
+  /*
   delay(500);
   
   int k = 0;
@@ -45,7 +46,7 @@ void loop()
     Serial.print(Cdata[j]); 
   }
   Serial.println();
-
+  */
   delay(1000);
   // send 1 of 3 commands 
   if(i==1)

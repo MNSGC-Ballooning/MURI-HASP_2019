@@ -13,7 +13,7 @@ To send packets of data, we might need to establish a buffer, and then fill that
 void Data_Downlink()
 { 
   // send a 2 byte checksum at the beginning and at the end
-  byte checksum_byte_1 = 'U';                                            // beginning checksum .......... pretty sure i can set these as characters. but maybe not
+  byte checksum_byte_1 = 'U';                                            // beginning checksum (technically not checksums)
   byte checksum_byte_2 = 'M';                                            // beginning checksum
   byte checksum_byte_3 = '@';                                            // end checksum
   byte checksum_byte_4 = '@';                                            // end checksum
@@ -90,22 +90,22 @@ void Data_Downlink()
   dataPacket.getBytes(packet, DWN_BYTES);       //convert string to bytes (should be 50 bytes)
 
   // send the data packet string
-  Serial.write(checksum_byte_1); // start with checksums 1 & 2
-  Serial.write(checksum_byte_2);
+  Serial1.write(checksum_byte_1); // start with checksums 1 & 2
+  Serial1.write(checksum_byte_2);
   for (int i = 0; i<50; i++) // send the bytes in the data string
   {
     Serial1.write(packet[i]);
   }
-  Serial.write(checksum_byte_3); // checksums 3 & 4
-  Serial.write(checksum_byte_4);
+  Serial1.write(checksum_byte_3); // checksums 3 & 4
+  Serial1.write(checksum_byte_4);
 
 }
 
 ///// Uplink Command /////
 void Read_Uplink_Command()
 {
-  uint8_t command_byte = 0;                     // byte for the command
-  uint8_t ID_byte = 0;                          // byte for ID and checksum byte
+  byte command_byte = 0;                     // byte for the command
+  byte ID_byte = 0;                          // byte for ID and checksum byte
 
   while(Serial1.available() > 1)
   {
@@ -115,23 +115,21 @@ void Read_Uplink_Command()
 
   if(ID_byte == 0x1C)                           //check to see id checksum is correct, if not, command is ignored
   {
-    switch(command_byte)
+    if(command_byte == 0xAA)                 // system reset command
     {
-      case 0xAA:                                // case for startup command
-        activeMode();                           // not sure how to implement this...
-        break;
-   
-      case 0xBB:                                // case for shutdown command
-        standbyMode();                          // again, not sure how to implement this...
-        break;
-
-      case 0xCC:
-        systemReset();
-        break;
-        
+      systemReset();
     }
+    else if(command_byte == 0xBB)            // OPC activation command
+    {
+      activeMode();
+    }
+    else if(command_byte == 0xCC)            // OPC shutdown command
+    {
+      standbyMode();  
+    }   
   }
 }
+
 
 ///// Command Functions /////
 void systemReset(){                             //This will reset the system

@@ -1,5 +1,6 @@
-//HASP SHADOMS Payload Flight Computer
+//SHADOMS Payload Flight Computer
 //Version 1.2
+//Payload 2019-01
 
 /*This code operates the Teensy 3.5/3.6 Microcontroller on the 2019 HASP flight.
 The goal of this flight is to collect data from the Plantower PMS-5003, the Alphasense OPC N3,
@@ -14,6 +15,7 @@ and downlink with the main HASP gondola.
 In this setup, both the Alphasense and the LOAC are running in a standalone mode where they 
 record their own data.*/
 
+//University of Minnesota Twin Cities
 //Written in June 2019
 
 //Version History

@@ -1,5 +1,5 @@
 //SHADOMS Payload Flight Computer
-//Version 1.2
+//Version 1.3
 //Payload 2019-01
 
 /*This code operates the Teensy 3.5/3.6 Microcontroller on the 2019 HASP flight.
@@ -15,10 +15,16 @@ and downlink with the main HASP gondola.
 In this setup, both the Alphasense and the LOAC are running in a standalone mode where they 
 record their own data.*/
 
-//University of Minnesota Twin Cities
+//University of Minnesota- Twin Cities
+//Candler-MURI Research Team
 //Written in June 2019
 
 //Version History
+//Version 1.3
+/*Passed all individual unit tests. Ready for full system test.Added data buffer,
+updated update and log rates, updated GPS system. Returned system to hardware serial.
+Updated LED to show satellite count, and logging time. Added more debugging and code cleanup.*/
+
 //Version 1.2
 /*Passed initial unit tests for thermal control, GPS. This version also updates
 the plantower logging system (returning to software serial), updates the LED pins, and fixes various bugs
@@ -48,7 +54,6 @@ implemented the serial interface with the HASP gondala and established meanings 
   #include <DallasTemperature.h>    //Dallas temperature control
   #include <TinyGPS++.h>            //GPS control
   #include <LatchRelay.h>           //Relay control
-  #include <SoftwareSerial.h>       //Software serial communication
 
 //Pin Definitions
   #define sdLED 23                  //LED pin which blinks to indicates data logging to the SD*****
@@ -73,13 +78,14 @@ implemented the serial interface with the HASP gondala and established meanings 
   #define HASP_TX 1                 //HASP Transmission Pin
   #define GPS_RX 9                  //GPS Recieve Pin                 SERIAL 2
   #define GPS_TX 10                 //GPS Transmission Pin
-*/
-  #define PMS_RX 34                 //PMS Recieve Pin                 SERIAL 5/SOFTWARE SERIAL
+  #define PMS_RX 34                 //PMS Recieve Pin                 SERIAL 5
   #define PMS_TX 33                 //PMS Transmission Pin (Unused) 
+*/
+ 
 
 //Constant Definitions
-  #define UPDATE_RATE 2300          //These definitions are the rates of the individual portions of the
-  #define PLAN_RATE 2300            //systemUpdate function.
+  #define LOG_RATE 1000             //These definitions are the rates of the individual portions of the
+  #define UPDATE_RATE 50            //systemUpdate function.
   #define FIXLED_LOOP 20000         //FixLED cycles every 20 seconds
   #define FIXLED_RATE 500           //FixLED is either on or off for 500ms
   #define NOFIXLED_RATE 1500        //When there is no GPS fix, FixLED cycles as on or off for 1.5s  
@@ -125,7 +131,6 @@ implemented the serial interface with the HASP gondala and established meanings 
   bool sdLogging = false;                               //This variable is used to indicate when logging occurs
   
 //Plantower Definitions
-  SoftwareSerial pmsSerial(PMS_RX, PMS_TX);             //Sets object for software serial connection
   String dataLog;                                       //Used for data logging
   int nhits=1;                                          //Used to count successful data transmissions    
   int ntot=1;                                           //Used to count total attempted transmissions
@@ -214,8 +219,7 @@ void setup() {
 //Serial Initialization
   Serial1.begin(1200);                                                 //Initializes HASP serial port at 1200 baud.      
   Serial2.begin(4800);                                                 //Initializes serial port for GPS communication
-  //Serial5.begin(9600);                                               //Initializes serial port for Plantower
-  pmsSerial.begin(9600);                                               //Alternate serial for Plantower
+  Serial5.begin(9600);                                               //Initializes serial port for Plantower
 
 //Data Log Initialization
   Serial.print("Initializing SD card...");                             //Tells us if the SD card faled to open:

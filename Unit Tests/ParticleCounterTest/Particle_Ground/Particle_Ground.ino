@@ -21,9 +21,9 @@ and a LOAC-R. The program will run the particle counters and collect data for 20
   #define LOAC_ON 7                 //LOAC OPC power relay pins
   #define LOAC_OFF 8                //^^^
   #define LS_PD 35                  //LOAC state shutdown transistor
-  #define PMS_RX 34                 //PMS Recieve Pin                 SERIAL 5/SOFTWARE SERIAL
-  #define PMS_TX 33                 //PMS Transmission Pin (Unused) 
-  #define PLAN_RATE 2300            //Plantower data collection rate
+ // #define PMS_RX 34                 //PMS Recieve Pin                 SERIAL 5/SOFTWARE SERIAL
+ // #define PMS_TX 33                 //PMS Transmission Pin (Unused) 
+  #define PLAN_RATE 100            //Plantower data collection rate
   #define TEST_TIME 1200000         //Test time for 20 minutes
   #define LED1 21
   #define LED2 22
@@ -36,7 +36,7 @@ and a LOAC-R. The program will run the particle counters and collect data for 20
   bool systemoff = false;
 
 //Plantower Defintions
-  SoftwareSerial pmsSerial(PMS_RX, PMS_TX);             //Sets object for software serial connection
+  //SoftwareSerial pmsSerial(PMS_RX, PMS_TX);             //Sets object for software serial connection
   const int chipSelect = BUILTIN_SDCARD;                 //Access on board micro-SD
   String dataLog;                                        // used for data logging
   int nhits=1;                                           // used to count successful data transmissions    
@@ -69,8 +69,11 @@ void setup() {
   LOAC.init(1);
 
 //Serial Initialization
-  pmsSerial.begin(9600);                                               //Alternate serial for Plantower
- // Serial5.begin(9600);                                                 //Initializes serial port for Plantower
+  Serial.begin(9600);
+  while (!Serial) ;
+  Serial.println("serial has begun.");
+  //pmsSerial.begin(9600);                                               //Alternate serial for Plantower
+  Serial5.begin(9600);                                                 //Initializes serial port for Plantower
 
 //Pin activation
   pinMode(LS_PD, OUTPUT);
@@ -80,7 +83,7 @@ void setup() {
 
 //Data Log
 
-  Serial.print("Initializing SD card...");                             //Tells us if the SD card faled to open:
+  Serial.println("Initializing SD card...");                             //Tells us if the SD card faled to open:
   if (!SD.begin(chipSelect)) {
     Serial.println("Initialization Failed!");
   }
@@ -91,12 +94,12 @@ void setup() {
   Serial.println("Setting up Plantower OPC...");
   Serial.println();                                                    
 
-  Serial.print("Initializing SD card...");
+  Serial.println("Initializing SD card...");
   // Check if card is present/initalized: 
-  if (!SD.begin()){
-  Serial.println("card initialization FAILED - something is wrong...");        //Card not present or initialization failed
-  return;                                                                      //Don't do anything more                                         
-  }
+  //if (!SD.begin(chipSelect)){
+ // Serial.println("card initialization FAILED - something is wrong...");        //Card not present or initialization failed
+ // return;                                                                      //Don't do anything more                                         
+ // }
   
   Serial.println("card initialization PASSED");                                //Initialization successful
 
@@ -124,7 +127,7 @@ void loop() {
   if ((millis() - planCycle >= PLAN_RATE)&&(!systemoff)) {                   //This regulates the plantower loop to every 2.3 seconds.
     digitalWrite(LED1, HIGH);
     planCycle=millis();
-
+    Serial.println("data update."); 
     pmsUpdate();                                                              //This will update the plantower data log.
     digitalWrite(LED1, LOW);
   }

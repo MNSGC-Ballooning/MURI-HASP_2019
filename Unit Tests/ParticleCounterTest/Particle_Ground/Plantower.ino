@@ -24,11 +24,12 @@ void pmsUpdate() {
     dataLog = "";
     dataLog += ntot;
     dataLog += ",";
-    dataLog += logTime();                              //in flight time from Flight_Timer 
+    dataLog += millis();                              //in flight time from Flight_Timer 
     dataLog += ",";
     
-  if (readPMSdata(&pmsSerial)) {
-
+  //if (readPMSdata(&pmsSerial)) {
+if (readPMSdata(&Serial5)) {
+  
 // if data is receieved, log it
     dataLog += planData.particles_03um;
     dataLog += ",";
@@ -64,8 +65,8 @@ void pmsUpdate() {
   
 // print data log to serial monitor
     Serial.println(dataLog); 
-  }
-
+  } 
+    
 }
 
 ////////// USER DEFINED FUNCTIONS //////////
@@ -77,14 +78,15 @@ boolean readPMSdata(Stream *s) {
   
   // Read a byte at a time until we get to the special '0x42' start-byte
   if (s->peek() != 0x42) {
-    s->read();
+   s->read();
+
     return false;
   }
  
   // Now read all 32 bytes
   if (s->available() < 32) {
-    return false;
-  }
+   return false;
+ }
     
   uint8_t buffer[32];    
   uint16_t sum = 0;

@@ -1,12 +1,12 @@
 //Loop Updater
 
 void systemUpdate(){                                   
-    if (millis() - planCycle >= PLAN_RATE) {           //This regulates the plantower loop to every 2.3 seconds.
+   if (millis() - planCycle >= PLAN_RATE) {             //This regulates the plantower loop to every 2.3 seconds.
     planCycle=millis();
 
-    pmsUpdate();                                       //This will update the plantower data log.
+    pmsUpdate();                                        //This will update the plantower data log string.
   }
-  
+
   
   if (millis() - lastCycle >= UPDATE_RATE) {            //This regulates the loop, so that it runs consistently
     lastCycle=millis();                                 //at 1Hz. lastCycle gives the previous time, and

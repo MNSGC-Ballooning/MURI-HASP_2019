@@ -27,7 +27,7 @@ void pmsUpdate() {
     dataLog += logTime();                              //in flight time from Flight_Timer 
     dataLog += ",";
     
-  if (readPMSdata(&Serial5)) {
+  if (readPMSdata(&pmsSerial)) {
 
 // if data is receieved, log it
     dataLog += planData.particles_03um;

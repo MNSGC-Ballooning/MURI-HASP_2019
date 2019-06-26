@@ -17,17 +17,17 @@
 
 /// begin loop
 void pmsUpdate() {
-//  digitalWrite(led,HIGH);                               //which LED is this??
+//  digitalWrite(led,HIGH);                             
 //  FT = millis();
 
 // log sample number, in flight time
     dataLog = "";
     dataLog += ntot;
     dataLog += ",";
-    dataLog += flightTime();                              //in flight time from Flight_Timer 
+    dataLog += flightTime();                        //in flight time from Flight_Timer 
     dataLog += ",";
     
-  if (readPMSdata(&Serial5)) {
+  if (readPMSdata(&pmsSerial)) {
 
 // if data is receieved, log it
     dataLog += planData.particles_03um;
@@ -49,28 +49,34 @@ void pmsUpdate() {
 // total samples
     ntot = ntot+1;
 
-// write data
-    ptLog = SD.open(filename.c_str(), FILE_WRITE);     //Open file
+    goodLog = true;                                   //If data is successfully collected, note the state;
+    badLog = 0;
 
- if (ptLog) {
-    //Serial.println("tempLog.csv opened...");         //File open successfully 
-    ptLog.println(dataLog);
-    ptLog.close();
+  } else {
+    badLog++;                                         //If there are five consecutive bad logs, not the state;
+    if (badLog = 5) goodLog = false;
+  }
+/*
+// write data
+    fLog = SD.open(filename.c_str(), FILE_WRITE);     //Open file
+
+ if (fLog) {
+    //Serial.println("tempLog.csv opened...");        //File open successfully 
+    fLog.println(dataLog);
+    fLog.close();
   }
   else {
-    Serial.println("error opening file");              //File open failed
+    Serial.println("error opening file");             //File open failed
     return;
   }
   
 // print data log to serial monitor
-    Serial.println(dataLog); 
-  }
-
+    Serial.println(dataLog); */
 }
 
 ////////// USER DEFINED FUNCTIONS //////////
 
-boolean readPMSdata(Stream *s) {
+boolean readPMSdata(Stream *s) {                      
   if (! s->available()) {
     return false;
   }
@@ -86,7 +92,7 @@ boolean readPMSdata(Stream *s) {
     return false;
   }
     
-  uint8_t buffer[32];    
+  uint8_t buffer[32];                                 //This loads the data into a buffer;
   uint16_t sum = 0;
   s->readBytes(buffer, 32);
  

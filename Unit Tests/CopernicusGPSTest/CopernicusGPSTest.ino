@@ -4,8 +4,9 @@
 
 
 //Place for definitions//
-#define sdLED 22
-#define fixLED 21
+#define stateLED 21
+#define fixLED 22
+#define sdLED 23
 #define GPS_RX 9
 #define GPS_TX 10
 const int chipSelect = BUILTIN_SDCARD; //On board SD card for teensy
@@ -34,7 +35,10 @@ bool fixLEDbool = false;           //indicates if the fixLED is on or not
 
 //strings that populate GPS data strings
 String GPSdata = "";                                  //Initializes data string that prints GPS data to the SD card
-String data = "";                                     //Initializes string that prints data to SD                      
+String data = "";                                     //Initializes string that prints data to SD
+String flightstring = "False";                        //Indicates if inFlight is active or not
+String faildate = "00/00/2000";                       //Printed date if GPS does not have a fix or any data
+String failtime = "00:00:00";                         //Printed time if GPS does not have a fix or any data                    
 String faillatitude = "0.00";                         //Printed latitude if GPS does not have a fix or any data
 String faillongitude = "0.000000";                    //Printed longitude if GPS does not have a fix or any data
 String failalt = "0.000000";                          //Printed altitude if GPS does not have a fix or any 
@@ -47,26 +51,44 @@ byte FlightCheckCounter = 0;                          //If this reaches 5, then 
 
 //GPS Operation
 
+String getdate() {
+  String datetime = "";
+  datetime = String(GPS.date.month()) + "/" + String(GPS.date.day()) + "/" + String(GPS.date.year());
+  return datetime;
+}
+
+String gettime() {
+  String timestamp = "";
+  timestamp = String(GPS.time.hour()) + ":" + String(GPS.time.minute()) + ":" + String(GPS.time.second());
+  return timestamp; 
+}
+
 String getlat() {                             //Function that returns latitude as a string.
   String latitude = "";
   latitude = String(GPS.location.lat(), 6);
   return latitude; 
-  }
+}
 
 
 String getlong() {                            //Function that returns longitude as a string.
   String longitude = "";
   longitude = String(GPS.location.lng(), 6);
   return longitude; 
-  }
+}
 
 
 String getalt() {                             //Function that returns altitude as a string.
   String alt = "";
   alt = String(GPS.altitude.feet());
   return alt; 
-  }
+}
 
+
+String getsat() {
+  String sat = "";
+  sat = String(GPS.satellites.value());
+  return sat;
+}
 
 void FlightCheck() {                                                              //Function that repeatedly checks if Payload is in flight.
   if (GPS.Fix && (GPS.altitude.feet() > 5000)  && (GPS.location.lng() != 0)) {    //HASP vehicle takeoff altitude is at roughly 4000 feet.
@@ -74,6 +96,7 @@ void FlightCheck() {                                                            
     if (FlightCheckCounter >= 5) {                                                //5 FlightCheckCounter hits in a row needed to set inFlight to true
       inFlight = true;                                                            //Bool that indicates if the payload is in flight.
       flightStart = millis();                                                     //flightStart holds the time when inFlight becomes true since the batteries for the payload are powered on
+      flightstring = "True";
     }
   }
   else {
@@ -86,26 +109,20 @@ void writeSensorsSD(){
   data = SDprintGPS();
   datalog.println(data);
 
-  Serial.println("Data line was added");
+  Serial.println(data);
   datalog.close();
 }
 
 
 //***SD will only print good data if the inFlight condtion is satisfied. This can easily be fixed by deleting that condition requirement.***
 
-String SDprintGPS() {                                                            //Function that takes GPS data and prints it to the SD card
+String SDprintGPS() {                                                //Function that takes GPS data and prints it to the SD card
   if (GPS.Fix && GPS.altitude.feet() != 0) {                         //If GPS has a fix with good data (may need more parameters to define "good data", GPS data is printed
-    GPSdata = getlat() + ", " + getlong() + ", " + getalt();
+    GPSdata = getdate() + ", " + gettime() + ", " + getlat() + ", " + getlong() + ", " + getalt() + ", " + getsat() + ", " + flightstring;
 
-    if (inFlight) {
-      GPSdata += ", inFlight true";
-    }
-    else if (!inFlight) {
-      GPSdata += ", inFlight not true";
-    }
   }
   else {                                                                         //If GPS has bad data or doesn't have a fix, zeros are printed for all three variables
-    GPSdata = faillatitude + ", " + faillongitude + ", " + failalt;    
+    GPSdata = faildate + ", " + failtime  + ", " + faillatitude + ", " + faillongitude + ", " + failalt + ", " + getsat() + ", " + flightstring;    
   }
 
   return GPSdata;
@@ -130,7 +147,8 @@ void updateGPS() {                                                              
 
    
 unsigned int getGPStime() {
-  return (GPS.time.hour() * 3600 + GPS.time.minute() * 60 + GPS.time.second());   }
+  return (GPS.time.hour() * 3600 + GPS.time.minute() * 60 + GPS.time.second());   
+}
 
 
 int getLastGPS() {                                                   //returns time in seconds between last successful fix and initial fix. Used to match with altitude data
@@ -151,6 +169,10 @@ int getLastGPS() {                                                   //returns t
 void setup() {
   Serial.begin(9600);
   gps_serial.begin(4800);             //Initializes serial port for GPS communication
+
+  pinMode(sdLED, OUTPUT);
+  pinMode(fixLED, OUTPUT);
+  pinMode(stateLED, OUTPUT);
 
   Serial.print("Initializing SD card...");
   
@@ -190,7 +212,7 @@ void setup() {
       digitalWrite(sdLED, HIGH);
     }
 
-  String header = "GPS Date, GPS time, Latitude, Longitude, Altitude(ft)";  //setup data format, and print it to monitor and SD card
+  String header = "GPS Date, GPS time, Latitude, Longitude, Altitude(ft), Number of Satellites, inFlight Status";  //setup data format, and print it to monitor and SD card
   Serial.println(header);
   if (SDactive) {
     datalog.println(header);
@@ -202,6 +224,7 @@ void setup() {
 
 
 void loop() {
+  
   if (millis() - fixtimer > 10000 && GPS.Fix) {
     fixtimer = millis(); //both fixtimer and LEDlocktimer set every 10 seconds
     LEDlocktimer = millis();

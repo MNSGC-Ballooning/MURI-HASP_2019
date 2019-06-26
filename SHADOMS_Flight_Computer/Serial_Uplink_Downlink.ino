@@ -18,6 +18,7 @@ void Data_Downlink()
   byte checksum_byte_3 = '@';                                            //end check byte
   byte checksum_byte_4 = '@';                                            //end check byte
 
+
   // assign timestamp
   String timestamp = logTime();                                          //HH:MM:SS timestamp (8 char string)
 
@@ -88,6 +89,7 @@ void Data_Downlink()
   dataPacket.getBytes(packet, DWN_BYTES);                                //convert string to bytes (should be 50 bytes)
 
   // send the data packet string
+
   Serial.write(checksum_byte_1);                                         //start with check bytes 1 & 2
   Serial.write(checksum_byte_2);
   for (int i = 0; i<50; i++)                                             //send the bytes in the data string
@@ -97,6 +99,7 @@ void Data_Downlink()
   Serial.write(checksum_byte_3);                                         //checksums 3 & 4
   Serial.write(checksum_byte_4);
 
+
 }
 
 ///// Uplink Command /////
@@ -104,6 +107,7 @@ void Read_Uplink_Command()
 {
   uint8_t command_byte = 0;                                              //byte for the command
   uint8_t ID_byte = 0;                                                   //byte for ID and checksum byte
+
 
   while(Serial1.available() > 1)
   {
@@ -113,23 +117,21 @@ void Read_Uplink_Command()
 
   if(ID_byte == 0x1C)                                                    //check to see id check byte is correct, if not, command is ignored
   {
-    switch(command_byte)
+    if(command_byte == 0xAA)                 // system reset command
     {
-      case 0xAA:                                                         //case for startup command
-        activeMode();                           
-        break;
-   
-      case 0xBB:                                                         //case for shutdown command
-        standbyMode();                                        
-        break;
-
-      case 0xCC:
-        systemReset();
-        break;
-        
+      systemReset(); 
     }
+    else if(command_byte == 0xBB)            // OPC activation command
+    {
+      activeMode();
+    }
+    else if(command_byte == 0xCC)            // OPC shutdown command
+    {
+      standbyMode();  
+    }   
   }
 }
+
 
 ///// Command Functions /////
 void systemReset(){                                                      //This will reset the system

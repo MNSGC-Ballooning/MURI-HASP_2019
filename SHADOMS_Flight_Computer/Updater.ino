@@ -50,14 +50,6 @@ void systemUpdate(){
       stateLight = false;
      }
 
-     if (sdLogging && !sdLight) {                       //If the data is being logged and the light is not active,
-      digitalWrite(sdLED, HIGH);                        //this will activate the light.
-      sdLight = true;
-     } else if (!sdLogging && sdLight){                 //If data is not being logged and the light is active,
-      digitalWrite(sdLED, LOW);                         //this will deactivate the light.
-      sdLight = false;
-     }  
-
      if (GPS.Fix && !fixLight) {                        //If the GPS has a fix and the light is not active, this
       digitalWrite(fixLED, HIGH);                       //will activate the light.
       fixLight = true;

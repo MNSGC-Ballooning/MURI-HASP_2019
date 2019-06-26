@@ -1,7 +1,7 @@
 //Data Logging
 
 void writeSensorsSD(){
-  sdLogging = true;
+  digitalWrite(sdLED, HIGH);
   fLog = SD.open(Fname.c_str(), FILE_WRITE);
   data = dataLog;                                   //PMS data log
   data += "Time=" + logTime() + ',' + "GPS=" + SDprintGPS() + ',' + "T Outside=" + String(t1) +',' + "T Inside=" + String(t2) +',' + "T OPC=" + String(t3) + "," + "OPC State=" + String(OPCState);
@@ -10,5 +10,5 @@ void writeSensorsSD(){
 
   Serial.println("Data line was added");
   fLog.close();
-  sdLogging = false;
+  digitalWrite(sdLED, LOW);
 }

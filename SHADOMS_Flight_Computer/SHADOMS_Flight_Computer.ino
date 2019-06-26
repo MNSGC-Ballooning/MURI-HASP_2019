@@ -157,7 +157,6 @@ implemented the serial interface with the HASP gondala and established meanings 
 
 //LED Definitions
   bool fixLight = false;                                //These booleans are for the light activation and deactivation logic  
-  bool sdLight = false;
   bool stateLight = false;
 
 //Updater Definitions                                   //These values help to regulate the speed of the updater function

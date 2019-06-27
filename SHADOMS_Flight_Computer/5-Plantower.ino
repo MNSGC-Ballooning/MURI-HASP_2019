@@ -15,6 +15,16 @@
 
 ////////// BEGIN CODE //////////
 
+void OPCInit(){                           //This function initializes the OPC systems
+  alphaOPC.init(0);                       //Sets all relays to an open state
+  planOPC.init(0);
+  LOAC.init(0);        
+  pinMode(LS_PD, OUTPUT);                 //This pin will allow for a transistor gate to be opened, triggering LOAC shutdown.
+  pinMode(stateLED, OUTPUT);              //Initializes state LED signal
+  Serial5.begin(9600);                    //Initializes serial port for Plantower
+  while (!Serial5) ;                      //Waits for Serial 5 to connect
+}
+
 /// begin loop
 void pmsUpdate() {
 //  digitalWrite(led,HIGH);                             
@@ -125,3 +135,35 @@ boolean readPMSdata(Stream *s) {
   // success!
   return true;
 }
+
+//Unused Initializations
+/*
+void PlanInit(){                          //Unused independent Plantower initialization. This is currently unused, as the log files have been collapsed into a single file.
+  Serial.println("Hello, there.");                                            
+  Serial.println();
+  Serial.println("Setting up Plantower OPC...");
+  Serial.println();                                                    
+
+  Serial.print("Initializing SD card...");
+  // Check if card is present/initalized: 
+  if (!SD.begin()){
+  Serial.println("card initialization FAILED - something is wrong...");           //Card not present or initialization failed
+  return;                                                                         //Don't do anything more                                         
+  }
+  
+  Serial.println("card initialization PASSED");                                   //Initialization successful
+
+  // Initialize file:
+  ptLog = SD.open(filename.c_str(), FILE_WRITE);                                  //Open file
+  
+  if (ptLog) {
+    Serial.println( filename + " opened...");
+    ptLog.close();
+    Serial.println("File initialized... begin data logging!");
+  }
+  else {
+    Serial.println("error opening file");
+    return;
+  } 
+}
+*/

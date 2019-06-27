@@ -1,4 +1,10 @@
 //Active Heating Operation
+void thermalInit(){                                   //This function initializes the thermal monitoring and control system.
+      heater.init(0);                                 //Heater relay initialization
+      temperature1.begin();                           //Temperature sensor initialization
+      temperature2.begin();
+      temperature3.begin();
+}
 
 void activeHeat(){
   if ((150 < t3) && (t3 < COLD)) {                    //Check if the temperature of the OPCs exceed the minimum

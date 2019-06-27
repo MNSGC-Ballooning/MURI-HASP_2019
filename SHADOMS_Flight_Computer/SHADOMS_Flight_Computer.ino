@@ -21,9 +21,10 @@ record their own data.*/
 
 //Version History
 //Version 1.3
-/*Passed all individual unit tests. Ready for full system test.Added data buffer,
+/*Passed all individual unit tests. Ready for full system test. Added data buffer,
 updated update and log rates, updated GPS system. Returned system to hardware serial.
-Updated LED to show satellite count, and logging time. Added more debugging and code cleanup.*/
+Updated LED to show satellite count, and logging time. Added more debugging and code cleanup. Passed all
+initialization into functions separated by system. Added serial initialization pauses.*/
 
 //Version 1.2
 /*Passed initial unit tests for thermal control, GPS. This version also updates
@@ -40,11 +41,7 @@ implemented the serial interface with the HASP gondala and established meanings 
 
 
 
-
-
-//---ESTABLISH PREREQUISITE DEFINITIONS---\\
-
-
+//---SYSTEM DEFINITIONS---\\
 
 
 
@@ -82,7 +79,6 @@ implemented the serial interface with the HASP gondala and established meanings 
   #define PMS_TX 33                 //PMS Transmission Pin (Unused) 
 */
  
-
 //Constant Definitions
   #define LOG_RATE 1000             //These definitions are the rates of the individual portions of the
   #define UPDATE_RATE 50            //systemUpdate function.
@@ -115,14 +111,12 @@ implemented the serial interface with the HASP gondala and established meanings 
   float t2;                                             //Temperature 2
   float t3;                                             //Temperature 3
   
-//Serial Definitions
-  //HASP Uplink and downlink data
+//Serial Definitions (HASP Communication)
   String flightState = "";
   String OPCState = "";
   byte packet[DWN_BYTES] = {0};                         //50 char/bytes in the string (54 with checksum)
   
 //Data Log Definitions
-  //Log Plantower, temperature, GPS, HASP data
   const int chipSelect = BUILTIN_SDCARD;                //Access on board micro-SD
   File fLog;                                            //This part of the code establishes the file and
   String data;                                          //sets up the CSV format
@@ -146,7 +140,7 @@ implemented the serial interface with the HASP gondala and established meanings 
     uint16_t particles_03um, particles_05um, particles_10um, particles_25um, particles_50um, particles_100um;
     uint16_t unused;
     uint16_t checksum;
-  } planData;                                           //This struct will organize the plantower bins into seperate parts of the data
+  } planData;                                           //This struct will organize the plantower bins into usable data
   
 //GPS Definitions
   TinyGPSPlus GPS;                                      //GPS object definition
@@ -157,25 +151,25 @@ implemented the serial interface with the HASP gondala and established meanings 
   byte FlightCheckCounter = 0;                          //If this reaches 5, then inFLight should be set to true
 
 //Variables for UpdateGPS()
-  unsigned long lastGPS = 0;                             //Time in seconds since the last GPS update
-  unsigned long GPSstartTime = 0;                        //When the GPS starts, time in seconds of last GPS update
-  uint8_t days = 0;                                      //If we're flying overnight this serves as a coutner for time keeping
+  unsigned long lastGPS = 0;                            //Time in seconds since the last GPS update
+  unsigned long GPSstartTime = 0;                       //When the GPS starts, time in seconds of last GPS update
+  uint8_t days = 0;                                     //If we're flying overnight this serves as a coutner for time keeping
 
 //timers and other variables for fixLED
-  unsigned long fixLED_loop_timer = 0;                   //timer to ensure that the fixLED will do "something" every 15 second loop
-  unsigned long fixLED_length_timer = 0;                 //timer to ensure that the fixLED will blink at a constant rate
-  uint8_t satnum = 0;                                    //indicates the number of satellites that the GPS has a lock on
-  uint8_t nofix_blink_counter = 0;                       //instructs fixLED how many times to blink if GPS doesn't have a fix
-  bool fixLEDon = false;                                 //indicates if the fixLED is on or not
-  bool GPSfix = false;                                   //indicates if the GPS has a fix so the fixLED knows what loop sequence to follow
-                                                         //necessary as if GPS loses fix in the middle of fixLED loop, strange sequences could happen
+  unsigned long fixLED_loop_timer = 0;                  //timer to ensure that the fixLED will do "something" every 15 second loop
+  unsigned long fixLED_length_timer = 0;                //timer to ensure that the fixLED will blink at a constant rate
+  uint8_t satnum = 0;                                   //indicates the number of satellites that the GPS has a lock on
+  uint8_t nofix_blink_counter = 0;                      //instructs fixLED how many times to blink if GPS doesn't have a fix
+  bool fixLEDon = false;                                //indicates if the fixLED is on or not
+  bool GPSfix = false;                                  //indicates if the GPS has a fix so the fixLED knows what loop sequence to follow
+                                                        //necessary as if GPS loses fix in the middle of fixLED loop, strange sequences could happen
  
 //strings that populate GPS data strings
-  String GPSdata = "";                                   //Initializes data string that prints GPS data to the SD card
-  String flightstring = "False";                         //Indicates if inFlight is active or not
-  String faillatitude = "0.00";                          //Printed latitude if GPS does not have a fix or any data
-  String faillongitude = "0.000000";                     //Printed longitude if GPS does not have a fix or any data
-  String failalt = "0.000000";                           //Printed altitude if GPS does not have a fix or any 
+  String GPSdata = "";                                  //Initializes data string that prints GPS data to the SD card
+  String flightstring = "False";                        //Indicates if inFlight is active or not
+  String faillatitude = "0.00";                         //Printed latitude if GPS does not have a fix or any data
+  String faillongitude = "0.000000";                    //Printed longitude if GPS does not have a fix or any data
+  String failalt = "0.000000";                          //Printed altitude if GPS does not have a fix or any 
 
 //LED Definitions
   bool fixLight = false;                                //These booleans are for the light activation and deactivation logic  
@@ -185,104 +179,16 @@ implemented the serial interface with the HASP gondala and established meanings 
   unsigned long lastCycle = 0;
   unsigned long planCycle = 0;
   
-  
 
 
-
-//---INITIALIZE CODE---\\                              
-
-
+//---ACTIVE CODE---\\                              
 
 
 
 void setup() {                                       
-//Relay Initialization- sets up all relays, sets them all to an open state.
-  heater.init(0);
-  alphaOPC.init(0);
-  planOPC.init(0);
-  LOAC.init(0);
-
-//State Pin Shutdown Initialization
-  pinMode(LS_PD, OUTPUT);                                              //This pin will allow for a transistor gate to be
-                                                                       //opened, triggering LOAC shutdown.
-
-//LED Initialization- sets all LED pins to output mode
-  pinMode(sdLED, OUTPUT);
-  pinMode(fixLED, OUTPUT);
-  pinMode(stateLED, OUTPUT);
-
-//Active Heating Initialization- starts temperature sensors
-  temperature1.begin();
-  temperature2.begin();
-  temperature3.begin();
-  
-//Serial Initialization
-  Serial1.begin(1200);                                                 //Initializes HASP serial port at 1200 baud.      
-  Serial2.begin(4800);                                                 //Initializes serial port for GPS communication
-  Serial5.begin(9600);                                               //Initializes serial port for Plantower
-
-//Data Log Initialization
-  Serial.print("Initializing SD card...");                             //Tells us if the SD card faled to open:
-  if (!SD.begin(chipSelect)) {
-    Serial.println("Initialization Failed!");
-  }
-  Serial.println("Initialization done.");                              //This "for" loop checks to see if there are any previous files on
-  for (int i = 0; i < 100; i++) {                                      //the SD card already with the generated name
-    
-    Fname = String("fLog" + String(i/10) + String(i%10) + ".csv");     //has new name for file to make sure file name is not already used
-    if (!SD.exists(Fname.c_str())){                                    //does not run if same SD name exists
-      break; 
-    }
-  }
-
-  Serial.println("System Log created: " + Fname);                 
-  fLog = SD.open(Fname.c_str(), FILE_WRITE);
-  header = "ntot,millis,3,5,10,25,50,100,time,GPS lat,GPS long,GPS alt,T Outside,T Inside,T OPC,OPC State";       
-  fLog.println(header);                                                           //Set up temp log format and header
-  fLog.close();
-  Serial.println("System Log header added");
-
-//Plantower Initialization                                                        //This is currently unused, as the log files have been
-/*                                                                                //collapsed into a single file.
-  Serial.println("Hello, there.");                                            
-  Serial.println();
-  Serial.println("Setting up Plantower OPC...");
-  Serial.println();                                                    
-
-  Serial.print("Initializing SD card...");
-  // Check if card is present/initalized: 
-  if (!SD.begin()){
-  Serial.println("card initialization FAILED - something is wrong...");           //Card not present or initialization failed
-  return;                                                                         //Don't do anything more                                         
-  }
-  
-  Serial.println("card initialization PASSED");                                   //Initialization successful
-
-  // Initialize file:
-  ptLog = SD.open(filename.c_str(), FILE_WRITE);                                  //Open file
-  
-  if (ptLog) {
-    Serial.println( filename + " opened...");
-    ptLog.close();
-    Serial.println("File initialized... begin data logging!");
-  }
-  else {
-    Serial.println("error opening file");
-    return;
-  } */
+  systemInit();                                         //This will initalize the system
 }
 
-
-
-
-
-
-//---ACTIVE CODE---\\
-
-
-
-
-
 void loop() {
-  systemUpdate();                                                                 //This function will update the full loop
+  systemUpdate();                                      //This function will update the full loop
 }

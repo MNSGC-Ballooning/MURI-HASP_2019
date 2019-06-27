@@ -1,7 +1,16 @@
-//Loop Updater
- 
+//System Operation
 
-void systemUpdate(){                                   
+//System Initialization
+void systemInit(){                                      
+  thermalInit();                                        //These functions run the systems initializations
+  GPSInit();
+  OPCInit();
+  dataLogInit();
+  serialInit();
+}
+
+//System updater
+void systemUpdate(){                                         
    if (millis() - planCycle >= UPDATE_RATE) {           //This regulates the plantower loop to every 2.3 seconds.
     planCycle=millis();
 

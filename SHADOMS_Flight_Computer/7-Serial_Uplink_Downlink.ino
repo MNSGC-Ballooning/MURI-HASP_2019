@@ -9,6 +9,11 @@
 To send packets of data, we might need to establish a buffer, and then fill that buffer with bytes, and then send the buffer?
 */
 
+void serialInit(){
+  Serial1.begin(1200);                                                   //Initializes HASP serial port at 1200 baud
+//  while (!Serial1) ;                                                   //Waits for Serial 1 to connect
+}
+
 ///// Data Downlink /////
 void Data_Downlink()
 { 

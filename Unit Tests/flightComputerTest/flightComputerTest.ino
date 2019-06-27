@@ -1,50 +1,4 @@
-//SHADOMS Payload Flight Computer
-//Version 1.3
-//Payload 2019-01
-
-/*This code operates the Teensy 3.5/3.6 Microcontroller on the 2019 HASP flight.
-The goal of this flight is to collect data from the Plantower PMS-5003, the Alphasense OPC N3,
-and the LOAC-R. Then, this data will be compared to examine how each particle detector operates
-in the conditions of the upper atmosphere. This examination will be utilized to determine counter
-effectiveness and calibration needs for future MURI research.
-
-The code operates the particle counter power, writes the data of the Plantower to disk,
-regulates temperature using active heating, runs a Coperinicus GPS, and controls uplink
-and downlink with the main HASP gondola.
-
-In this setup, both the Alphasense and the LOAC are running in a standalone mode where they 
-record their own data.*/
-
-//University of Minnesota- Twin Cities
-//Candler-MURI Research Team
-//Written in June 2019
-
-//Version History
-//Version 1.3
-/*Passed all individual unit tests. Ready for full system test. Added data buffer,
-updated update and log rates, updated GPS system. Returned system to hardware serial.
-Updated LED to show satellite count, and logging time. Added more debugging and code cleanup. Passed all
-initialization into functions separated by system. Added serial initialization pauses.*/
-
-//Version 1.2
-/*Passed initial unit tests for thermal control, GPS. This version also updates
-the plantower logging system (returning to software serial), updates the LED pins, and fixes various bugs
-and unclean code. The system log and the plantower log have also been collapsed.*/
-
-//Version 1.1
-/*Updated the serial port system to impliment hardware serial connections in place of software serial.
-This will allow for the system to interface with multiple serial systems simaltaneously. This version also
-implemented the serial interface with the HASP gondala and established meanings for the LEDs.*/
-
-//Version 1.0
-/*This is the initial code after the first stage of debugging.*/
-
-
-
-//---SYSTEM DEFINITIONS---\\
-
-
-
+//SHADOMS Payload Flight Computer Test
 //Libraries
   #include <SD.h>                   //Writing to SD card
   #include <OneWire.h>              //Dallas data control
@@ -179,16 +133,45 @@ implemented the serial interface with the HASP gondala and established meanings 
   unsigned long lastCycle = 0;
   unsigned long planCycle = 0;
   
-
+  bool powerTest = false;
+  bool resetTest = false;
 
 //---ACTIVE CODE---\\                              
 
 
 
 void setup() {                                       
+  Serial.begin(9600);
+  while (!Serial) ;
+  Serial.println("USB Serial initialized.");
   systemInit();                                         //This will initalize the system
+  activeMode();
 }
 
 void loop() {
   systemUpdate();                                       //This function will update the full loop
+  if ((millis>=120000)&&(!powerTest)){
+    Serial.println("START FULL POWER TEST");
+    powerTest = true;
+    heater.setState(1);
+    pinMode(fixLED, HIGH);
+    pinMode(sdLED, HIGH);
+    pinMode(stateLED, HIGH); 
+    delay(20000);
+    heater.setState(0);
+    pinMode(fixLED, LOW);
+    pinMode(sdLED, LOW);
+    pinMode(stateLED, LOW); 
+    Serial.println("END FULL POWER TEST");  
+  }
+
+  if ((millis>=240000)&&(!resetTest)){
+    Serial.println("START RESET TEST");
+    resetTest = true;
+    systemReset();
+    Serial.println("END RESET TEST");
+  }
+  
+  if (millis>=1800000) standbyMode(); 
+  Serial.println("30 minute test complete. Safe to remove power.");
 }

@@ -12,6 +12,11 @@
 const int chipSelect = BUILTIN_SDCARD; //On board SD card for teensy
 
 
+//Constant Definitions
+#define FIXLED_LOOP 20000         //FixLED cycles every 20 seconds
+#define FIXLED_RATE 500           //FixLED is either on or off for 500ms
+#define NOFIXLED_RATE 1500        //When there is no GPS fix, FixLED cycles as on or off for 1.5s  
+
 TinyGPSPlus GPS;
 SoftwareSerial gps_serial(9,10);
 
@@ -27,11 +32,16 @@ unsigned long lastGPS = 0;
 unsigned long GPSstartTime = 0;    //when the GPS starts, time in seconds of last GPS update.
 uint8_t days = 0;                  //if we're flying overnight
 
-//timers for SD and LEDs
-unsigned long timer = 0;           //timer to ensure GPS prints data once every second
-unsigned long fixtimer = 0;        //timer to ensure that if the GPS has a fix, and LED flashes once every 10 seconds
-unsigned long LEDlocktimer = 0;    //timer to ensure that the green LED that goes on if there is a GPS lock stays on for a specified amount of time
-bool fixLEDbool = false;           //indicates if the fixLED is on or not
+//timers and other variables for fixLED
+unsigned long timer = 0;                               //timer to ensure GPS prints data once every second
+unsigned long fixLED_loop_timer = 0;                   //timer to ensure that the fixLED will do "something" every 15 second loop
+unsigned long fixLED_length_timer = 0;                 //timer to ensure that the fixLED will blink at a constant rate
+uint8_t satnum = 0;                                    //indicates the number of satellites that the GPS has a lock on
+uint8_t nofix_blink_counter = 0;                       //instructs fixLED how many times to blink if GPS doesn't have a fix
+bool fixLEDon = false;                                 //indicates if the fixLED is on or not
+bool GPSfix = false;                                   //indicates if the GPS has a fix so the fixLED knows what loop sequence to follow
+                                                       //necessary as if GPS loses fix in the middle of fixLED loop, strange sequences could happen
+
 
 //strings that populate GPS data strings
 String GPSdata = "";                                  //Initializes data string that prints GPS data to the SD card
@@ -224,14 +234,7 @@ void setup() {
 
 
 void loop() {
-  
-  if (millis() - fixtimer > 10000 && GPS.Fix && GPS.altitude.feet() != 0) {
-    fixtimer = millis(); //both fixtimer and LEDlocktimer set every 10 seconds
-    LEDlocktimer = millis();
-    digitalWrite(fixLED, HIGH);
-    fixLEDbool = true; 
-    }
-  
+  fixLEDupdater();
   updateGPS();    
   FlightCheck();
 
@@ -248,9 +251,4 @@ void loop() {
       digitalWrite(sdLED, LOW);
       }
    }
-
-  if (fixLEDbool && (millis() - LEDlocktimer > 1000)) { //when the GPS has a fix, this ensures that the
-    digitalWrite(fixLED, LOW);                    //green LED is on for a full second every 10 seconds
-    fixLEDbool = false;  
-   }
- }
+}

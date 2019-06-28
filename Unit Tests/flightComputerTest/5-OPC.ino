@@ -64,7 +64,7 @@ void pmsUpdate() {
 
   } else {
     badLog++;                                         //If there are five consecutive bad logs, not the state;
-    if (badLog = 5) {
+    if (badLog >= 5) {
       goodLog = false;
       Serial.println("WARNING: BAD LOG");
     }

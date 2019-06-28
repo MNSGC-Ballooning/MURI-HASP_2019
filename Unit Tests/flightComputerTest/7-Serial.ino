@@ -10,7 +10,7 @@ To send packets of data, we might need to establish a buffer, and then fill that
 */
 
 void serialInit(){
-  Serial1.begin(1200);                                                   //Initializes HASP serial port at 1200 baud
+//  Serial1.begin(1200);                                                   //Initializes HASP serial port at 1200 baud
 //  while (!Serial1) ;                                                   //Waits for Serial 1 to connect
 }
 
@@ -72,22 +72,6 @@ void Data_Downlink()
   String s5 = String(t2);                                                //6 char string
   String s6 = String(t3);                                                //6 char string   
   
-  if(inFlight)                                                           //the next two booleans typecast the booleans
-  {                                                                      //with space for additional logic
-    flightState = "1";                                                  
-  }
-  else
-  {
-    flightState = "0";
-  }
-  if(dataCollection && goodLog)
-  {
-    OPCState = "1";
-  }
-  else
-  {
-    OPCState = "0";
-  }
 
   // combine strings into 1 long one
   String dataPacket = timestamp + s1 + s2 + s3 + s4 + s5 + s6 + latSign + lngSign + flightState + OPCState;

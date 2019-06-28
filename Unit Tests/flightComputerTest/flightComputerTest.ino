@@ -34,8 +34,8 @@
 */
  
 //Constant Definitions
-  #define LOG_RATE 1000             //These definitions are the rates of the individual portions of the
-  #define UPDATE_RATE 50            //systemUpdate function.
+  #define LOG_RATE 5000             //These definitions are the rates of the individual portions of the
+  #define UPDATE_RATE 100           //systemUpdate function.
   #define FIXLED_LOOP 20000         //FixLED cycles every 20 seconds
   #define FIXLED_RATE 500           //FixLED is either on or off for 500ms
   #define NOFIXLED_RATE 1500        //When there is no GPS fix, FixLED cycles as on or off for 1.5s  
@@ -145,33 +145,51 @@ void setup() {
   while (!Serial) ;
   Serial.println("USB Serial initialized.");
   systemInit();                                         //This will initalize the system
+    digitalWrite(fixLED, HIGH);
+    digitalWrite(sdLED, HIGH);
+    digitalWrite(stateLED, HIGH); 
+    delay (1000);
+    digitalWrite(fixLED, LOW);
+    digitalWrite(sdLED, LOW);
+    digitalWrite(stateLED, LOW); 
+    delay(1000);
+    digitalWrite(fixLED, HIGH);
+    digitalWrite(sdLED, HIGH);
+    digitalWrite(stateLED, HIGH); 
+    delay (1000);
+    digitalWrite(fixLED, LOW);
+    digitalWrite(sdLED, LOW);
+    digitalWrite(stateLED, LOW); 
   activeMode();
 }
 
 void loop() {
   systemUpdate();                                       //This function will update the full loop
-  if ((millis>=120000)&&(!powerTest)){
+  
+  if ((millis()>=30000)&&(!powerTest)){
     Serial.println("START FULL POWER TEST");
     powerTest = true;
     heater.setState(1);
-    pinMode(fixLED, HIGH);
-    pinMode(sdLED, HIGH);
-    pinMode(stateLED, HIGH); 
+    digitalWrite(fixLED, HIGH);
+    digitalWrite(sdLED, HIGH);
+    digitalWrite(stateLED, HIGH); 
     delay(20000);
     heater.setState(0);
-    pinMode(fixLED, LOW);
-    pinMode(sdLED, LOW);
-    pinMode(stateLED, LOW); 
+    digitalWrite(fixLED, LOW);
+    digitalWrite(sdLED, LOW);
+    digitalWrite(stateLED, LOW); 
     Serial.println("END FULL POWER TEST");  
   }
 
-  if ((millis>=240000)&&(!resetTest)){
+  if ((millis()>=90000)&&(!resetTest)){
     Serial.println("START RESET TEST");
     resetTest = true;
     systemReset();
     Serial.println("END RESET TEST");
   }
   
-  if (millis>=1800000) standbyMode(); 
-  Serial.println("30 minute test complete. Safe to remove power.");
+  if (millis()>=130000){
+    standbyMode(); 
+    Serial.println("30 minute test complete. Safe to remove power.");
+  }
 }

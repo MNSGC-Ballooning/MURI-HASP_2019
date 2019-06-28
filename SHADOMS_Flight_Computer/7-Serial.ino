@@ -141,8 +141,10 @@ void Read_Uplink_Command()
 ///// Command Functions /////
 void systemReset(){                                                      //This will reset the system
   standbyMode();
+  Serial.println("Shutdown successful.");
   heater.setState(0);
   activeMode();
+  Serial.println("SActivation successful.");
 }
 
 void activeMode(){                                                      //This will activate all of the particle detectors.

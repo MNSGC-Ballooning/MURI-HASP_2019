@@ -21,10 +21,9 @@ record their own data.*/
 
 //Version History
 //Version 1.3
-/*Passed all individual unit tests. Ready for full system test. Added data buffer,
-updated update and log rates, updated GPS system. Returned system to hardware serial.
-Updated LED to show satellite count, and logging time. Added more debugging and code cleanup. Passed all
-initialization into functions separated by system. Added serial initialization pauses.*/
+/*Passed all individual unit tests and full system test. Updated update and log rates, updated GPS system. 
+Returned system to hardware serial. Updated LED to show satellite count, and logging time. Added more debugging 
+and code cleanup. Passed all initialization into functions separated by system. Added serial initialization pauses.*/
 
 //Version 1.2
 /*Passed initial unit tests for thermal control, GPS. This version also updates
@@ -80,16 +79,16 @@ implemented the serial interface with the HASP gondala and established meanings 
 */
  
 //Constant Definitions
-  #define LOG_RATE 1000             //These definitions are the rates of the individual portions of the
-  #define UPDATE_RATE 50            //systemUpdate function.
-  #define FIXLED_LOOP 20000         //FixLED cycles every 20 seconds
-  #define FIXLED_RATE 500           //FixLED is either on or off for 500ms
-  #define NOFIXLED_RATE 1500        //When there is no GPS fix, FixLED cycles as on or off for 1.5s  
+  #define LOG_RATE 7000             //These definitions are the rates of the individual portions of the
+  #define UPDATE_RATE 1             //systemUpdate function.
+  #define FIXLED_LOOP 15000         //FixLED cycles every 15 seconds
+  #define FIXLED_RATE 500           //FixLED is held on for 0.5 seconds
+  #define NOFIXLED_RATE 3000        //When there is no GPS fix, FixLED cycles is held on for 3 seconds
   #define DWN_BYTES 51              //Number of downlink bytes + 1 (the +1 makes it work)
   #define COLD 280.0                //Minimum acceptable temperature of the OPC
   #define HOT 290.0                 //Maximum acceptable temperature of the OPC
   #define KELVIN 273.15             //Number to convert Celcius to Kelvin
-
+  
 //Relay Definitions
   LatchRelay heater(heater_ON, heater_OFF);             //Define heater relay object
   LatchRelay alphaOPC(alphaOPC_ON, alphaOPC_OFF);       //Define Alphasense OPC relay object
@@ -156,13 +155,9 @@ implemented the serial interface with the HASP gondala and established meanings 
   uint8_t days = 0;                                     //If we're flying overnight this serves as a coutner for time keeping
 
 //timers and other variables for fixLED
-  unsigned long fixLED_loop_timer = 0;                  //timer to ensure that the fixLED will do "something" every 15 second loop
-  unsigned long fixLED_length_timer = 0;                //timer to ensure that the fixLED will blink at a constant rate
-  uint8_t satnum = 0;                                   //indicates the number of satellites that the GPS has a lock on
-  uint8_t nofix_blink_counter = 0;                      //instructs fixLED how many times to blink if GPS doesn't have a fix
+  unsigned long fixLED_loop_timer = 0;                  //timer to ensure that the fixLED will do "something" every 10 second loop
   bool fixLEDon = false;                                //indicates if the fixLED is on or not
-  bool GPSfix = false;                                  //indicates if the GPS has a fix so the fixLED knows what loop sequence to follow
-                                                        //necessary as if GPS loses fix in the middle of fixLED loop, strange sequences could happen
+  bool fixLEDshort = false;                             //indicates what LED flash sequence to follow
  
 //strings that populate GPS data strings
   String GPSdata = "";                                  //Initializes data string that prints GPS data to the SD card

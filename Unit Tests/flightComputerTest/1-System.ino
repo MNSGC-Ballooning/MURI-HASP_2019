@@ -23,10 +23,11 @@ void systemUpdate(){
   }
 
    if (millis() - fixLED_loop_timer >= FIXLED_LOOP) {
+    Serial.println("New Fix LED loop.");
     fixLEDupdater();                                    //Runs the fixLED through loops depending on if it has a GPS fix or not 
   }
 
-  if (fixLEDon) {                                       //Timer determines when to turn the fixLED off depending on boolean set in fixLEDupdater()
+  if (fixLEDon) {                                     //Timer determines when to turn the fixLED off depending on boolean set in fixLEDupdater()
     if (fixLEDshort && (millis() - fixLED_loop_timer >= FIXLED_RATE)) {
       fixLEDturnoff();
     }

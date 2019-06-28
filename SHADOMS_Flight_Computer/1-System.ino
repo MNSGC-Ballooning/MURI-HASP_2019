@@ -17,16 +17,27 @@ void systemUpdate(){
     readPMSdata(&Serial5);
   }
 
-  //fixLEDupdater();                                    //Runs the fixLED through loops depending on if it has a GPS fix or not 
+  if (millis() - fixLED_loop_timer >= FIXLED_LOOP) {
+    fixLEDupdater();                                    //Runs the fixLED through loops depending on if it has a GPS fix or not 
+  }
+
+  if (fixLEDon) {                                     //Timer determines when to turn the fixLED off depending on boolean set in fixLEDupdater()
+    if (fixLEDshort && (millis() - fixLED_loop_timer >= FIXLED_RATE)) {
+      fixLEDturnoff();
+    }
+    else if (!fixLEDshort && (millis() - fixLED_loop_timer >= NOFIXLED_RATE)) {
+      fixLEDturnoff();
+    }
+  }
   
   
   if (millis() - lastCycle >= LOG_RATE) {               //This regulates the loop, so that it runs consistently
     lastCycle=millis();                                 //at 1Hz. lastCycle gives the previous time, and
                                                         //millis gives the current time. Both are in ms.
-     updateGPS();                                       //This will update the GPS data
      updateTemp();                                      //Update Temp
    
     //GPS Flight Check
+     updateGPS();                                       //This will update the GPS data
      flightCheck();                                     //The flight check variable will identify when the payload is in flight.
   
     //Data Log Update

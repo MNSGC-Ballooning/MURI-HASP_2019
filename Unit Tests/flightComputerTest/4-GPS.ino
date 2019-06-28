@@ -57,11 +57,13 @@ void fixLEDupdater() {
   if (GPS.Fix && GPS.altitude.feet() != 0) {
     digitalWrite(fixLED, HIGH);
     fixLEDon = true;
+    Serial.println("Fix LED on. GPS Fix.");
     fixLEDshort = true;
   }
   else {
     digitalWrite(fixLED, HIGH);
     fixLEDon = true;
+    Serial.println("Fix LED on. No GPS Fix.");
     fixLEDshort = false;
   }
 
@@ -70,6 +72,7 @@ void fixLEDupdater() {
 void fixLEDturnoff() {
   digitalWrite(fixLED, LOW);
   fixLEDon = false;
+  Serial.println("Fix LED off.");
   
 }
 

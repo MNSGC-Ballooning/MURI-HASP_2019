@@ -25,8 +25,25 @@ void dataLogInit(){                                                    //Initial
 void writeSensorsSD(){
   digitalWrite(sdLED, HIGH);
   fLog = SD.open(Fname.c_str(), FILE_WRITE);
-  data = dataLog;                                                     //PMS data log
-  data += "Time=" + logTime() + ',' + "GPS=" + printGPS() + ',' + "T Outside=" + String(t1) +',' + "T Inside=" + String(t2) +',' + "T OPC=" + String(t3) + "," + "OPC State=" + String(OPCState);
+  
+  if(inFlight)                                                           //the next two booleans typecast the booleans
+  {                                                                      //with space for additional logic
+    flightState = '1';                                                  
+  }
+  else
+  {
+    flightState = '0';
+  }
+  if(dataCollection && goodLog)
+  {
+    OPCState = '1';
+  }
+  else
+  {
+    OPCState = '0';
+  }
+  
+  data = dataLog + ',' + logTime() + ',' + printGPS() + ',' + String(t1) +','+ String(t2) + ',' + String(t3) + ',' + OPCState;
   Serial.println(data);
   fLog.println(data);                                                 //PMS and Sensor data log
 

@@ -27,9 +27,6 @@ void OPCInit(){                           //This function initializes the OPC sy
 
 /// begin loop
 void pmsUpdate() {
-//  digitalWrite(led,HIGH);                             
-//  FT = millis();
-
 // log sample number, in flight time
     dataLog = "";
     dataLog += ntot;
@@ -38,7 +35,7 @@ void pmsUpdate() {
     dataLog += ",";
     
   if (readPMSdata(&Serial5)) {
-
+    
 // if data is receieved, log it
     dataLog += planData.particles_03um;
     dataLog += ",";
@@ -51,7 +48,6 @@ void pmsUpdate() {
     dataLog += planData.particles_50um;
     dataLog += ",";
     dataLog += planData.particles_100um;
-    dataLog += ",";
     
 // samples of data collected
     nhits=nhits+1;
@@ -64,7 +60,10 @@ void pmsUpdate() {
 
   } else {
     badLog++;                                         //If there are five consecutive bad logs, not the state;
-    if (badLog = 5) goodLog = false;
+    if (badLog = 5){
+      goodLog = false;
+      dataLog += '%' + ',' + 'Q' + ',' + '=' + ',' + '!' + ',' + '@' + ',' + '$';
+    }
   }
 /*
 // write data

@@ -51,8 +51,7 @@ void pmsUpdate() {
     dataLog += planData.particles_50um;
     dataLog += ",";
     dataLog += planData.particles_100um;
-    dataLog += ",";
-    
+
 // samples of data collected
     nhits=nhits+1;
     
@@ -66,6 +65,7 @@ void pmsUpdate() {
     badLog++;                                         //If there are five consecutive bad logs, not the state;
     if (badLog >= 5) {
       goodLog = false;
+      dataLog += '%' + ',' + 'Q' + ',' + '=' + ',' + '!' + ',' + '@' + ',' + '$';
       Serial.println("WARNING: BAD LOG");
     }
   }
@@ -132,6 +132,7 @@ boolean readPMSdata(Stream *s) {
   memcpy((void *)&planData, (void *)buffer_u16, 30);
  
   if (sum != planData.checksum) {
+    Serial.println();
     Serial.println("Checksum failure");
     return false;
   }

@@ -10,8 +10,8 @@ To send packets of data, we might need to establish a buffer, and then fill that
 */
 
 void serialInit(){
-//  Serial1.begin(1200);                                                   //Initializes HASP serial port at 1200 baud
-//  while (!Serial1) ;                                                   //Waits for Serial 1 to connect
+  Serial1.begin(1200);                                                   //Initializes HASP serial port at 1200 baud
+  //while (!Serial1) ;                                                   //Waits for Serial 1 to connect
 }
 
 ///// Data Downlink /////
@@ -55,23 +55,23 @@ void Data_Downlink()
   {
     lngSign = "0";                                                       //if positive, sign flag = 0
   }
+  
   String s2 = String(lng);                                               //convert to string
   while(s2.length() < 6)
   {
-    s1 = "0"+s1;                                                         //if less than 6 char, left fill with 0
+    s2 = "0"+s2;                                                         //if less than 6 char, left fill with 0
   }
   
   float alt = float(GPS.altitude.feet());
   String s3 = String(alt);                                               //convert to string
   while(s3.length() < 9)
   {
-    s1 = "0"+s1;                                                         //if less than 9 char, left fill with 0
+    s3 = "0"+s3;                                                         //if less than 9 char, left fill with 0
   }
 
   String s4 = String(t1);                                                //6 char string
   String s5 = String(t2);                                                //6 char string
   String s6 = String(t3);                                                //6 char string   
-  
 
   // combine strings into 1 long one
   String dataPacket = timestamp + s1 + s2 + s3 + s4 + s5 + s6 + latSign + lngSign + flightState + OPCState;
@@ -79,23 +79,23 @@ void Data_Downlink()
 
   // send the data packet string
 
-  Serial.write(checksum_byte_1);                                         //start with check bytes 1 & 2
-  Serial.write(checksum_byte_2);
+  Serial1.write(checksum_byte_1);                                         //start with check bytes 1 & 2
+  Serial1.write(checksum_byte_2);
   for (int i = 0; i<50; i++)                                             //send the bytes in the data string
   {
     Serial1.write(packet[i]);
   }
-  Serial.write(checksum_byte_3);                                         //checksums 3 & 4
-  Serial.write(checksum_byte_4);
+  Serial1.write(checksum_byte_3);                                         //checksums 3 & 4
+  Serial1.write(checksum_byte_4);
 
-
+Serial.println("Data downlink sent!");
 }
 
 ///// Uplink Command /////
 void Read_Uplink_Command()
 {
-  uint8_t command_byte = 0;                                              //byte for the command
-  uint8_t ID_byte = 0;                                                   //byte for ID and checksum byte
+  byte command_byte = 0;                                                 //byte for the command
+  byte ID_byte = 0;                                                      //byte for ID and checksum byte
 
 
   while(Serial1.available() > 1)
@@ -108,14 +108,17 @@ void Read_Uplink_Command()
   {
     if(command_byte == 0xAA)                 // system reset command
     {
+      Serial.println("Reset command recieved!");
       systemReset(); 
     }
     else if(command_byte == 0xBB)            // OPC activation command
     {
+      Serial.println("Activation command recieved!");
       activeMode();
     }
     else if(command_byte == 0xCC)            // OPC shutdown command
     {
+      Serial.println("Shutdown command recieved!");
       standbyMode();  
     }   
   }
@@ -125,8 +128,10 @@ void Read_Uplink_Command()
 ///// Command Functions /////
 void systemReset(){                                                      //This will reset the system
   standbyMode();
+  Serial.println("Shutdown successful.");
   heater.setState(0);
   activeMode();
+  Serial.println("Activation successful.");
 }
 
 void activeMode(){                                                      //This will activate all of the particle detectors.

@@ -28,23 +28,22 @@ void writeSensorsSD(){
   
   if(inFlight)                                                           //the next two booleans typecast the booleans
   {                                                                      //with space for additional logic
-    flightState = "1";                                                  
+    flightState = '1';                                                  
   }
   else
   {
-    flightState = "0";
+    flightState = '0';
   }
   if(dataCollection && goodLog)
   {
-    OPCState = "1";
+    OPCState = '1';
   }
   else
   {
-    OPCState = "0";
+    OPCState = '0';
   }
   
-  data = dataLog;                                                     //PMS data log
-  data += "Time=" + logTime() + ',' + "GPS=" + printGPS() + ',' + "T Outside=" + String(t1) +',' + "T Inside=" + String(t2) +',' + "T OPC=" + String(t3) + "," + "OPC State=" + String(OPCState);
+  data = dataLog + ',' + logTime() + ',' + printGPS() + ',' + String(t1) +','+ String(t2) + ',' + String(t3) + ',' + OPCState;
   Serial.println(data);
   fLog.println(data);                                                 //PMS and Sensor data log
 

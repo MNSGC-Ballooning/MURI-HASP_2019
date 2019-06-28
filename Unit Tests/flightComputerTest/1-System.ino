@@ -19,9 +19,7 @@ void systemInit(){
 void systemUpdate(){                                         
    if (millis() - planCycle >= UPDATE_RATE) {           //This regulates the plantower loop to every 2.3 seconds.
     planCycle=millis();
-    readPMSdata(&Serial5);                              //This will update the Plantower data 
-    Serial.print("=");
-
+    readPMSdata(&Serial5);                              //This will update the Plantower data
   }
 
  //fixLEDupdater();                                      //Runs the fixLED through loops depending on if it has a GPS fix or not 

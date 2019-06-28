@@ -34,8 +34,8 @@
 */
  
 //Constant Definitions
-  #define LOG_RATE 5000             //These definitions are the rates of the individual portions of the
-  #define UPDATE_RATE 1           //systemUpdate function.
+  #define LOG_RATE 7000             //These definitions are the rates of the individual portions of the
+  #define UPDATE_RATE 1             //systemUpdate function.
   #define FIXLED_LOOP 20000         //FixLED cycles every 20 seconds
   #define FIXLED_RATE 500           //FixLED is either on or off for 500ms
   #define NOFIXLED_RATE 1500        //When there is no GPS fix, FixLED cycles as on or off for 1.5s  
@@ -166,8 +166,8 @@ void setup() {
 
 void loop() {
   if (!testEnd) systemUpdate();                                       //This function will update the full loop
-  
-/*  if ((millis()>=30000)&&(!powerTest)){
+  /*
+    if ((millis()>=30000)&&(!powerTest)){
     Serial.println("START FULL POWER TEST");
     powerTest = true;
     heater.setState(1);
@@ -189,9 +189,9 @@ void loop() {
     Serial.println("END RESET TEST");
   }
   */
-  if (millis()>=80000){
+  if (millis()>=800000){
     standbyMode(); 
-    Serial.println("1 minute test complete. Safe to remove power.");
+    Serial.println("800 seconds test complete. Safe to remove power.");
     testEnd = true;
     digitalWrite(stateLED, LOW);
   }

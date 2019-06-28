@@ -25,8 +25,8 @@ void Data_Downlink()
 
 
   // assign timestamp
-  String timestamp = logTime();                                          //HH:MM:SS timestamp (8 char string)
-
+  String timestamp = logTimeSerial();                                    //HH:MM:SS timestamp (8 char string)   CHANGE IN CODE!!!
+  Serial.println(logTimeSerial());
   float lat = float(GPS.location.lat());                                 //get data in float
   String latSign;
   if(lat < 0)

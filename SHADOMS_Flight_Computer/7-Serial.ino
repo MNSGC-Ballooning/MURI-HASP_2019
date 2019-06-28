@@ -17,14 +17,12 @@ void serialInit(){
 ///// Data Downlink /////
 void Data_Downlink()
 { 
-  // send a 2 byte checksum at the beginning and at the end
+  //Send 4 check bytes- 2 at the beginning and 2 at the end
   byte checksum_byte_1 = 'U';                                            //beginning check byte
   byte checksum_byte_2 = 'M';                                            //beginning check byte
   byte checksum_byte_3 = '@';                                            //end check byte
   byte checksum_byte_4 = '@';                                            //end check byte
 
-
-  // assign timestamp
   String timestamp = logTimeSerial();                                    //HH:MM:SS timestamp (8 char string)
 
   float lat = float(GPS.location.lat());                                 //get data in float
@@ -72,12 +70,11 @@ void Data_Downlink()
   String s5 = String(t2);                                                //6 char string
   String s6 = String(t3);                                                //6 char string   
 
-  // combine strings into 1 long one
-  String dataPacket = timestamp + s1 + s2 + s3 + s4 + s5 + s6 + latSign + lngSign + flightState + OPCState;
+  dataPacket = timestamp + s1 + s2 + s3 + s4 + s5;                       //Combine strings into 1 long one
+  dataPacket += s6 + latSign + lngSign + flightState + OPCState;
   dataPacket.getBytes(packet, DWN_BYTES);                                //convert string to bytes (should be 50 bytes)
 
-  // send the data packet string
-
+  //Send the data packet string
   Serial1.write(checksum_byte_1);                                        //start with check bytes 1 & 2
   Serial1.write(checksum_byte_2);
   for (int i = 0; i<50; i++)                                             //send the bytes in the data string
@@ -88,7 +85,7 @@ void Data_Downlink()
   Serial1.write(checksum_byte_4);
 }
 
-///// Uplink Command /////
+/////Uplink Command/////
 void Read_Uplink_Command()
 {
   uint8_t command_byte = 0;                                              //byte for the command
@@ -103,15 +100,15 @@ void Read_Uplink_Command()
 
   if(ID_byte == 0x1C)                                                    //check to see id check byte is correct, if not, command is ignored
   {
-    if(command_byte == 0xAA)                 // system reset command
+    if(command_byte == 0xAA)                                             //System reset command
     {
       systemReset(); 
     }
-    else if(command_byte == 0xBB)            // OPC activation command
+    else if(command_byte == 0xBB)                                        //OPC activation command
     {
       activeMode();
     }
-    else if(command_byte == 0xCC)            // OPC shutdown command
+    else if(command_byte == 0xCC)                                        //OPC shutdown command
     {
       standbyMode();  
     }   
@@ -119,7 +116,7 @@ void Read_Uplink_Command()
 }
 
 
-///// Command Functions /////
+/////Command Functions/////
 void systemReset(){                                                      //This will reset the system
   standbyMode();
   Serial.println("Shutdown successful.");
@@ -140,8 +137,8 @@ void standbyMode(){                                                     //This w
   dataCollection = false;
   alphaOPC.setState(0);
   planOPC.setState(0);
-  digitalWrite(LS_PD, HIGH);                                           //To turn off the LOAC, the recording state has to be
-  delay(12000);                                                        //shut down before it can be powered down. 
+  digitalWrite(LS_PD, HIGH);                                            //To turn off the LOAC, the recording state has to be
+  delay(12000);                                                         //shut down before it can be powered down. 
   digitalWrite(LS_PD, LOW);
   LOAC.setState(0);                           
 }

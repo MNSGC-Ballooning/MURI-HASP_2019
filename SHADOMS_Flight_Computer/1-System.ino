@@ -11,17 +11,19 @@ void systemInit(){
 
 //System updater
 void systemUpdate(){                                         
-   if (millis() - planCycle >= UPDATE_RATE) {           //This regulates the plantower loop to every 2.3 seconds.
+//Update Loop  
+  if (millis() - planCycle >= UPDATE_RATE) {            //This regulates the rapid update loop every millisecond
     planCycle=millis();
 
     readPMSdata(&Serial5);
   }
 
-  if (millis() - fixLED_loop_timer >= FIXLED_LOOP) {
+//Fix Loop
+ if (millis() - fixLED_loop_timer >= FIXLED_LOOP) {
     fixLEDupdater();                                    //Runs the fixLED through loops depending on if it has a GPS fix or not 
   }
 
-  if (fixLEDon) {                                     //Timer determines when to turn the fixLED off depending on boolean set in fixLEDupdater()
+  if (fixLEDon) {                                       //Timer determines when to turn the fixLED off depending on boolean set in fixLEDupdater()
     if (fixLEDshort && (millis() - fixLED_loop_timer >= FIXLED_RATE)) {
       fixLEDturnoff();
     }
@@ -30,10 +32,11 @@ void systemUpdate(){
     }
   }
   
-  
+//Logging Loop  
   if (millis() - lastCycle >= LOG_RATE) {               //This regulates the loop, so that it runs consistently
-    lastCycle=millis();                                 //at 1Hz. lastCycle gives the previous time, and
+    lastCycle=millis();                                 //every 7 seconds. lastCycle gives the previous time, and
                                                         //millis gives the current time. Both are in ms.
+    //Temperature Update
      updateTemp();                                      //Update Temp
    
     //GPS Flight Check

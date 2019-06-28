@@ -1,24 +1,24 @@
 //GPS Operation
 
-void GPSInit(){                                //Initializes GPS systems
-   pinMode(fixLED, OUTPUT);                    //Initializes fix LED
-   Serial2.begin(4800);                        //Initializes serial port for GPS communication
-   while (!Serial2) ;                          //Waits for Serial 2 to connect
+void GPSInit(){                                                                   //Initializes GPS systems
+   pinMode(fixLED, OUTPUT);                                                       //Initializes fix LED
+   Serial2.begin(4800);                                                           //Initializes serial port for GPS communication
+   while (!Serial2) ;                                                             //Waits for Serial 2 to connect
 }
 
-String getlat() {                             //Function that returns latitude as a string.
+String getlat() {                                                                 //Function that returns latitude as a string.
   String latitude = "";
   latitude = String(GPS.location.lat(), 6);
   return latitude;
 }
 
-String getlong() {                            //Function that returns longitude as a string.
+String getlong() {                                                                //Function that returns longitude as a string.
   String longitude = "";
   longitude = String(GPS.location.lng(), 6);
   return longitude;
 }
 
-String getalt() {                             //Function that returns altitude as a string.
+String getalt() {                                                                 //Function that returns altitude as a string.
   String alt = "";
   alt = String(GPS.altitude.feet());
   return alt;
@@ -71,15 +71,15 @@ void fixLEDturnoff() {
   fixLEDon = false; 
 }
 
-void updateGPS() {                                                              //Function that updates GPS every second and accounts for
-  static bool firstFix = false;                                                 //clock rollover at midnight (23:59:59 to 00:00:00)
+void updateGPS() {                                                                //Function that updates GPS every second and accounts for
+  static bool firstFix = false;                                                   //clock rollover at midnight (23:59:59 to 00:00:00)
   while (Serial2.available() > 0) {
     GPS.encode(Serial2.read());
     }
   if (GPS.altitude.isUpdated() || GPS.location.isUpdated()) {
     if (!firstFix && GPS.Fix && (GPS.altitude.feet() != 0)) {     
       GPSstartTime = GPS.time.hour() * 3600 + GPS.time.minute() * 60 + GPS.time.second();
-      firstFix = true;                                                          //Time in second of GPS clock will now be compared to GPS Start Time
+      firstFix = true;                                                            //Time in second of GPS clock will now be compared to GPS Start Time
       }
     }
   if (getGPStime() > lastGPS) {    //if it's been more than a second
@@ -91,9 +91,9 @@ unsigned int getGPStime() {
   return (GPS.time.hour() * 3600 + GPS.time.minute() * 60 + GPS.time.second());
 }
 
-int getLastGPS() {                                                              //returns time in seconds between last successful fix and initial fix.
-  static bool newDay  = false;                                                  //Used to match with altitude data variable in case we're flying late at
-  if (!newDay && lastGPS < GPSstartTime) {                                      //night (clock rollover).
+int getLastGPS() {                                                                //returns time in seconds between last successful fix and initial fix.
+  static bool newDay  = false;                                                    //Used to match with altitude data variable in case we're flying late at
+  if (!newDay && lastGPS < GPSstartTime) {                                        //night (clock rollover).
     days++;
     newDay = true;
   }

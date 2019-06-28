@@ -163,7 +163,7 @@ void setup() {
 }
 
 void loop() {
-  if (!testEnd) systemUpdate();                                       //This function will update the full loop
+  if (!testEnd) systemUpdate();                         //This function will update the full loop
   /*
     if ((millis()>=30000)&&(!powerTest)){
     Serial.println("START FULL POWER TEST");

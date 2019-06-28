@@ -1,23 +1,24 @@
 //Data Logging
-void dataLogInit(){                                                    //Initializes the data log
-  pinMode(sdLED, OUTPUT);                                              //Initializes SD LED
-  Serial.print("Initializing SD card...");                             //Tells us if the SD card faled to open:
+void dataLogInit(){                                                      //Initializes the data log
+  pinMode(sdLED, OUTPUT);                                                //Initializes SD LED
+  Serial.print("Initializing SD card...");                               //Tells us if the SD card faled to open:
   if (!SD.begin(chipSelect)) {
     Serial.println("Initialization Failed!");
   }
-  Serial.println("Initialization done.");                              //This "for" loop checks to see if there are any previous files on
-  for (int i = 0; i < 100; i++) {                                      //the SD card already with the generated name
+  Serial.println("Initialization done.");                                //This "for" loop checks to see if there are any previous files on
+  for (int i = 0; i < 100; i++) {                                        //the SD card already with the generated name
     
-    Fname = String("fLog" + String(i/10) + String(i%10) + ".csv");     //has new name for file to make sure file name is not already used
-    if (!SD.exists(Fname.c_str())){                                    //does not run if same SD name exists
+    Fname = String("fLog" + String(i/10) + String(i%10) + ".csv");       //has new name for file to make sure file name is not already used
+    if (!SD.exists(Fname.c_str())){                                      //does not run if same SD name exists
       break; 
     }
   }
 
   Serial.println("System Log created: " + Fname);                 
   fLog = SD.open(Fname.c_str(), FILE_WRITE);
-  header = "ntot,millis,3,5,10,25,50,100,time,GPS lat,GPS long,GPS alt,T Outside,T Inside,T OPC,OPC State";       
-  fLog.println(header);                                                //Set up temp log format and header
+  header = "ntot,millis,3,5,10,25,50,100,time,GPS lat,";
+  header += "GPS long,GPS alt,T Outside,T Inside,T OPC,OPC State";       
+  fLog.println(header);                                                  //Set up temp log format and header
   fLog.close();
   Serial.println("System Log header added");
 }
@@ -43,9 +44,10 @@ void writeSensorsSD(){
     OPCState = '0';
   }
   
-  data = dataLog + ',' + logTime() + ',' + printGPS() + ',' + String(t1) +','+ String(t2) + ',' + String(t3) + ',' + OPCState;
+  data = dataLog+','+logTime()+','+printGPS()+',';
+  data += String(t1)+','+String(t2)+','+String(t3)+','+OPCState;
   Serial.println(data);
-  fLog.println(data);                                                 //PMS and Sensor data log
+  fLog.println(data);                                                    //PMS and Sensor data log
 
   Serial.println("Data line was added");
   fLog.close();

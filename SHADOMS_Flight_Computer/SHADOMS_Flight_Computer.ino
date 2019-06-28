@@ -3,9 +3,9 @@
 //Payload 2019-01
 
 /*This code operates the Teensy 3.5/3.6 Microcontroller on the 2019 HASP flight.
-The goal of this flight is to collect data from the Plantower PMS-5003, the Alphasense OPC N3,
+The goal of this flight is to collect data from the Plantower PMS-5003, the Alphasense N3,
 and the LOAC-R. Then, this data will be compared to examine how each particle detector operates
-in the conditions of the upper atmosphere. This examination will be utilized to determine counter
+in the conditions of the upper atmosphere. This examination will be utilized to determine OPC
 effectiveness and calibration needs for future MURI research.
 
 The code operates the particle counter power, writes the data of the Plantower to disk,
@@ -40,54 +40,54 @@ implemented the serial interface with the HASP gondala and established meanings 
 
 
 
-//---SYSTEM DEFINITIONS---\\
+/////SYSTEM DEFINITIONS\\\\\
 
 
 
 //Libraries
-  #include <SD.h>                   //Writing to SD card
-  #include <OneWire.h>              //Dallas data control
-  #include <DallasTemperature.h>    //Dallas temperature control
-  #include <TinyGPS++.h>            //GPS control
-  #include <LatchRelay.h>           //Relay control
+  #include <SD.h>                                       //Writing to SD card
+  #include <OneWire.h>                                  //Dallas data control
+  #include <DallasTemperature.h>                        //Dallas temperature control
+  #include <TinyGPS++.h>                                //GPS control
+  #include <LatchRelay.h>                               //Relay control
 
 //Pin Definitions
-  #define sdLED 23                  //LED pin which blinks to indicates data logging to the SD*****
-  #define fixLED 22                 //LED pin which blinks to indicate GPS fix*****
-  #define stateLED 21               //LED pin which blinks to indicate an active data recording status******
-  #define wireBus1 29               //Temperature sensor 1 pin - Internal Ambient
-  #define wireBus2 30               //Temperature sensor 2 pin - External Ambient
-  #define wireBus3 31               //Temperature sensor 3 pin - OPCs
-  #define heater_ON 24              //Heater relay pins
-  #define heater_OFF 25             //^^^
-  #define alphaOPC_ON 5             //Alphasense OPC relay pins
-  #define alphaOPC_OFF 6            //^^^
-  #define planOPC_ON 26             //Plantower OPC relay pins
-  #define planOPC_OFF 27            //^^^
-  #define LOAC_ON 7                 //LOAC OPC power relay pins
-  #define LOAC_OFF 8                //^^^
-  #define LS_PD 35                  //LOAC state shutdown transistor
+  #define sdLED 23                                      //LED pin which blinks to indicates data logging to the SD*****
+  #define fixLED 22                                     //LED pin which blinks to indicate GPS fix*****
+  #define stateLED 21                                   //LED pin which blinks to indicate an active data recording status******
+  #define wireBus1 29                                   //Temperature sensor 1 pin - Internal Ambient
+  #define wireBus2 30                                   //Temperature sensor 2 pin - External Ambient
+  #define wireBus3 31                                   //Temperature sensor 3 pin - OPCs
+  #define heater_ON 24                                  //Heater relay pins
+  #define heater_OFF 25                                 //^^^
+  #define alphaOPC_ON 5                                 //Alphasense OPC relay pins
+  #define alphaOPC_OFF 6                                //^^^
+  #define planOPC_ON 26                                 //Plantower OPC relay pins
+  #define planOPC_OFF 27                                //^^^
+  #define LOAC_ON 7                                     //LOAC OPC power relay pins
+  #define LOAC_OFF 8                                    //^^^
+  #define LS_PD 35                                      //LOAC state shutdown transistor
   
 //Serial Pins
 /*  
-  #define HASP_RX 0                 //HASP Recieve Pin                SERIAL 1
-  #define HASP_TX 1                 //HASP Transmission Pin
-  #define GPS_RX 9                  //GPS Recieve Pin                 SERIAL 2
-  #define GPS_TX 10                 //GPS Transmission Pin
-  #define PMS_RX 34                 //PMS Recieve Pin                 SERIAL 5
-  #define PMS_TX 33                 //PMS Transmission Pin (Unused) 
+  #define HASP_RX 0                                     //HASP Recieve Pin                SERIAL 1
+  #define HASP_TX 1                                     //HASP Transmission Pin
+  #define GPS_RX 9                                      //GPS Recieve Pin                 SERIAL 2
+  #define GPS_TX 10                                     //GPS Transmission Pin
+  #define PMS_RX 34                                     //PMS Recieve Pin                 SERIAL 5
+  #define PMS_TX 33                                     //PMS Transmission Pin (Unused) 
 */
  
 //Constant Definitions
-  #define LOG_RATE 7000             //These definitions are the rates of the individual portions of the
-  #define UPDATE_RATE 1             //systemUpdate function.
-  #define FIXLED_LOOP 15000         //FixLED cycles every 15 seconds
-  #define FIXLED_RATE 500           //FixLED is held on for 0.5 seconds
-  #define NOFIXLED_RATE 3000        //When there is no GPS fix, FixLED cycles is held on for 3 seconds
-  #define DWN_BYTES 51              //Number of downlink bytes + 1 (the +1 makes it work)
-  #define COLD 280.0                //Minimum acceptable temperature of the OPC
-  #define HOT 290.0                 //Maximum acceptable temperature of the OPC
-  #define KELVIN 273.15             //Number to convert Celcius to Kelvin
+  #define LOG_RATE 7000                                 //These definitions are the rates of the individual portions of the
+  #define UPDATE_RATE 1                                 //systemUpdate function.
+  #define FIXLED_LOOP 15000                             //FixLED cycles every 15 seconds
+  #define FIXLED_RATE 500                               //FixLED is held on for 0.5 seconds
+  #define NOFIXLED_RATE 3000                            //When there is no GPS fix, FixLED cycles is held on for 3 seconds
+  #define DWN_BYTES 51                                  //Number of downlink bytes + 1 (the +1 makes it work)
+  #define COLD 280.0                                    //Minimum acceptable temperature of the OPC
+  #define HOT 290.0                                     //Maximum acceptable temperature of the OPC
+  #define KELVIN 273.15                                 //Number to convert Celcius to Kelvin
   
 //Relay Definitions
   LatchRelay heater(heater_ON, heater_OFF);             //Define heater relay object
@@ -113,6 +113,7 @@ implemented the serial interface with the HASP gondala and established meanings 
 //Serial Definitions (HASP Communication)
   String flightState = "";
   String OPCState = "";
+  String dataPacket = "";
   byte packet[DWN_BYTES] = {0};                         //50 char/bytes in the string (54 with checksum)
   
 //Data Log Definitions
@@ -124,7 +125,7 @@ implemented the serial interface with the HASP gondala and established meanings 
   bool sdLogging = false;                               //This variable is used to indicate when logging occurs
   
 //Plantower Definitions
-  String dataLog;                                       //Used for data logging
+  String dataLog = "";                                  //Used for data logging
   int nhits=1;                                          //Used to count successful data transmissions    
   int ntot=1;                                           //Used to count total attempted transmissions
   bool goodLog = false;                                 //Used to check if data is actually being logged
@@ -136,30 +137,27 @@ implemented the serial interface with the HASP gondala and established meanings 
     uint16_t framelen;
     uint16_t pm10_standard, pm25_standard, pm100_standard;
     uint16_t pm10_env, pm25_env, pm100_env;
-    uint16_t particles_03um, particles_05um, particles_10um, particles_25um, particles_50um, particles_100um;
+    uint16_t particles_03um, particles_05um, particles_10um;
+    uint16_t particles_25um, particles_50um, particles_100um;
     uint16_t unused;
     uint16_t checksum;
   } planData;                                           //This struct will organize the plantower bins into usable data
   
 //GPS Definitions
   TinyGPSPlus GPS;                                      //GPS object definition
-
-//FlightChecker() variables
+ //FlightChecker() variables
   bool inFlight = false;                                //Bool that determines if the payload is in flight. Used with FlightCheck function
   unsigned long flightStart = 0;                        //Time passed since inFlight became true
   byte FlightCheckCounter = 0;                          //If this reaches 5, then inFLight should be set to true
-
-//Variables for UpdateGPS()
+ //Variables for UpdateGPS()
   unsigned long lastGPS = 0;                            //Time in seconds since the last GPS update
   unsigned long GPSstartTime = 0;                       //When the GPS starts, time in seconds of last GPS update
   uint8_t days = 0;                                     //If we're flying overnight this serves as a coutner for time keeping
-
-//timers and other variables for fixLED
+ //timers and other variables for fixLED
   unsigned long fixLED_loop_timer = 0;                  //timer to ensure that the fixLED will do "something" every 10 second loop
   bool fixLEDon = false;                                //indicates if the fixLED is on or not
   bool fixLEDshort = false;                             //indicates what LED flash sequence to follow
- 
-//strings that populate GPS data strings
+ //strings that populate GPS data strings
   String GPSdata = "";                                  //Initializes data string that prints GPS data to the SD card
   String flightstring = "False";                        //Indicates if inFlight is active or not
   String faillatitude = "0.00";                         //Printed latitude if GPS does not have a fix or any data
@@ -176,7 +174,7 @@ implemented the serial interface with the HASP gondala and established meanings 
   
 
 
-//---ACTIVE CODE---\\                              
+/////ACTIVE CODE\\\\\                              
 
 
 
@@ -185,5 +183,5 @@ void setup() {
 }
 
 void loop() {
-  systemUpdate();                                       //This function will update the full loop
+  systemUpdate();                                       //This function will update the full system
 }

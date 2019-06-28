@@ -15,29 +15,25 @@
 
 ////////// BEGIN CODE //////////
 
-void OPCInit(){                           //This function initializes the OPC systems
-  alphaOPC.init(0);                       //Sets all relays to an open state
+void OPCInit(){                                                                    //This function initializes the OPC systems
+  alphaOPC.init(0);                                                                //Sets all relays to an open state
   planOPC.init(0);
   LOAC.init(0);        
-  pinMode(LS_PD, OUTPUT);                 //This pin will allow for a transistor gate to be opened, triggering LOAC shutdown.
-  pinMode(stateLED, OUTPUT);              //Initializes state LED signal
-  Serial5.begin(9600);                    //Initializes serial port for Plantower
-  while (!Serial5) ;                      //Waits for Serial 5 to connect
+  pinMode(LS_PD, OUTPUT);                                                          //This pin will allow for a transistor gate to be opened, triggering LOAC shutdown.
+  pinMode(stateLED, OUTPUT);                                                       //Initializes state LED signal
+  Serial5.begin(9600);                                                             //Initializes serial port for Plantower
+  while (!Serial5) ;                                                               //Waits for Serial 5 to connect
 }
 
-/// begin loop
 void pmsUpdate() {
-// log sample number, in flight time
-    dataLog = "";
+    dataLog = "";                                                                  //Log sample number, in flight time
     dataLog += ntot;
     dataLog += ",";
-    dataLog += flightTime();                        //in flight time from Flight_Timer 
+    dataLog += flightTime();                                                       //In flight time from Flight_Timer 
     dataLog += ",";
     
   if (readPMSdata(&Serial5)) {
-    
-// if data is receieved, log it
-    dataLog += planData.particles_03um;
+    dataLog += planData.particles_03um;                                            //If data is in the buffer, log it
     dataLog += ",";
     dataLog += planData.particles_05um;
     dataLog += ",";
@@ -49,17 +45,15 @@ void pmsUpdate() {
     dataLog += ",";
     dataLog += planData.particles_100um;
     
-// samples of data collected
-    nhits=nhits+1;
+    nhits=nhits+1;                                                                 //Log sample number, in flight time
     
-// total samples
-    ntot = ntot+1;
+    ntot = ntot+1;                                                                 //Total samples
 
-    goodLog = true;                                   //If data is successfully collected, note the state;
+    goodLog = true;                                                                //If data is successfully collected, note the state;
     badLog = 0;
 
   } else {
-    badLog++;                                         //If there are five consecutive bad logs, not the state;
+    badLog++;                                                                      //If there are five consecutive bad logs, not the state;
     if (badLog = 5){
       goodLog = false;
       dataLog += '%' + ',' + 'Q' + ',' + '=' + ',' + '!' + ',' + '@' + ',' + '$';
@@ -67,15 +61,15 @@ void pmsUpdate() {
   }
 /*
 // write data
-    fLog = SD.open(filename.c_str(), FILE_WRITE);     //Open file
+    fLog = SD.open(filename.c_str(), FILE_WRITE);                                  //Open file
 
  if (fLog) {
-    //Serial.println("tempLog.csv opened...");        //File open successfully 
+    //Serial.println("tempLog.csv opened...");                                     //File open successfully 
     fLog.println(dataLog);
     fLog.close();
   }
   else {
-    Serial.println("error opening file");             //File open failed
+    Serial.println("error opening file");                                          //File open failed
     return;
   }
   
@@ -101,12 +95,11 @@ boolean readPMSdata(Stream *s) {
     return false;
   }
     
-  uint8_t buffer[32];                                 //This loads the data into a buffer;
+  uint8_t buffer[32];                                                              //This loads the data into a buffer;
   uint16_t sum = 0;
   s->readBytes(buffer, 32);
  
-  // get checksum ready
-  for (uint8_t i=0; i<30; i++) {
+  for (uint8_t i=0; i<30; i++) {                                                   //Get checksum ready
     sum += buffer[i];
   }
  
@@ -117,27 +110,24 @@ boolean readPMSdata(Stream *s) {
   Serial.println();
 */
   
-  // The data comes in endian'd, this solves it so it works on all platforms
-  uint16_t buffer_u16[15];
+  uint16_t buffer_u16[15];                                                         //The data comes in endian'd, this solves it so it works on all platforms
   for (uint8_t i=0; i<15; i++) {
     buffer_u16[i] = buffer[2 + i*2 + 1];
     buffer_u16[i] += (buffer[2 + i*2] << 8);
   }
  
-  // put it into a nice struct :)
-  memcpy((void *)&planData, (void *)buffer_u16, 30);
+  memcpy((void *)&planData, (void *)buffer_u16, 30);                               //Put it into a nice struct :)
  
   if (sum != planData.checksum) {
     Serial.println("Checksum failure");
     return false;
   }
-  // success!
-  return true;
+  return true;                                                                     //Success!
 }
 
 //Unused Initializations
 /*
-void PlanInit(){                          //Unused independent Plantower initialization. This is currently unused, as the log files have been collapsed into a single file.
+void PlanInit(){                                                                   //Unused independent Plantower initialization. The log files have been collapsed into a single file.
   Serial.println("Hello, there.");                                            
   Serial.println();
   Serial.println("Setting up Plantower OPC...");

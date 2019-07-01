@@ -1,5 +1,5 @@
 //SHADOMS Payload Flight Computer
-//Version 1.3
+//Version 0.3
 //Payload 2019-01
 
 /*This code operates the Teensy 3.5/3.6 Microcontroller on the 2019 HASP flight.
@@ -20,22 +20,22 @@ record their own data.*/
 //Written in June 2019
 
 //Version History
-//Version 1.3
+//Version 0.3
 /*Passed all individual unit tests and full system test. Updated update and log rates, updated GPS system. 
 Returned system to hardware serial. Updated LED to show satellite count, and logging time. Added more debugging 
 and code cleanup. Passed all initialization into functions separated by system. Added serial initialization pauses.*/
 
-//Version 1.2
+//Version 0.2
 /*Passed initial unit tests for thermal control, GPS. This version also updates
 the plantower logging system (returning to software serial), updates the LED pins, and fixes various bugs
 and unclean code. The system log and the plantower log have also been collapsed.*/
 
-//Version 1.1
+//Version 0.1
 /*Updated the serial port system to impliment hardware serial connections in place of software serial.
 This will allow for the system to interface with multiple serial systems simaltaneously. This version also
 implemented the serial interface with the HASP gondala and established meanings for the LEDs.*/
 
-//Version 1.0
+//Version 0.0
 /*This is the initial code after the first stage of debugging.*/
 
 

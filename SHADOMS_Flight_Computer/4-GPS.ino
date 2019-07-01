@@ -3,7 +3,7 @@
 void GPSInit(){                                                                   //Initializes GPS systems
    pinMode(fixLED, OUTPUT);                                                       //Initializes fix LED
    Serial2.begin(4800);                                                           //Initializes serial port for GPS communication
-   while (!Serial2) ;                                                             //Waits for Serial 2 to connect
+//   while (!Serial2) ;                                                           //Waits for Serial 2 to connect
 }
 
 String getlat() {                                                                 //Function that returns latitude as a string.
@@ -24,7 +24,6 @@ String getalt() {                                                               
   return alt;
 }
 
-
 void flightCheck() {                                                              //Function that repeatedly checks if Payload is in flight.
   if (GPS.Fix && (GPS.altitude.feet() > 5000)  && (GPS.location.lng() != 0)) {    //HASP vehicle takeoff altitude is at roughly 4000 feet.
     FlightCheckCounter++;                                                         //If three conditions are met, FlightCheckComputer gets a hit.
@@ -42,9 +41,7 @@ void flightCheck() {                                                            
 String printGPS() {                                                               //Function that takes GPS data and prints it to the SD card
   if (GPS.Fix && GPS.altitude.feet() != 0) {                                      //If GPS has a fix with good data (may need more parameters to define "good data", GPS data is printed
     GPSdata = getlat() + ", " + getlong() + ", " + getalt();
-
-  }
-  else {                                                                          //If GPS has bad data or doesn't have a fix, zeros are printed for all three variables
+  } else {                                                                          //If GPS has bad data or doesn't have a fix, zeros are printed for all three variables
     GPSdata = faillatitude + ", " + faillongitude + ", " + failalt;   
   }
 

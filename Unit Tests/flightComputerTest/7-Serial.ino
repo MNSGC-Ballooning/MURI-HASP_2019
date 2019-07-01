@@ -74,7 +74,8 @@ void Data_Downlink()
   String s6 = String(t3);                                                //6 char string   
 
   // combine strings into 1 long one
-  String dataPacket = timestamp + s1 + s2 + s3 + s4 + s5 + s6 + latSign + lngSign + flightState + OPCState;
+  dataPacket = timestamp + s1 + s2 + s3 + s4 + s5;
+  dataPacket += s6 + latSign + lngSign + flightState + OPCState;
   dataPacket.getBytes(packet, DWN_BYTES);                                //convert string to bytes (should be 50 bytes)
 
   // send the data packet string

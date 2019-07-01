@@ -3,7 +3,7 @@
 void GPSInit(){                                //Initializes GPS systems
    pinMode(fixLED, OUTPUT);                    //Initializes fix LED
    Serial2.begin(4800);                        //Initializes serial port for GPS communication
-   while (!Serial2) ;                          //Waits for Serial 2 to connect
+//   while (!Serial2) ;                          //Waits for Serial 2 to connect
 }
 
 String getlat() {                             //Function that returns latitude as a string.

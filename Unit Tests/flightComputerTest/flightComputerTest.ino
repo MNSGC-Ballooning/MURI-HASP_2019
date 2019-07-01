@@ -68,6 +68,7 @@
 //Serial Definitions (HASP Communication)
   String flightState = "";
   String OPCState = "";
+  String dataPacket = "";
   byte packet[DWN_BYTES] = {0};                         //50 char/bytes in the string (54 with checksum)
   
 //Data Log Definitions
@@ -79,7 +80,7 @@
   bool sdLogging = false;                               //This variable is used to indicate when logging occurs
   
 //Plantower Definitions
-  String dataLog;                                       //Used for data logging
+  String dataLog = "";                                  //Used for data logging
   int nhits=1;                                          //Used to count successful data transmissions    
   int ntot=1;                                           //Used to count total attempted transmissions
   bool goodLog = false;                                 //Used to check if data is actually being logged
@@ -91,7 +92,8 @@
     uint16_t framelen;
     uint16_t pm10_standard, pm25_standard, pm100_standard;
     uint16_t pm10_env, pm25_env, pm100_env;
-    uint16_t particles_03um, particles_05um, particles_10um, particles_25um, particles_50um, particles_100um;
+    uint16_t particles_03um, particles_05um, particles_10um;
+    uint16_t particles_25um, particles_50um, particles_100um;
     uint16_t unused;
     uint16_t checksum;
   } planData;                                           //This struct will organize the plantower bins into usable data

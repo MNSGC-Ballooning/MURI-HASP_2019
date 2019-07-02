@@ -70,14 +70,21 @@ void Data_Downlink()
   String s5 = String(t2);                                                //6 char string
   String s6 = String(t3);                                                //6 char string   
 
+  String planSample = planData.particles_05um;
+  while(planSample.length()<6)
+  {
+    planSample = "#" + planSample;
+  }
+
   dataPacket = timestamp + s1 + s2 + s3 + s4 + s5;                       //Combine strings into 1 long one
-  dataPacket += s6 + latSign + lngSign + flightState + OPCState;
+  dataPacket += s6 + planSample;                                         //add in sample of 2nd bin on plantower
+  dataPacket += latSign + lngSign + flightState + OPCState;
   dataPacket.getBytes(packet, DWN_BYTES);                                //convert string to bytes (should be 50 bytes)
 
   //Send the data packet string
   Serial1.write(checksum_byte_1);                                        //start with check bytes 1 & 2
   Serial1.write(checksum_byte_2);
-  for (int i = 0; i<50; i++)                                             //send the bytes in the data string
+  for (int i = 0; i<56; i++)    //add 6 more or however many for planSample                                         //send the bytes in the data string
   {
     Serial1.write(packet[i]);
   }

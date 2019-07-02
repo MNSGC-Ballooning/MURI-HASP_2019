@@ -119,7 +119,7 @@ boolean readPMSdata(Stream *s) {
   memcpy((void *)&planData, (void *)buffer_u16, 30);                               //Put it into a nice struct :)
  
   if (sum != planData.checksum) {
-    Serial.println("Checksum failure");
+//    Serial.println("Checksum failure");
     return false;
   }
   return true;                                                                     //Success!

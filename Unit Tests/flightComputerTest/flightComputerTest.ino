@@ -161,13 +161,12 @@ void setup() {
     digitalWrite(fixLED, LOW);
     digitalWrite(sdLED, LOW);
     digitalWrite(stateLED, LOW); 
-  activeMode();
 }
 
 void loop() {
   if (!testEnd) systemUpdate();                         //This function will update the full loop
-  /*
-    if ((millis()>=30000)&&(!powerTest)){
+  
+    if ((millis()>=45000)&&(!powerTest)){
     Serial.println("START FULL POWER TEST");
     powerTest = true;
     heater.setState(1);
@@ -181,7 +180,7 @@ void loop() {
     digitalWrite(stateLED, LOW); 
     Serial.println("END FULL POWER TEST");  
   }
-
+/*
   if ((millis()>=50000)&&(!resetTest)){
     Serial.println("START RESET TEST");
     resetTest = true;
@@ -189,9 +188,9 @@ void loop() {
     Serial.println("END RESET TEST");
   }
   */
-  if (millis()>=800000){
+  if (millis()>=1800000){
     standbyMode(); 
-    Serial.println("800 seconds test complete. Safe to remove power.");
+    Serial.println("30 minute test complete. Safe to remove power.");
     testEnd = true;
     digitalWrite(stateLED, LOW);
   }

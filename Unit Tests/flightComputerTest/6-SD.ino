@@ -34,6 +34,7 @@ void writeSensorsSD(){
   else
   {
     flightState = '0';
+    dataLog = ",,,,,";
   }
   if(dataCollection && goodLog)
   {

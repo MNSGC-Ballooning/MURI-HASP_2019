@@ -109,6 +109,7 @@ implemented the serial interface with the HASP gondala and established meanings 
   float t1;                                             //Temperature 1
   float t2;                                             //Temperature 2
   float t3;                                             //Temperature 3
+  String HS = "0"; //heat pad status (1 = on)
   
 //Serial Definitions (HASP Communication)
   String flightState = "";

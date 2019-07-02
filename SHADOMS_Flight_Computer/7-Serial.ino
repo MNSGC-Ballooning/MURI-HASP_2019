@@ -76,9 +76,13 @@ void Data_Downlink()
     planSample = "#" + planSample;
   }
 
-  dataPacket = timestamp + s1 + s2 + s3 + s4 + s5;                       //Combine strings into 1 long one
-  dataPacket += s6 + planSample;                                         //add in sample of 2nd bin on plantower
-  dataPacket += latSign + lngSign + flightState + OPCState;
+  //dataPacket = timestamp + s1 + s2 + s3 + s4 + s5;                       //Combine strings into 1 long one
+  //dataPacket += s6 + planSample;                                         //add in sample of 2nd bin on plantower
+  //dataPacket += latSign + lngSign + flightState + OPCState;
+
+  dataPacket = timestamp + " t1:" + s4 + "t2:" + s5 + "t3:" + s6 + "heater: " + HS + " OPCstate:" + OPCState; 
+               ///////////////////////////////////////////////////////////////////////////////////////////56
+  
   dataPacket.getBytes(packet, DWN_BYTES);                                //convert string to bytes (should be 50 bytes)
 
   //Send the data packet string

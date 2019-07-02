@@ -143,7 +143,7 @@
 
 void setup() {                                       
   Serial.begin(9600);
-  while (!Serial) ;
+ // while (!Serial) ;
   Serial.println("USB Serial initialized.");
   systemInit();                                         //This will initalize the system
     digitalWrite(fixLED, HIGH);
@@ -161,11 +161,12 @@ void setup() {
     digitalWrite(fixLED, LOW);
     digitalWrite(sdLED, LOW);
     digitalWrite(stateLED, LOW); 
+    activeMode();
 }
 
 void loop() {
   if (!testEnd) systemUpdate();                         //This function will update the full loop
-  
+  /*
     if ((millis()>=45000)&&(!powerTest)){
     Serial.println("START FULL POWER TEST");
     powerTest = true;

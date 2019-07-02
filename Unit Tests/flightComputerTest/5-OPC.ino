@@ -4,8 +4,8 @@
 //  -- Prepares data for logging  
 //  -- Bin numbers correspond to:
 //     - bin 1 --> Particles > 0.3um / 0.1L air
-//     - bin 2 --> Particles > 0.5um / 0.1L air
-//     - bin 3 --> Particles > 1.0um / 0.1L air
+//     - bin 2 --> Particles > 0.5um / 0.1L air                   //SEND THIS
+//     - bin 3 --> Particles > 1.0um / 0.1L air                   //OR THIS
 //     - bin 4 --> Particles > 2.5um / 0.1L air
 //     - bin 5 --> Particles > 5.0um / 0.1L air
 //     - bin 6 --> Particles > 10.0um / 0.1L air

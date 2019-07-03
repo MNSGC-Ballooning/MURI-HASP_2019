@@ -39,7 +39,7 @@
   #define FIXLED_LOOP 15000         //FixLED cycles every 15 seconds
   #define FIXLED_RATE 500           //FixLED is held on for 0.5 seconds
   #define NOFIXLED_RATE 3000        //When there is no GPS fix, FixLED cycles is held on for 3 seconds
-  #define DWN_BYTES 51              //Number of downlink bytes + 1 (the +1 makes it work)
+  #define DWN_BYTES 54              //Number of downlink bytes + 1 (the +1 makes it work)
   #define COLD 280.0                //Minimum acceptable temperature of the OPC
   #define HOT 290.0                 //Maximum acceptable temperature of the OPC
   #define KELVIN 273.15             //Number to convert Celcius to Kelvin
@@ -61,9 +61,10 @@
   DallasTemperature temperature1(&oneWire1);            //Temperature sensor 1
   DallasTemperature temperature2(&oneWire2);            //Temperature sensor 2
   DallasTemperature temperature3(&oneWire3);            //Temperature sensor 3
-  float t1;                                             //Temperature 1
-  float t2;                                             //Temperature 2
-  float t3;                                             //Temperature 3
+  float t1;                                             //Temperature 1 (outside)
+  float t2;                                             //Temperature 2 (OPC)
+  float t3;                                             //Temperature 3 (PCB)
+  //String HS = "0";                                    //Heater Pad status (1 = on)
   
 //Serial Definitions (HASP Communication)
   String flightState = "";
@@ -172,7 +173,7 @@ void loop() {
     powerTest = true;
     heater.setState(1);
     digitalWrite(fixLED, HIGH);
-    digitalWrite(sdLED, HIGH);
+    digitalWrite(sdLED, HIGH); m
     digitalWrite(stateLED, HIGH); 
     delay(20000);
     heater.setState(0);

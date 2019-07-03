@@ -84,7 +84,7 @@ implemented the serial interface with the HASP gondala and established meanings 
   #define FIXLED_LOOP 15000                             //FixLED cycles every 15 seconds
   #define FIXLED_RATE 500                               //FixLED is held on for 0.5 seconds
   #define NOFIXLED_RATE 3000                            //When there is no GPS fix, FixLED cycles is held on for 3 seconds
-  #define DWN_BYTES 57                                  //Number of downlink bytes + 1 (the +1 makes it work)
+  #define DWN_BYTES 54                                  //Number of downlink bytes + 1 (the +1 makes it work)
   #define COLD 280.0                                    //Minimum acceptable temperature of the OPC
   #define HOT 290.0                                     //Maximum acceptable temperature of the OPC
   #define KELVIN 273.15                                 //Number to convert Celcius to Kelvin
@@ -109,7 +109,7 @@ implemented the serial interface with the HASP gondala and established meanings 
   float t1;                                             //Temperature 1
   float t2;                                             //Temperature 2
   float t3;                                             //Temperature 3
-  String HS = "0"; //heat pad status (1 = on)
+  //String HS = "0";                                    //heat pad status (1 = on)
   
 //Serial Definitions (HASP Communication)
   String flightState = "";

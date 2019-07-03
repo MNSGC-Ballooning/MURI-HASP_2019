@@ -15,10 +15,10 @@ void activeHeat(){
 
   if (coldOPC && heater.getState()==0) {                //If the OPCs are cold, the heating mesh will activate until
     heater.setState(1);                                 //the OPCs are no longer cold.
-    HS = "1";
+    //HS = "1";
   } else if (!coldOPC && heater.getState()==1) {        //ERROR HERE IF STATES ARE NOT 1 AND 0
     heater.setState(0);
-    HS = "0";
+    //HS = "0";
   }
 }
 

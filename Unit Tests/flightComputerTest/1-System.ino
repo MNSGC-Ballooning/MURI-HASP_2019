@@ -38,7 +38,7 @@ void systemUpdate(){
   
   if (millis() - lastCycle >= LOG_RATE) {               //This regulates the loop, so that it runs consistently
     lastCycle=millis();                                 //at 1Hz. lastCycle gives the previous time, and
-    Serial.println("LOG CYCLE");                                                   //millis gives the current time. Both are in ms.
+    //Serial.println("LOG CYCLE");                                                   //millis gives the current time. Both are in ms.
 
     updateGPS();                                        //This will update the GPS data
     updateTemp();                                       //Update Temp

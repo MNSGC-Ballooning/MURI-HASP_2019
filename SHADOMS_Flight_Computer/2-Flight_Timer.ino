@@ -56,7 +56,7 @@ String logTimeSerial() {                                                //This f
   
   if (!inFlight) {                                                      //If the flight has not started, the logging function will track the powered time. That way, if the
     timer = poweredTime();                                              //flight time fails to start, the time is still logged in a usable way. Else, the timer will be based
-    logString = "Flight has not yet begun. Time since power on: ";      //on the flight time.
+                                                                        //on the flight time. In the Serial log time function, times will not be explicitly indicated.
   } else {
     timer = flightTime();
   }

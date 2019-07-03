@@ -99,7 +99,7 @@ void Data_Downlink()
   Serial1.write(checksum_byte_3);                                         //checksums 3 & 4
   Serial1.write(checksum_byte_4);
 
-Serial.println("Data downlink sent!");
+//Serial.println("Data downlink sent!");
 }
 
 ///// Uplink Command /////
@@ -151,6 +151,7 @@ void activeMode(){                                                      //This w
   planOPC.setState(1);
   dataCollection = true;                                                //This will enable storage of data from the particle counters
   if (!inFlight) inFlight = true;                                       //If the "in flight" boolean has not been triggered, this will begin the flight.
+  testEnd = false;
   Serial.println("System Active.");
 }
 

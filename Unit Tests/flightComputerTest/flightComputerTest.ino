@@ -135,6 +135,7 @@
   bool powerTest = false;
   bool resetTest = false;
   bool testEnd = false;
+  char heatState = '0';
 
 
 
@@ -190,9 +191,9 @@ void loop() {
     Serial.println("END RESET TEST");
   }
   */
-  if (millis()>=1800000){
+  if (millis()>=28800000){  //28800000
     standbyMode(); 
-    Serial.println("30 minute test complete. Safe to remove power.");
+    Serial.println("8 hour test completed, or test manually terminated. Safe to remove power.");
     testEnd = true;
     digitalWrite(stateLED, LOW);
   }

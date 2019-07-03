@@ -109,7 +109,7 @@ implemented the serial interface with the HASP gondala and established meanings 
   float t1;                                             //Temperature 1
   float t2;                                             //Temperature 2
   float t3;                                             //Temperature 3
-  //String HS = "0";                                    //heat pad status (1 = on)
+  char heatState = '0'                                  //heat pad status (1 = on)
   
 //Serial Definitions (HASP Communication)
   String flightState = "";
@@ -181,6 +181,21 @@ implemented the serial interface with the HASP gondala and established meanings 
 
 void setup() {                                       
   systemInit();                                         //This will initalize the system
+  digitalWrite(fixLED, HIGH);
+  digitalWrite(sdLED, HIGH);
+  digitalWrite(stateLED, HIGH); 
+  delay (1000);
+  digitalWrite(fixLED, LOW);
+  digitalWrite(sdLED, LOW);
+  digitalWrite(stateLED, LOW); 
+  delay(1000);
+  digitalWrite(fixLED, HIGH);
+  digitalWrite(sdLED, HIGH);
+  digitalWrite(stateLED, HIGH); 
+  delay (1000);
+  digitalWrite(fixLED, LOW);
+  digitalWrite(sdLED, LOW);
+  digitalWrite(stateLED, LOW); 
 }
 
 void loop() {

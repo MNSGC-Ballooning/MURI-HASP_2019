@@ -17,7 +17,7 @@ void dataLogInit(){                                                    //Initial
   Serial.println("System Log created: " + Fname);                 
   fLog = SD.open(Fname.c_str(), FILE_WRITE);
   header = "ntot,millis,3,5,10,25,50,100,time,GPS lat,";
-  header += "GPS long,GPS alt,T Outside,T Inside,T OPC,OPC State,heatState";       
+  header += "GPS long,GPS alt,T Outside,T OPC,T PCB,OPC State,heatState";       
   fLog.println(header);                                                //Set up temp log format and header
   fLog.close();
   Serial.println("System Log header added");

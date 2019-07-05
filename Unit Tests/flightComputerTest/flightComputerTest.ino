@@ -22,7 +22,7 @@
   #define LOAC_ON 7                 //LOAC OPC power relay pins
   #define LOAC_OFF 8                //^^^
   #define LS_PD 35                  //LOAC state shutdown transistor
-  #define LOAC_FAN #                //LOAC fan pin
+  #define LOAC_FAN 32               //LOAC fan pin
   
 //Serial Pins
 /*  
@@ -63,7 +63,6 @@
   //ADD TO MAIN
   bool hotOPC = false;
   bool danger = false;                                  //danger runs an emergency shutdown of the OPC system
-  bool dangerState = false;
   bool overRide = false;                                //manual system override mechanism
   unsigned long overrideTimer = 0;
   char fanState = '0';                                  //Defines the stae of the LOAC fan. "0" means off, "1" means on

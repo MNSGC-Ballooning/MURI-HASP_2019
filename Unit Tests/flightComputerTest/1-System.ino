@@ -40,15 +40,18 @@ void systemUpdate(){
     lastCycle=millis();                                 //at 1Hz. lastCycle gives the previous time, and
     //Serial.println("LOG CYCLE");                                                   //millis gives the current time. Both are in ms.
 
+    //Update
     updateGPS();                                        //This will update the GPS data
-    updateTemp();                                       //Update Temp
-    autoShutdown():                                     //This will ensure that the system has not reached a dangerous temperature
+    updateTemp();                                       //This will update the temperature
+    pmsUpdate();                                        //This will write the plantower data string
+    
+    //Thermal Systems
+    ThermalControl();                                   //This will ensure that the system has not reached a dangerous temperature
 
     //GPS Flight Check
     flightCheck();                                      //The flight check variable will identify when the payload is in flight.
   
     //Data Log Update
-    pmsUpdate();
     writeSensorsSD();                                   //This will update the PMS data log and then write the data to an SD
 
     //Serial Update
@@ -82,8 +85,8 @@ void activeMode(){                                                      //This w
   dataCollection = true;                                                //This will enable storage of data from the particle counters
   if (!inFlight) inFlight = true;                                       //If the "in flight" boolean has not been triggered, this will begin the flight.
   //ADD MAIN
-  if ((inFlight)&&(danger) {
-    overRide = true;
+  if ((inFlight)&&(danger)) {                                           //If active mode is called while the system is active, then the system will run
+    overRide = true;                                                    //an automatic override of the automatic shutdown for a given time.
     overrideTimer = millis();
   }
   
@@ -99,5 +102,5 @@ void standbyMode(){                                                     //This w
   delay(12000);                                                        //shut down before it can be powered down. 
   digitalWrite(LS_PD, LOW);
   LOAC.setState(0);     
-  if (overRide) overRide = false;                     
+  if (overRide) overRide = false;                                      //A manual shutdown will end the override state.
 }

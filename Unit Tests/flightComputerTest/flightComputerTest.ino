@@ -22,6 +22,8 @@
   #define LOAC_ON 7                 //LOAC OPC power relay pins
   #define LOAC_OFF 8                //^^^
   #define LS_PD 35                  //LOAC state shutdown transistor
+  //ADD TO MAIN
+  #define LOAC_FAN #                //LOAC fan pin
   
 //Serial Pins
 /*  
@@ -41,11 +43,12 @@
   #define NOFIXLED_RATE 3000        //When there is no GPS fix, FixLED cycles is held on for 3 seconds
   #define DWN_BYTES 54              //Number of downlink bytes + 1 (the +1 makes it work)
   #define COLD 280.0                //Minimum acceptable temperature of the OPC for active heating
-  #define HOT 290.0                 //Maximum acceptable temperature of the OPC for active cooling
+  #define HOT 290.0                 //Maximum acceptable temperature of the OPC for active heating
   #define KELVIN 273.15             //Number to convert Celcius to Kelvin
   //ADD TO MAIN
   #define MAX_TEMP 314.0            //Maximum operating temperature of the OPC
   #define MIN_TEMP 244.0            //Minimum operating temperature of the OPC
+  #define MIN_FANTEMP 300.0         //Minimum acceptable temperature of the OPC for active cooling
 
 //Relay Definitions
   LatchRelay heater(heater_ON, heater_OFF);             //Define heater relay object
@@ -57,7 +60,7 @@
 //Active Heating Definitions
   bool coldOPC = false;                                 //cold and hot trigger active thermal control
   //ADD TO MAIN
-  bool hotOPC = false;
+  bool hotOPC = false;                                  //cold and hot trigger activate thermal cooling fan control
   bool danger = false;                                  //danger runs an emergency shutdown of the OPC system
   bool overRide = false;                                //manual system override mechanism
  
@@ -143,6 +146,10 @@
   bool resetTest = false;
   bool testEnd = false;
   char heatState = '0';
+  //ADD TO MAIN
+  char fanState = '0';                                  //Defines the stae of the LOAC fan. "0" means off, "1" means on
+
+ 
 
 
 

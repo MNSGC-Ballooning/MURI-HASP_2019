@@ -22,6 +22,7 @@
   #define LOAC_ON 7                 //LOAC OPC power relay pins
   #define LOAC_OFF 8                //^^^
   #define LS_PD 35                  //LOAC state shutdown transistor
+  #define LOAC_FAN #                //LOAC fan pin
   
 //Serial Pins
 /*  
@@ -44,9 +45,11 @@
   #define HOT 290.0                 //Maximum acceptable temperature of the OPC for active cooling
   #define KELVIN 273.15             //Number to convert Celcius to Kelvin
   //ADD TO MAIN
+  #define MIN_FANTEMP 300.0         //Minimum acceptable temperature of the OPC for active cooling
   #define MAX_TEMP 314.0            //Maximum operating temperature of the OPC
   #define MIN_TEMP 244.0            //Minimum operating temperature of the OPC
   #define OVERRIDE_TIME 1500000     //Time of the override command
+
 
 //Relay Definitions
   LatchRelay heater(heater_ON, heater_OFF);             //Define heater relay object
@@ -55,7 +58,7 @@
   LatchRelay LOAC(LOAC_ON, LOAC_OFF);                   //Define LOAC OPC power relay object
   bool dataCollection = false;
   
-//Active Heating Definitions
+//Thermal Control Definitions
   bool coldOPC = false;                                 //cold and hot trigger active thermal control
   //ADD TO MAIN
   bool hotOPC = false;
@@ -63,6 +66,7 @@
   bool dangerState = false;
   bool overRide = false;                                //manual system override mechanism
   unsigned long overrideTimer = 0;
+  char fanState = '0';                                  //Defines the stae of the LOAC fan. "0" means off, "1" means on
  
 //Temperature Sensor Definitions
   OneWire oneWire1(wireBus1);                           //Temperature sensor 1 data interface

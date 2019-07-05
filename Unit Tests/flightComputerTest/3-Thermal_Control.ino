@@ -24,7 +24,23 @@ void activeHeat(){
 
 //ADD TO MAIN
 void activeCool(){
-  
+    if (LOAC.getState()==1) {
+    if (MIN_FANTEMP < t3) {
+    hotOPC=true;
+    }
+    else if (t3 < MIN_FANTEMP) {
+    hotOPC=false;
+    }
+  }
+
+  if (hotOPC && fanState = '0') {
+    digitalWrite(LOAC_FAN, HIGH);
+    fanState = '1'; 
+  }
+  else if (!hotOPC && fanState = '1') {
+    digitalWrite(LOAC_FAN, LOW);
+    fanState = '0';
+  }
 }
 
 void autoShutdown(){

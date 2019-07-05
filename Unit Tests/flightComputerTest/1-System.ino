@@ -42,13 +42,14 @@ void systemUpdate(){
 
     updateGPS();                                        //This will update the GPS data
     updateTemp();                                       //Update Temp
+    autoShutdown():                                     //This will ensure that the system has not reached a dangerous temperature
 
     //GPS Flight Check
-     flightCheck();                                     //The flight check variable will identify when the payload is in flight.
+    flightCheck();                                      //The flight check variable will identify when the payload is in flight.
   
     //Data Log Update
-     pmsUpdate();
-     writeSensorsSD();
+    pmsUpdate();
+    writeSensorsSD();                                   //This will update the PMS data log and then write the data to an SD
 
     //Serial Update
      Data_Downlink();                                   //Send down packet of data
@@ -63,4 +64,40 @@ void systemUpdate(){
       stateLight = false;
      }    
   }
+}
+
+///// Command Functions /////
+void systemReset(){                                                      //This will reset the system
+  standbyMode();
+  Serial.println("Shutdown successful.");
+  heater.setState(0);
+  activeMode();
+  Serial.println("Activation successful.");
+}
+
+void activeMode(){                                                      //This will activate all of the particle detectors.
+  LOAC.setState(1);
+  alphaOPC.setState(1);
+  planOPC.setState(1);
+  dataCollection = true;                                                //This will enable storage of data from the particle counters
+  if (!inFlight) inFlight = true;                                       //If the "in flight" boolean has not been triggered, this will begin the flight.
+  //ADD MAIN
+  if ((inFlight)&&(danger) {
+    overRide = true;
+    overrideTimer = millis();
+  }
+  
+  testEnd = false;
+  Serial.println("System Active.");
+}
+
+void standbyMode(){                                                     //This will shut down all of the particle detectors.
+  dataCollection = false;
+  alphaOPC.setState(0);
+  planOPC.setState(0);
+  digitalWrite(LS_PD, HIGH);                                           //To turn off the LOAC, the recording state has to be
+  delay(12000);                                                        //shut down before it can be powered down. 
+  digitalWrite(LS_PD, LOW);
+  LOAC.setState(0);     
+  if (overRide) overRide = false;                     
 }

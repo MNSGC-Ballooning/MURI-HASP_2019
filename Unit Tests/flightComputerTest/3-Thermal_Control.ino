@@ -28,8 +28,19 @@ void activeCool(){
 }
 
 void autoShutdown(){
-  if (danger && !overRide) {
-    
+  if ((overrideTimer != 0) && (millis()-overrideTimer >= OVERRIDE_TIME))  {
+    overRide = false;
+    overrideTimer = 0;
+  }
+
+  if (((t3 >= MAX_TEMP)||(t3 <= MIN_TEMP))&&(!overRide)&&(!danger)) {
+    danger = true;
+    standbyMode();
+  } 
+  
+   if (((t3<MAX_TEMP)&&(t3>MIN_TEMP))&&(danger)) {
+    danger = false;
+    activeMode();
   }
 }
 

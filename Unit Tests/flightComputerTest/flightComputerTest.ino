@@ -46,6 +46,7 @@
   //ADD TO MAIN
   #define MAX_TEMP 314.0            //Maximum operating temperature of the OPC
   #define MIN_TEMP 244.0            //Minimum operating temperature of the OPC
+  #define OVERRIDE_TIME 1500000     //Time of the override command
 
 //Relay Definitions
   LatchRelay heater(heater_ON, heater_OFF);             //Define heater relay object
@@ -59,7 +60,9 @@
   //ADD TO MAIN
   bool hotOPC = false;
   bool danger = false;                                  //danger runs an emergency shutdown of the OPC system
+  bool dangerState = false;
   bool overRide = false;                                //manual system override mechanism
+  unsigned long overrideTimer = 0;
  
 //Temperature Sensor Definitions
   OneWire oneWire1(wireBus1);                           //Temperature sensor 1 data interface

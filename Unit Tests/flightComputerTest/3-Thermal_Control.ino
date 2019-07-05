@@ -7,9 +7,9 @@ void thermalInit(){                                   //This function initialize
 }
 
 void activeHeat(){
-  if ((150 < t3) && (t3 < COLD)) {                    //Check if the temperature of the OPCs exceed the minimum
+  if ((150 < t2) && (t2 < COLD)) {                    //Check if the temperature of the OPCs exceed the minimum
     coldOPC=true;                                     //or maximum heating temperatures.
-  } else if (t3 > HOT) {
+  } else if (t2 > HOT) {
     coldOPC=false;
   }
 
@@ -19,6 +19,17 @@ void activeHeat(){
   } else if (!coldOPC && heater.getState()==1) {      //ERROR HERE IF STATES ARE NOT 1 AND 0
     heater.setState(0);
     heatState = '0';
+  }
+}
+
+//ADD TO MAIN
+void activeCool(){
+  
+}
+
+void autoShutdown(){
+  if (danger && !overRide) {
+    
   }
 }
 

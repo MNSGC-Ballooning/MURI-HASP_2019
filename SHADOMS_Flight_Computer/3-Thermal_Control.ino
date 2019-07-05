@@ -7,9 +7,9 @@ void thermalInit(){                                     //This function initiali
 }
 
 void activeHeat(){
-  if ((150 < t3) && (t3 < COLD)) {                      //Check if the temperature of the OPCs exceed the minimum
+  if ((150 < t2) && (t2 < COLD)) {                      //Check if the temperature of the OPCs exceed the minimum
     coldOPC=true;                                       //or maximum heating temperatures.
-  } else if (t3 > HOT) {
+  } else if (t2 > HOT) {
     coldOPC=false;
   }
 

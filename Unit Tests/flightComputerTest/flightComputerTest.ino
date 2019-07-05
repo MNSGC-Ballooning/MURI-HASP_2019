@@ -10,9 +10,9 @@
   #define sdLED 23                  //LED pin which blinks to indicates data logging to the SD*****
   #define fixLED 22                 //LED pin which blinks to indicate GPS fix*****
   #define stateLED 21               //LED pin which blinks to indicate an active data recording status******
-  #define wireBus1 29               //Temperature sensor 1 pin - Internal Ambient
-  #define wireBus2 30               //Temperature sensor 2 pin - External Ambient
-  #define wireBus3 31               //Temperature sensor 3 pin - OPCs
+  #define wireBus1 29               //Temperature sensor 1 pin - External Ambient
+  #define wireBus2 30               //Temperature sensor 2 pin - OPC
+  #define wireBus3 31               //Temperature sensor 3 pin - PCB
   #define heater_ON 24              //Heater relay pins
   #define heater_OFF 25             //^^^
   #define alphaOPC_ON 5             //Alphasense OPC relay pins
@@ -40,9 +40,12 @@
   #define FIXLED_RATE 500           //FixLED is held on for 0.5 seconds
   #define NOFIXLED_RATE 3000        //When there is no GPS fix, FixLED cycles is held on for 3 seconds
   #define DWN_BYTES 54              //Number of downlink bytes + 1 (the +1 makes it work)
-  #define COLD 280.0                //Minimum acceptable temperature of the OPC
-  #define HOT 290.0                 //Maximum acceptable temperature of the OPC
+  #define COLD 280.0                //Minimum acceptable temperature of the OPC for active heating
+  #define HOT 290.0                 //Maximum acceptable temperature of the OPC for active cooling
   #define KELVIN 273.15             //Number to convert Celcius to Kelvin
+  //ADD TO MAIN
+  #define MAX_TEMP 314.0            //Maximum operating temperature of the OPC
+  #define MIN_TEMP 244.0            //Minimum operating temperature of the OPC
 
 //Relay Definitions
   LatchRelay heater(heater_ON, heater_OFF);             //Define heater relay object
@@ -52,8 +55,12 @@
   bool dataCollection = false;
   
 //Active Heating Definitions
-  bool coldOPC = false;
-
+  bool coldOPC = false;                                 //cold and hot trigger active thermal control
+  //ADD TO MAIN
+  bool hotOPC = false;
+  bool danger = false;                                  //danger runs an emergency shutdown of the OPC system
+  bool overRide = false;                                //manual system override mechanism
+ 
 //Temperature Sensor Definitions
   OneWire oneWire1(wireBus1);                           //Temperature sensor 1 data interface
   OneWire oneWire2(wireBus2);                           //Temperature sensor 2 data interface

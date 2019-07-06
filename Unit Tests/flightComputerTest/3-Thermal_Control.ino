@@ -54,7 +54,7 @@ void activeCool(){
 
 void ThermalControl(){
   activeHeat();                                       //Checks for the system temperature and runs active controls
-  activeCool();
+//  activeCool();
   
   if ((overrideTimer != 0) && (millis()-overrideTimer >= OVERRIDE_TIME))  {
     overRide = false;                                 //if the system override is completed, this will end the override state

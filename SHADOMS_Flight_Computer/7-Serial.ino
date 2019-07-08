@@ -125,31 +125,3 @@ void Read_Uplink_Command()
     }   
   }
 }
-
-
-/////Command Functions/////
-void systemReset(){                                                      //This will reset the system
-  standbyMode();
-//  Serial.println("Shutdown successful.");
-  heater.setState(0);
-  activeMode();
-//  Serial.println("Activation successful.");
-}
-
-void activeMode(){                                                      //This will activate all of the particle detectors.
-  LOAC.setState(1);
-  alphaOPC.setState(1);
-  planOPC.setState(1);
-  dataCollection = true;                                                //This will enable storage of data from the particle counters
-  if (!inFlight) inFlight = true;                                       //If the "in flight" boolean has not been triggered, this will begin the flight.
-}
-
-void standbyMode(){                                                     //This will shut down all of the particle detectors.
-  dataCollection = false;
-  alphaOPC.setState(0);
-  planOPC.setState(0);
-  digitalWrite(LS_PD, HIGH);                                            //To turn off the LOAC, the recording state has to be
-  delay(12000);                                                         //shut down before it can be powered down. 
-  digitalWrite(LS_PD, LOW);
-  LOAC.setState(0);                           
-}

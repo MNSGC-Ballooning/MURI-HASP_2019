@@ -7,9 +7,9 @@
   #include <LatchRelay.h>           //Relay control
 
 //Pin Definitions
-  #define sdLED 23                  //LED pin which blinks to indicates data logging to the SD*****
-  #define fixLED 22                 //LED pin which blinks to indicate GPS fix*****
-  #define stateLED 21               //LED pin which blinks to indicate an active data recording status******
+  #define sdLED 23                  //LED pin which blinks to indicates data logging to the SD
+  #define fixLED 22                 //LED pin which blinks to indicate GPS fix
+  #define stateLED 21               //LED pin which blinks to indicate an active data recording status
   #define wireBus1 29               //Temperature sensor 1 pin - External Ambient
   #define wireBus2 30               //Temperature sensor 2 pin - OPC
   #define wireBus3 31               //Temperature sensor 3 pin - PCB
@@ -46,7 +46,7 @@
   #define KELVIN 273.15             //Number to convert Celcius to Kelvin
   //ADD TO MAIN
   #define MIN_FANTEMP 300.0         //Minimum acceptable temperature of the OPC for active cooling
-  #define MAX_TEMP 314.0            //Maximum operating temperature of the OPC
+  #define MAX_TEMP 300.0            //Maximum operating temperature of the OPC
   #define MIN_TEMP 244.0            //Minimum operating temperature of the OPC
   #define OVERRIDE_TIME 1500000     //Time of the override command
 
@@ -176,7 +176,7 @@ void setup() {
     digitalWrite(fixLED, LOW);
     digitalWrite(sdLED, LOW);
     digitalWrite(stateLED, LOW); 
-    activeMode();
+    //activeMode();
 }
 
 void loop() {
@@ -204,9 +204,9 @@ void loop() {
     Serial.println("END RESET TEST");
   }
   */
-  if (millis()>=1800000){  //28800000
+  if (millis()>=7200000){  //28800000
     standbyMode(); 
-    Serial.println("30 minute test completed, or test manually terminated. Safe to remove power.");
+    Serial.println("2 hour test completed, or test manually terminated. Safe to remove power.");
     testEnd = true;
     digitalWrite(stateLED, LOW);
   }

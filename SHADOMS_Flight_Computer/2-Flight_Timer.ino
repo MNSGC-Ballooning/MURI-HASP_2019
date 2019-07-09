@@ -5,10 +5,12 @@ unsigned long poweredTime() {
 }
 
 unsigned long flightTime() {                                            //This function will track time of actual flight. The inFlight boolean will be triggered by
-  while (!inFlight) {                                                   //the GPS. flightStart will be set by the same function. This will allow for a flight counter
+  if (!inFlight) {                                                   //the GPS. flightStart will be set by the same function. This will allow for a flight counter
     return 0;                                                           //to stamp data from the actual flight. This will also be used to start the particle counters.
   }
-  return (poweredTime()-flightStart);
+  else {
+    return (poweredTime()-flightStart);
+  }
 }
 
 String logTime() {                                                      //This function will establish the time for the data log in HH:MM:SS:MSS format. MSS is milliseconds.

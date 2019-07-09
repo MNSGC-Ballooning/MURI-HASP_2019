@@ -67,6 +67,7 @@ implemented the serial interface with the HASP gondala and established meanings 
   #define LOAC_ON 7                                     //LOAC OPC power relay pins
   #define LOAC_OFF 8                                    //^^^
   #define LS_PD 35                                      //LOAC state shutdown transistor
+  #define LOAC_FAN 32                                   //LOAC fan pin
   
 //Serial Pins
 /*  
@@ -88,6 +89,11 @@ implemented the serial interface with the HASP gondala and established meanings 
   #define COLD 280.0                                    //Minimum acceptable temperature of the OPC
   #define HOT 290.0                                     //Maximum acceptable temperature of the OPC
   #define KELVIN 273.15                                 //Number to convert Celcius to Kelvin
+  #define INFLIGHT_START_ALT 10000                      //Altitude in feet where the inFlight condition is set to true
+  #define MIN_FANTEMP 300.0                             //Minimum acceptable temperature of the OPC for active cooling
+  #define MAX_TEMP 300.0                                //Maximum operating temperature of the OPC
+  #define MIN_TEMP 244.0                                //Minimum operating temperature of the OPC
+  #define OVERRIDE_TIME 1500000                         //Time of the override command
   
 //Relay Definitions
   LatchRelay heater(heater_ON, heater_OFF);             //Define heater relay object
@@ -96,8 +102,13 @@ implemented the serial interface with the HASP gondala and established meanings 
   LatchRelay LOAC(LOAC_ON, LOAC_OFF);                   //Define LOAC OPC power relay object
   bool dataCollection = false;
   
-//Active Heating Definitions
+//Thermal Control Definitions
   bool coldOPC = false;
+  bool hotOPC = false;
+  bool danger = false;                                  //danger runs an emergency shutdown of the OPC system
+  bool overRide = false;                                //manual system override mechanism
+  unsigned long overrideTimer = 0;
+  char fanState = '0';                                  //Defines the stae of the LOAC fan. "0" means off, "1" means on
 
 //Temperature Sensor Definitions
   OneWire oneWire1(wireBus1);                           //Temperature sensor 1 data interface
@@ -144,32 +155,36 @@ implemented the serial interface with the HASP gondala and established meanings 
     uint16_t checksum;
   } planData;                                           //This struct will organize the plantower bins into usable data
   
-//GPS Definitions
+  //GPS Definitions
   TinyGPSPlus GPS;                                      //GPS object definition
- //FlightChecker() variables
+  
+  //FlightChecker() variables
   bool inFlight = false;                                //Bool that determines if the payload is in flight. Used with FlightCheck function
   unsigned long flightStart = 0;                        //Time passed since inFlight became true
   byte FlightCheckCounter = 0;                          //If this reaches 5, then inFLight should be set to true
- //Variables for UpdateGPS()
+
+  //Variables for UpdateGPS()
   unsigned long lastGPS = 0;                            //Time in seconds since the last GPS update
   unsigned long GPSstartTime = 0;                       //When the GPS starts, time in seconds of last GPS update
   uint8_t days = 0;                                     //If we're flying overnight this serves as a coutner for time keeping
- //timers and other variables for fixLED
+
+  //timers and other variables for fixLED
   unsigned long fixLED_loop_timer = 0;                  //timer to ensure that the fixLED will do "something" every 10 second loop
   bool fixLEDon = false;                                //indicates if the fixLED is on or not
   bool fixLEDshort = false;                             //indicates what LED flash sequence to follow
- //strings that populate GPS data strings
+  
+  //strings that populate GPS data strings
   String GPSdata = "";                                  //Initializes data string that prints GPS data to the SD card
   String flightstring = "False";                        //Indicates if inFlight is active or not
   String faillatitude = "0.00";                         //Printed latitude if GPS does not have a fix or any data
   String faillongitude = "0.000000";                    //Printed longitude if GPS does not have a fix or any data
   String failalt = "0.000000";                          //Printed altitude if GPS does not have a fix or any 
 
-//LED Definitions
+  //LED Definitions
   bool fixLight = false;                                //These booleans are for the light activation and deactivation logic  
   bool stateLight = false;
 
-//Updater Definitions                                   //These values help to regulate the speed of the updater function
+  //Updater Definitions                                   //These values help to regulate the speed of the updater function
   unsigned long lastCycle = 0;
   unsigned long planCycle = 0;
   

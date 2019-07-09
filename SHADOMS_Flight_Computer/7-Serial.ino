@@ -88,7 +88,7 @@ void Data_Downlink()
   //Send the data packet string
   Serial1.write(checksum_byte_1);                                        //start with check bytes 1 & 2
   Serial1.write(checksum_byte_2);
-  for (int i = 0; i<53; i++)    //add 6 more or however many for planSample                                         //send the bytes in the data string
+  for (int i = 0; i<(DWN_BYTES-1); i++)                                  //send the bytes in the data string
   {
     Serial1.write(packet[i]);
   }

@@ -24,13 +24,13 @@ String getalt() {                                                               
   return alt;
 }
 
-void flightCheck() {                                                              //Function that repeatedly checks if Payload is in flight.
-  if (GPS.Fix && (GPS.altitude.feet() >= INFLIGHT_START_ALT)  && (GPS.location.lng() != 0)) {    //HASP vehicle takeoff altitude is at roughly 4000 feet.
+void flightCheck() {                                                              //Function that repeatedly checks if Payload is in flight (above the in flight altitude).
+  if (GPS.Fix && (GPS.altitude.feet() >= INFLIGHT_START_ALT)  && (GPS.location.lng() != 0)) {    
     FlightCheckCounter++;                                                         //If three conditions are met, FlightCheckComputer gets a hit.
     if ((FlightCheckCounter >= 5)&&(!inFlight)) {                                 //5 FlightCheckCounter hits in a row needed to set inFlight to true
       inFlight = true;                                                            //Bool that indicates if the payload is in flight.
-      flightStart = millis();                                                     //flightStart holds the time when inFlight becomes true since the batteries for the payload are powered on
-      activeMode();
+      flightStart = millis();                                                     //flightStart holds the time when inFlight becomes true since the batteries for the payload
+      activeMode();                                                               //are powered on.
     }
   }
   else {
@@ -41,7 +41,7 @@ void flightCheck() {                                                            
 String printGPS() {                                                               //Function that takes GPS data and prints it to the SD card
   if (GPS.Fix && GPS.altitude.feet() != 0) {                                      //If GPS has a fix with good data (may need more parameters to define "good data", GPS data is printed
     GPSdata = getlat() + ", " + getlong() + ", " + getalt();
-  } else {                                                                          //If GPS has bad data or doesn't have a fix, zeros are printed for all three variables
+  } else {                                                                        //If GPS has bad data or doesn't have a fix, zeros are printed for all three variables
     GPSdata = faillatitude + ", " + faillongitude + ", " + failalt;   
   }
 
@@ -49,7 +49,7 @@ String printGPS() {                                                             
 }
 
 void fixLEDupdater() {
-  fixLED_loop_timer = millis();
+  fixLED_loop_timer = millis();                                                   //This will check for fixes and use the fix LED to indicate status.
     
   if (GPS.Fix && GPS.altitude.feet() != 0) {
     digitalWrite(fixLED, HIGH);

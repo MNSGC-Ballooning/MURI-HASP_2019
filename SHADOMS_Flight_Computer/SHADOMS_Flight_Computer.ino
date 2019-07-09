@@ -1,5 +1,5 @@
 //SHADOMS Payload Flight Computer
-//Version 0.3
+//Version 0.4
 //Payload 2019-01
 
 /*This code operates the Teensy 3.5/3.6 Microcontroller on the 2019 HASP flight.
@@ -20,6 +20,13 @@ record their own data.*/
 //Written in June 2019
 
 //Version History
+//Version 0.4
+/*This version seeks to counter the overheating problem by adding robust thermal control. The goal is to add active cooling,
+and to turn off systems when they reach an unsafe operating temperature. This update also fixed the LOAC logging, which derives
+its error from the transistor switch implemented for system shutdown. The flight timer was updated to successfully log the 
+difference between flight start and poweron, and the SD Log was changed to add fillers when the data is not available.
+The serial string now has the ability to send plantower data. Additionally, various bug fixes and code cleanup occurred.*/
+
 //Version 0.3
 /*Passed all individual unit tests and full system test. Updated update and log rates, updated GPS system. 
 Returned system to hardware serial. Updated LED to show satellite count, and logging time. Added more debugging 
@@ -184,7 +191,7 @@ implemented the serial interface with the HASP gondala and established meanings 
   bool fixLight = false;                                //These booleans are for the light activation and deactivation logic  
   bool stateLight = false;
 
-  //Updater Definitions                                   //These values help to regulate the speed of the updater function
+  //Updater Definitions                                 //These values help to regulate the speed of the updater function
   unsigned long lastCycle = 0;
   unsigned long planCycle = 0;
   
@@ -196,7 +203,7 @@ implemented the serial interface with the HASP gondala and established meanings 
 
 void setup() {                                       
   systemInit();                                         //This will initalize the system
-  digitalWrite(fixLED, HIGH);
+  digitalWrite(fixLED, HIGH);                           //This will blink the LEDs to indicate startup.
   digitalWrite(sdLED, HIGH);
   digitalWrite(stateLED, HIGH); 
   delay (1000);

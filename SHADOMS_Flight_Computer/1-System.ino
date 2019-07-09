@@ -64,39 +64,41 @@ void systemUpdate(){
 }
 
 ///// Command Functions /////
-void systemReset(){                                                      //This will reset the system
+void systemReset(){                                     //This will reset the system
   standbyMode();
   heater.setState(0);
+  delay (1000);
   activeMode();
 }
 
 
-void activeMode(){                                                      //This will activate all of the particle detectors.
+void activeMode(){                                      //This will activate all of the particle detectors.
   LOAC.setState(1);
   alphaOPC.setState(1);
   planOPC.setState(1);
-  dataCollection = true;                                                //This will enable storage of data from the particle counters
+  dataCollection = true;                                //This will enable storage of data from the particle counters
 
   if (!inFlight) {
-    inFlight = true;                                                    //If the "in flight" boolean has not been triggered, this will begin the flight.
+    inFlight = true;                                    //If the "in flight" boolean has not been triggered, this will begin the flight.
+    flightStart = millis();
   }
   
-  if ((inFlight)&&(danger)) {                                           //If active mode is called while the system is active, then the system will run
-    overRide = true;                                                    //an automatic override of the automatic shutdown for a given time.
+  if ((inFlight)&&(danger)) {                           //If active mode is called while the system is active, then the system will run
+    overRide = true;                                    //an automatic override of the automatic shutdown for a given time.
     overrideTimer = millis();
   }
 }
 
-void standbyMode(){                                                     //This will shut down all of the particle detectors.
+void standbyMode(){                                     //This will shut down all of the particle detectors.
   dataCollection = false;
   alphaOPC.setState(0);
   planOPC.setState(0);
-  digitalWrite(LS_PD, HIGH);                                           //To turn off the LOAC, the recording state has to be
-  delay(12000);                                                        //shut down before it can be powered down. 
+  digitalWrite(LS_PD, HIGH);                            //To turn off the LOAC, the recording state has to be
+  delay(12000);                                         //shut down before it can be powered down. 
   digitalWrite(LS_PD, LOW);
   LOAC.setState(0); 
       
   if (overRide) {
-    overRide = false;                                      //A manual shutdown will end the override state.
+    overRide = false;                                   //A manual shutdown will end the override state.
   }
 }

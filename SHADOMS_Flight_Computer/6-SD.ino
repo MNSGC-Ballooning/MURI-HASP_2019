@@ -1,6 +1,5 @@
 //Data Logging
-void dataLogInit()
-{                                                      //Initializes the data log
+void dataLogInit(){                                                      //Initializes the data log
   pinMode(sdLED, OUTPUT);                                                //Initializes SD LED
 //  Serial.print("Initializing SD card...");                             //Tells us if the SD card faled to open:
   if (!SD.begin(chipSelect)) {
@@ -18,7 +17,7 @@ void dataLogInit()
 //  Serial.println("System Log created: " + Fname);                 
   fLog = SD.open(Fname.c_str(), FILE_WRITE);
   header = "ntot,millis,3,5,10,25,50,100,time,GPS lat,GPS long,";
-  header += "GPS alt,T Outside,T OPC,T PCB,OPC State,heat State";       
+  header += "GPS alt,T Outside,T OPC,T PCB,flight State,OPC State,heat State";       
   fLog.println(header);                                                  //Set up temp log format and header
   fLog.close();
 // Serial.println("System Log header added");
@@ -28,7 +27,7 @@ void writeSensorsSD(){
   digitalWrite(sdLED, HIGH);
   fLog = SD.open(Fname.c_str(), FILE_WRITE);
   
-  if(inFlight && planOPC.getState() == true)                                                           //the next two booleans typecast the booleans
+  if(inFlight && planOPC.getState() == true)                             //the next two booleans typecast the booleans
   {                                                                      //with space for additional logic
     flightState = '1';                                                  
   }
@@ -46,8 +45,8 @@ void writeSensorsSD(){
     OPCState = '0';
   }
   
-  data = dataLog+','+logTime()+','+printGPS()+','+String(t1)+',';
-  data += String(t2)+','+String(t3)+','+OPCState+heatState;
+  data = dataLog+','+logTime()+','+printGPS()+','+String(t1)+','+String(t2);
+  data +=','+String(t3)+','+flightState+','+OPCState+','+heatState;
  // Serial.println(data);
   fLog.println(data);                                                    //PMS and Sensor data log
 

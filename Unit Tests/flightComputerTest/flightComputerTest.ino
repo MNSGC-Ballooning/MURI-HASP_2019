@@ -176,7 +176,7 @@ void setup() {
     digitalWrite(fixLED, LOW);
     digitalWrite(sdLED, LOW);
     digitalWrite(stateLED, LOW); 
-    //activeMode();
+    activeMode();
 }
 
 void loop() {
@@ -204,9 +204,9 @@ void loop() {
     Serial.println("END RESET TEST");
   }
   */
-  if (millis()>=7200000){  //28800000
+  if (millis()>=1800000){  //28800000
     standbyMode(); 
-    Serial.println("2 hour test completed, or test manually terminated. Safe to remove power.");
+    Serial.println("30 minute test completed, or test manually terminated. Safe to remove power.");
     testEnd = true;
     digitalWrite(stateLED, LOW);
   }

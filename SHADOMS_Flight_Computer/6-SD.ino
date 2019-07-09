@@ -40,6 +40,10 @@ void writeSensorsSD(){
   {
     OPCState = '1';
   }
+  else if (danger && !overRide)
+  {
+    OPCState = '2';
+  }
   else
   {
     OPCState = '0';

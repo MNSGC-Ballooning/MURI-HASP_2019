@@ -80,7 +80,7 @@ void Data_Downlink()
   dataPacket += s6 + planSample;                                         //add in sample of 2nd bin on plantower
   dataPacket += latSign + lngSign + flightState + OPCState;
 
-  //dataPacket = timestamp + " t1:" + s4 + "t2:" + s5 + "t3:" + s6 + "heater: " + HS + " OPCstate:" + OPCState; // this is 56 bytes
+  //dataPacket = timestamp + " t1:" + s4 + "t2:" + s5 + "t3:" + s6 + "heater: " + HS + " OPCstate:" + OPCState; //This is 56 bytes
   // string for thermal test
   
   dataPacket.getBytes(packet, DWN_BYTES);                                //convert string to bytes (should be 53 bytes)

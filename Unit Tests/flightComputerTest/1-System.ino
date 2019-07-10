@@ -74,6 +74,7 @@ void systemReset(){                                                      //This 
   standbyMode();
   Serial.println("Shutdown successful.");
   heater.setState(0);
+  delay(1000);
   activeMode();
   Serial.println("Activation successful.");
 }

@@ -45,10 +45,12 @@ void activeCool(){
   if (hotOPC && fanState == '0') {                    //Turns the fan on if hotOPC is true and the
     digitalWrite(LOAC_FAN, HIGH);                     //fan is off
     fanState = '1'; 
+    Serial.println("Fan on!");
   }
   else if (!hotOPC && fanState == '1') {              //Turns the fan off if hotOPC is false and the
     digitalWrite(LOAC_FAN, LOW);                      //fan is on
     fanState = '0';
+    Serial.println("Fan off!");
   }
 }
 
@@ -63,6 +65,7 @@ void ThermalControl(){
 
   if (((t3 >= MAX_TEMP)||(t3 <= MIN_TEMP))&&(!overRide)&&(!danger)) {
     danger = true;                                    //if the system reaches a dangerous temperature and it has not yet recognized it
+    Serial.println("Danger!!!");
     standbyMode();                                    //and there is no override, then the system will shutdown the particle counters.
   } 
   

@@ -98,8 +98,8 @@ implemented the serial interface with the HASP gondala and established meanings 
   #define KELVIN 273.15                                 //Number to convert Celcius to Kelvin
   #define INFLIGHT_START_ALT 10000                      //Altitude in feet where the inFlight condition is set to true
   #define MIN_FANTEMP 300.0                             //Minimum acceptable temperature of the OPC for active cooling
-  #define MAX_TEMP 300.0                                //Maximum operating temperature of the OPC
-  #define MIN_TEMP 244.0                                //Minimum operating temperature of the OPC
+  #define MAX_TEMP 314.5                                //Maximum operating temperature of the OPC
+  #define MIN_TEMP 243.5                                //Minimum operating temperature of the OPC
   #define OVERRIDE_TIME 1500000                         //Time of the override command
   
 //Relay Definitions

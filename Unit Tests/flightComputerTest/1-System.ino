@@ -89,6 +89,7 @@ void activeMode(){                                                      //This w
   if ((inFlight)&&(danger)) {                                           //If active mode is called while the system is active, then the system will run
     overRide = true;                                                    //an automatic override of the automatic shutdown for a given time.
     overrideTimer = millis();
+    Serial.println("Override mode active");
   }
   
   testEnd = false;
@@ -103,5 +104,8 @@ void standbyMode(){                                                     //This w
   delay(12000);                                                        //shut down before it can be powered down. 
   digitalWrite(LS_PD, LOW);
   LOAC.setState(0);     
-  if (overRide) overRide = false;                                      //A manual shutdown will end the override state.
+  if (overRide){
+    overRide = false;                                      //A manual shutdown will end the override state.
+    Serial.println("Override mode inactive");
+  }
 }

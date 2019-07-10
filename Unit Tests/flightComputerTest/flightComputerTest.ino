@@ -45,8 +45,8 @@
   #define HOT 290.0                 //Maximum acceptable temperature of the OPC for active cooling
   #define KELVIN 273.15             //Number to convert Celcius to Kelvin
   //ADD TO MAIN
-  #define MIN_FANTEMP 299.0         //Minimum acceptable temperature of the OPC for active cooling
-  #define MAX_TEMP 301.0            //Maximum operating temperature of the OPC
+  #define MIN_FANTEMP 299.5         //Minimum acceptable temperature of the OPC for active cooling
+  #define MAX_TEMP 314.5            //Maximum operating temperature of the OPC
   #define MIN_TEMP 243.5            //Minimum operating temperature of the OPC
   #define OVERRIDE_TIME 1500000     //Time of the override command
 
@@ -204,9 +204,9 @@ void loop() {
     Serial.println("END RESET TEST");
   }
   */
-  if (millis()>=1800000){  //28800000
+  if (millis()>=300000){  //28800000
     standbyMode(); 
-    Serial.println("30 minute test completed, or test manually terminated. Safe to remove power.");
+    Serial.println("2 hour test completed, or test manually terminated. Safe to remove power.");
     testEnd = true;
     digitalWrite(stateLED, LOW);
   }

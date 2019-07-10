@@ -97,7 +97,7 @@ implemented the serial interface with the HASP gondala and established meanings 
   #define HOT 290.0                                     //Maximum acceptable temperature of the OPC
   #define KELVIN 273.15                                 //Number to convert Celcius to Kelvin
   #define INFLIGHT_START_ALT 10000                      //Altitude in feet where the inFlight condition is set to true
-  #define MIN_FANTEMP 300.0                             //Minimum acceptable temperature of the OPC for active cooling
+  #define MIN_FANTEMP 305.0                             //Minimum acceptable temperature of the OPC for active cooling
   #define MAX_TEMP 314.5                                //Maximum operating temperature of the OPC
   #define MIN_TEMP 243.5                                //Minimum operating temperature of the OPC
   #define OVERRIDE_TIME 1500000                         //Time of the override command
@@ -222,4 +222,9 @@ void setup() {
 
 void loop() {
   systemUpdate();                                       //This function will update the full system
+  if ((millis()>3600000)&&(!inFlight))
+  {
+    activeMode();
+  }
+  
 }

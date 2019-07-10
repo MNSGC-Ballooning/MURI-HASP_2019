@@ -4,6 +4,7 @@ void thermalInit(){                                   //This function initialize
       temperature1.begin();                           //Temperature sensor initialization
       temperature2.begin();
       temperature3.begin();
+      pinMode(LOAC_FAN, OUTPUT);                      //This pin will allow for us to turn on and off the LOAC fan for a "cooling" mode
 }
 
 void updateTemp(){
@@ -33,21 +34,21 @@ void activeHeat(){
 
 //ADD TO MAIN
 void activeCool(){
-  if (LOAC.getState()==1) {                           //Only goes through if LOAC is on
-    if (MIN_FANTEMP <= t3) {                          //Set hotOPC to true if t3 is above 300K
+  if (LOAC.getState() == true) {                      //Only goes through if LOAC is on
+    if ((t3 > MIN_FANTEMP)&&(!coldOPC)) {            //Set hotOPC to true if t3 is above 300K
     hotOPC=true;
     }
-    else if (t3 < MIN_FANTEMP) {                      //Set hotOPC to false if t3 is below 300K
+    else if ((t3 < MIN_FANTEMP)||(coldOPC)) {                      //Set hotOPC to false if t3 is below 300K
     hotOPC=false;
     }
   }
 
-  if (hotOPC && fanState == '0') {                    //Turns the fan on if hotOPC is true and the
-    digitalWrite(LOAC_FAN, HIGH);                     //fan is off
+  if ((hotOPC) && (fanState == '0')) {    //Turns the fan on if hotOPC is true and the
+    digitalWrite(LOAC_FAN, HIGH);                       //fan is off
     fanState = '1'; 
     Serial.println("Fan on!");
   }
-  else if (!hotOPC && fanState == '1') {              //Turns the fan off if hotOPC is false and the
+  else if (!hotOPC && (fanState == '1')) {              //Turns the fan off if hotOPC is false and the
     digitalWrite(LOAC_FAN, LOW);                      //fan is on
     fanState = '0';
     Serial.println("Fan off!");
@@ -56,7 +57,7 @@ void activeCool(){
 
 void ThermalControl(){
   activeHeat();                                       //Checks for the system temperature and runs active controls
-//  activeCool();
+  activeCool();
   
   if ((overrideTimer != 0) && (millis()-overrideTimer >= OVERRIDE_TIME))  {
     overRide = false;                                 //if the system override is completed, this will end the override state

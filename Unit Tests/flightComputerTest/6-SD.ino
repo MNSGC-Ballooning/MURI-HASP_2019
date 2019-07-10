@@ -46,7 +46,7 @@ void writeSensorsSD(){
   }
   
   data = dataLog + ',' + logTime() + ',' + printGPS() + ',';
-  data += String(t1) +','+ String(t2) + ',' + String(t3) + ',' + OPCState + ',' + heatState;
+  data += String(t1) +','+ String(t2) + ',' + String(t3) + ',' + OPCState + ',' + heatState + ',' + fanState + ',' + danger;
   Serial.println(data);
   fLog.println(data);                                                 //PMS and Sensor data log
 

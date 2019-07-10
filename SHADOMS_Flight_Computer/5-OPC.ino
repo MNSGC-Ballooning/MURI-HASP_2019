@@ -18,8 +18,7 @@
 void OPCInit(){                                                                    //This function initializes the OPC systems
   alphaOPC.init(0);                                                                //Sets all relays to an open state
   planOPC.init(0);
-  LOAC.init(0);
-  pinMode(LOAC_FAN, OUTPUT);                                                       //This pin will allow for us to turn on and off the LOAC fan for a "cooling" mode        
+  LOAC.init(0);     
   pinMode(LS_PD, OUTPUT);                                                          //This pin will allow for a transistor gate to be opened, triggering LOAC shutdown.
   pinMode(stateLED, OUTPUT);                                                       //Initializes state LED signal
   Serial5.begin(9600);                                                             //Initializes serial port for Plantower

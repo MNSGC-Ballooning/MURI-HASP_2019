@@ -74,7 +74,7 @@ void Data_Downlink()
   String s6 = String(t3);                                                //6 char string   
 
   String planSample = planData.particles_05um;
-  while(planSample.length()<3)
+  while(planSample.length()<6)
   {
     planSample = "#" + planSample;
   }

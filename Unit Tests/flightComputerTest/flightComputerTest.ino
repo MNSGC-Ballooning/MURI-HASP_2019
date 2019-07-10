@@ -40,7 +40,7 @@
   #define FIXLED_LOOP 15000         //FixLED cycles every 15 seconds
   #define FIXLED_RATE 500           //FixLED is held on for 0.5 seconds
   #define NOFIXLED_RATE 3000        //When there is no GPS fix, FixLED cycles is held on for 3 seconds
-  #define DWN_BYTES 54              //Number of downlink bytes + 1 (the +1 makes it work)
+  #define DWN_BYTES 57              //Number of downlink bytes + 1 (the +1 makes it work)
   #define COLD 280.0                //Minimum acceptable temperature of the OPC for active heating
   #define HOT 290.0                 //Maximum acceptable temperature of the OPC for active cooling
   #define KELVIN 273.15             //Number to convert Celcius to Kelvin

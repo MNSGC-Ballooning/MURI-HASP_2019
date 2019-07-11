@@ -204,7 +204,7 @@ void loop() {
     Serial.println("END RESET TEST");
   }
   */
-  if (millis()>=300000){  //28800000
+  if (millis()>=7200000){  //28800000
     standbyMode(); 
     Serial.println("2 hour test completed, or test manually terminated. Safe to remove power.");
     testEnd = true;

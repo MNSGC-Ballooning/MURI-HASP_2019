@@ -16,6 +16,7 @@ void systemUpdate(){
     planCycle=millis();
 
     readPMSdata(&Serial5);
+    updateGPS();
   }
 
 //Fix Loop

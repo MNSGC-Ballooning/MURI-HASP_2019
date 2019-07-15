@@ -176,7 +176,7 @@ void setup() {
     digitalWrite(fixLED, LOW);
     digitalWrite(sdLED, LOW);
     digitalWrite(stateLED, LOW); 
-    activeMode();
+  //  activeMode();
 }
 
 void loop() {

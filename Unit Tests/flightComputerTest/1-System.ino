@@ -20,6 +20,7 @@ void systemUpdate(){
    if (millis() - planCycle >= UPDATE_RATE) {           //This regulates the plantower loop to every 2.3 seconds.
     planCycle=millis();
     readPMSdata(&Serial5);                              //This will update the Plantower data
+    updateGPS();
   }
 
    if (millis() - fixLED_loop_timer >= FIXLED_LOOP) {

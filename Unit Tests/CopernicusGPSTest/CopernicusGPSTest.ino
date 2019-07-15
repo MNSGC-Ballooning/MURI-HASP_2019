@@ -18,7 +18,7 @@ const int chipSelect = BUILTIN_SDCARD; //On board SD card for teensy
 #define NOFIXLED_RATE 1500        //When there is no GPS fix, FixLED cycles as on or off for 1.5s  
 
 TinyGPSPlus GPS;
-SoftwareSerial gps_serial(9,10);
+//SoftwareSerial gps_serial(9,10);
 
 
 
@@ -142,8 +142,8 @@ String SDprintGPS() {                                                //Function 
 
 void updateGPS() {                                                              //Function that updates GPS every second and accounts for
   static bool firstFix = false;                                                 //clock rollover at midnight (23:59:59 to 00:00:00)
-  while (gps_serial.available() > 0) {                                         //*check to see if this is the correct serial
-    GPS.encode(gps_serial.read());
+  while (Serial2.available() > 0) {                                         //*check to see if this is the correct serial
+    GPS.encode(Serial2.read());
     }
   if (GPS.altitude.isUpdated() || GPS.location.isUpdated()) {
     if (!firstFix && GPS.Fix) {     
@@ -178,7 +178,7 @@ int getLastGPS() {                                                   //returns t
 
 void setup() {
   Serial.begin(9600);
-  gps_serial.begin(4800);             //Initializes serial port for GPS communication
+  Serial2.begin(4800);             //Initializes serial port for GPS communication
 
   pinMode(sdLED, OUTPUT);
   pinMode(fixLED, OUTPUT);

@@ -16,7 +16,7 @@ void dataLogInit(){                                                    //Initial
 
   Serial.println("System Log created: " + Fname);                 
   fLog = SD.open(Fname.c_str(), FILE_WRITE);
-  header = "ntot,millis,3,5,10,25,50,100,time,GPS lat,";
+  header = "ntot,millis,3,5,10,25,50,100,time,date,realtime,GPS lat,";
   header += "GPS long,GPS alt,T Outside,T OPC,T PCB,OPC State,heatState";       
   fLog.println(header);                                                //Set up temp log format and header
   fLog.close();
@@ -45,7 +45,7 @@ void writeSensorsSD(){
     OPCState = '0';
   }
   
-  data = dataLog + ',' + logTime() + ',' + printGPS() + ',';
+  data = dataLog + ',' + logTime() + ',' + getdate() + ',' + gettime() + ',' + printGPS() + ',';
   data += String(t1) +','+ String(t2) + ',' + String(t3) + ',' + OPCState + ',' + heatState + ',' + fanState + ',' + danger;
   Serial.println(data);
   fLog.println(data);                                                 //PMS and Sensor data log

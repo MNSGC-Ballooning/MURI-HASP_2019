@@ -4,6 +4,7 @@ void GPSInit(){                                                                 
    pinMode(fixLED, OUTPUT);                                                       //Initializes fix LED
    Serial2.begin(4800);                                                           //Initializes serial port for GPS communication
 //   while (!Serial2) ;                                                           //Waits for Serial 2 to connect
+   
 }
 
 String getlat() {                                                                 //Function that returns latitude as a string.
@@ -97,9 +98,9 @@ int getLastGPS() {                                                              
   else if (newDay && lastGPS > GPSstartTime)
     newDay = false;
   return days * 86400 + lastGPS;
-
+}
   
-/*     The following three functions are here in the unlikely case that we want to implement them later
+//The following three functions are here in the unlikely case that we want to implement them later
 String getdate() {
   String datetime = "";
   datetime = String(GPS.date.month()) + "/" + String(GPS.date.day()) + "/" + String(GPS.date.year());
@@ -112,10 +113,10 @@ String gettime() {
   return timestamp; 
 }
 
+/*
 String getsat() {
   String sat = "";
   sat = String(GPS.satellites.value());
   return sat;
 }
 */
-}

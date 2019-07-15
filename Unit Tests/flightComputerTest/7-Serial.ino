@@ -82,7 +82,7 @@ void Data_Downlink()
   // combine strings into 1 long one
   dataPacket = timestamp + s1 + s2 + s3 + s4 + s5;
   dataPacket += s6 + planSample;
-  dataPacket += latSign + lngSign + flightState + OPCState;
+  dataPacket += latSign + lngSign + getsat() + OPCState;
 
   //dataPacket = timestamp + " t1:" + s4 + "t2:" + s5 + "t3:" + s6 + "heater: " + HS + " OPCstate:" + OPCState;  // (this is  56 bytes)
   

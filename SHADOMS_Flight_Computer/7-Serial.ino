@@ -99,14 +99,19 @@ void Data_Downlink()
 /////Uplink Command/////
 void Read_Uplink_Command()
 {
-  uint8_t command_byte = 0;                                              //byte for the command
-  uint8_t ID_byte = 0;                                                   //byte for ID and checksum byte
+  byte command_byte = 0;                                                //byte for the command
+  byte ID_byte = 0;                                                     //byte for ID and checksum byte
+  byte bin = 0;                                                         //Spare bytes
 
-
-  while(Serial1.available() > 1)
+  while(Serial1.available()>6)
   {
+      bin = Serial1.read();
+      bin = Serial1.read();
       ID_byte = Serial1.read();                                          //read first byte to ID variable
       command_byte = Serial1.read();                                     //read second byte to command variable
+      bin = Serial1.read();
+      bin = Serial1.read();
+      bin = Serial1.read();
   }
 
   if(ID_byte == 0x1C)                                                    //check to see id check byte is correct, if not, command is ignored

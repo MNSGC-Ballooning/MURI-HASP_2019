@@ -1,5 +1,5 @@
 //SHADOMS Payload Flight Computer
-//Version 0.4
+//Version 1.0
 //Payload 2019-01
 
 /*This code operates the Teensy 3.5/3.6 Microcontroller on the 2019 HASP flight.
@@ -20,6 +20,10 @@ record their own data.*/
 //Written in June 2019
 
 //Version History
+//Version 1.0
+/*This version of the code is modified to work with HASP serial connection. This code officially passed the HASP thermal
+vaccuum, power, and operations tests. This is the code that will fly on the actual HASP flight.*/
+
 //Version 0.4
 /*This version seeks to counter the overheating problem by adding robust thermal control. The goal is to add active cooling,
 and to turn off systems when they reach an unsafe operating temperature. This update also fixed the LOAC logging, which derives
@@ -222,10 +226,5 @@ void setup() {
 }
 
 void loop() {
-  systemUpdate();                                       //This function will update the full system
-  if ((millis()>3600000)&&(!inFlight))
-  {
-    activeMode();
-  }
-  
+  systemUpdate();                                       //This function will update the full system  
 }

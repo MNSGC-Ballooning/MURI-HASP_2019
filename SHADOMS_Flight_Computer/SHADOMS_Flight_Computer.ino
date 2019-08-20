@@ -13,7 +13,9 @@ regulates temperature using active heating, runs a Coperinicus GPS, and controls
 and downlink with the main HASP gondola.
 
 In this setup, both the Alphasense and the LOAC are running in a standalone mode where they 
-record their own data.*/
+record their own data.
+
+This code has the major flaw of not including a checksum for bytes interfacing with the HASP gondola.*/
 
 //University of Minnesota- Twin Cities
 //Candler-MURI Research Team

@@ -2,9 +2,7 @@
 
 void GPSInit(){                                                                   //Initializes GPS systems
    pinMode(fixLED, OUTPUT);                                                       //Initializes fix LED
-   Serial2.begin(4800);                                                           //Initializes serial port for GPS communication
-//   while (!Serial2) ;                                                           //Waits for Serial 2 to connect
-   
+   Serial2.begin(4800);                                                           //Initializes serial port for GPS communication 
 }
 
 String getlat() {                                                                 //Function that returns latitude as a string.
@@ -101,6 +99,7 @@ int getLastGPS() {                                                              
 }
   
 //The following three functions are here in the unlikely case that we want to implement them later
+//NOTE: We did use these to get real time and real date stamps. This is a good idea.
 String getdate() {
   String datetime = "";
   datetime = String(GPS.date.month()) + "/" + String(GPS.date.day()) + "/" + String(GPS.date.year());

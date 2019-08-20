@@ -19,8 +19,8 @@ void updateTemp(){
 void activeHeat(){
   if ((150 < t2) && (t2 < COLD)) {                                          //Check if the temperature of the OPCs exceed the minimum
     coldOPC=true;                                                           //or maximum heating temperatures.
-  } else if (t2 > HOT) {
-    coldOPC=false;
+  } else if (t2 > HOT) {                                                    //NOTE: We should have put a thermocouple outside the payload, and used the other sensors as a backup.
+    coldOPC=false;                                                          //NOTE: If this sensor breaks, then the whole active heating system fails. Add redundancy.
   }
 
   if (coldOPC && heater.getState()==0) {                                    //If the OPCs are cold, the heating mesh will activate until
@@ -53,7 +53,7 @@ void activeCool(){
 }
 
 
-void ThermalControl(){
+void ThermalControl(){                                                      //NOTE: Heating is harder in high pressure, and cooling is harder in low pressure.
   activeHeat();                                                             //Checks for the system temperature and runs active controls
   activeCool();
   if ((inFlight)&&(!initialCheck)){

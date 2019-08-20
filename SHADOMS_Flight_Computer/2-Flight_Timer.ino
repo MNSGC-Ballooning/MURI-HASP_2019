@@ -1,4 +1,4 @@
-//Flight Timer
+//Flight Timer                                                          //NOTE: It would have been useful to log total minutes of flight (without formatting) for easier analysis.
 
 unsigned long poweredTime() {
   return millis();                                                      //The millis command counts the time in milliseconds since the system has been powered on.
@@ -41,7 +41,7 @@ String logTime() {                                                      //This f
   }
     logString += (String(timer/1000) + ':');
     timer=timer%1000;
-    if ((timer/10)<100){                                                
+    if ((timer/10)<100){                                                //NOTE: Decimal seconds are incredibly unneeded and make data analysis more difficult.                
     logString += '0'; 
     if (timer/10<10) {
       logString += '0';                                                 
@@ -53,7 +53,7 @@ String logTime() {                                                      //This f
 }
 
 String logTimeSerial() {                                                //This function will establish the time for the data log in HH:MM:SS format.
-  String logString = "";                                                
+  String logString = "";                                                //NOTE: Should have just sent down total minutes, rather than the fancy format
   unsigned long timer;
   
   if (!inFlight) {                                                      //If the flight has not started, the logging function will track the powered time. That way, if the

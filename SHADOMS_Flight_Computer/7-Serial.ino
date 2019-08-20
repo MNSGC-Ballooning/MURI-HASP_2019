@@ -1,17 +1,16 @@
-//Serial Uplink and Downlink
-
-//HEX COMMAND VALUES
+//Serial Uplink and Downlink                                              NOTE: You can easily test the serial using CoolTerm (1200 baud, 8bit, 1 stop, no parity),
+//                                                                        NOTE: a USB to RS232 connector, and an RS232 to UART connector. The USB cable must have a
+//HEX COMMAND VALUES                                                      NOTE: FTDI chip in it to successfully do the conversion. Do this for uplink and downlink.
 /*
-1C AA - System reset    // first byte has to be ID and checksum (1C) second byte is reset command (AA)
-1C BB - OPC Activation  // first byte has to be ID and checksum (1C) second byte is activation command (BB)
-1C CC - OPC Shutdown    // first byte has to be ID and checksum (1C) second byte is shutdown command (CC)
+1C AA - System reset    //First byte has to be ID and checkbyte (1C) second byte is reset command (AA)
+1C BB - OPC Activation  //First byte has to be ID and checkbyte (1C) second byte is activation command (BB)
+1C CC - OPC Shutdown    //First byte has to be ID and checkbyte (1C) second byte is shutdown command (CC)
 
-To send packets of data, we might need to establish a buffer, and then fill that buffer with bytes, and then send the buffer?
+To send packets of data, we might need to establish a buffer, and then fill that buffer with bytes, and then send the buffer?  NOTE: We didn't, but it would've been nice.
 */
 
 void serialInit(){
   Serial1.begin(1200);                                                   //Initializes HASP serial port at 1200 baud
- //while (!Serial1) ;                                                    //Waits for Serial 1 to connect
 }
 
 ///// Data Downlink /////
@@ -105,26 +104,26 @@ void Read_Uplink_Command()
 
   while(Serial1.available()>6)
   {
+      bin = Serial1.read();                                             //NOTE: YOU MUST PARSE THE EXTRA BYTES! We simply discarded them, which works well.
       bin = Serial1.read();
-      bin = Serial1.read();
-      ID_byte = Serial1.read();                                          //read first byte to ID variable
-      command_byte = Serial1.read();                                     //read second byte to command variable
+      ID_byte = Serial1.read();                                         //read first byte to ID variable
+      command_byte = Serial1.read();                                    //read second byte to command variable
       bin = Serial1.read();
       bin = Serial1.read();
       bin = Serial1.read();
   }
 
-  if(ID_byte == 0x1C)                                                    //check to see id check byte is correct, if not, command is ignored
+  if(ID_byte == 0x1C)                                                   //check to see id check byte is correct, if not, command is ignored
   {
-    if(command_byte == 0xAA)                                             //System reset command
+    if(command_byte == 0xAA)                                            //System reset command
     {
       systemReset(); 
     }
-    else if(command_byte == 0xBB)                                        //OPC activation command
+    else if(command_byte == 0xBB)                                       //OPC activation command
     {
       activeMode();
     }
-    else if(command_byte == 0xCC)                                        //OPC shutdown command
+    else if(command_byte == 0xCC)                                       //OPC shutdown command
     {
       standbyMode();  
     }   

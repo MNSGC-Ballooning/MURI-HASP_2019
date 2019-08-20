@@ -1,5 +1,5 @@
 //SHADOMS Payload Flight Computer
-//Version 1.0
+//Version 1.0.1
 //Payload 2019-01
 
 /*This code operates the Teensy 3.5/3.6 Microcontroller on the 2019 HASP flight.
@@ -13,15 +13,17 @@ regulates temperature using active heating, runs a Coperinicus GPS, and controls
 and downlink with the main HASP gondola.
 
 In this setup, both the Alphasense and the LOAC are running in a standalone mode where they 
-record their own data.
-
-This code has the major flaw of not including a checksum for bytes interfacing with the HASP gondola.*/
+record their own data.*/
 
 //University of Minnesota- Twin Cities
 //Candler-MURI Research Team
 //Written in June 2019
 
 //Version History
+//Version 1.0.1
+/*This version of the code has extra notes, in addition to comments, about things that might have been changed or done in a
+different way if HASP was attempted again. Other documentation will be put up with the code in a folder for future reference.*/
+
 //Version 1.0
 /*This version of the code is modified to work with HASP serial connection. This code officially passed the HASP thermal
 vaccuum, power, and operations tests. This is the code that will fly on the actual HASP flight.*/
@@ -65,9 +67,9 @@ implemented the serial interface with the HASP gondala and established meanings 
   #include <LatchRelay.h>                               //Relay control
 
 //Pin Definitions
-  #define sdLED 23                                      //LED pin which blinks to indicates data logging to the SD*****
-  #define fixLED 22                                     //LED pin which blinks to indicate GPS fix*****
-  #define stateLED 21                                   //LED pin which blinks to indicate an active data recording status******
+  #define sdLED 23                                      //LED pin which blinks to indicates data logging to the SD            NOTE: An OLED screen can be used to replace LEDs
+  #define fixLED 22                                     //LED pin which blinks to indicate GPS fix
+  #define stateLED 21                                   //LED pin which blinks to indicate an active data recording status
   #define wireBus1 29                                   //Temperature sensor 1 pin - Internal Ambient
   #define wireBus2 30                                   //Temperature sensor 2 pin - External Ambient
   #define wireBus3 31                                   //Temperature sensor 3 pin - OPCs
@@ -140,7 +142,7 @@ implemented the serial interface with the HASP gondala and established meanings 
   String flightState = "";
   String OPCState = "";
   String dataPacket = "";
-  byte packet[DWN_BYTES] = {0};                         //50 char/bytes in the string (54 with checksum)
+  byte packet[DWN_BYTES] = {0};                         //50 char/bytes in the string (54 with checkbytes)                    NOTE: The checkbytes act as start and stop bytes. 
   
 //Data Log Definitions
   const int chipSelect = BUILTIN_SDCARD;                //Access on board micro-SD
@@ -151,7 +153,7 @@ implemented the serial interface with the HASP gondala and established meanings 
   bool sdLogging = false;                               //This variable is used to indicate when logging occurs
   
 //Plantower Definitions
-  String dataLog = "";                                  //Used for data logging
+  String dataLog = "";                                  //Used for data logging                                               NOTE: A library now exists for OPCs.
   int nhits=1;                                          //Used to count successful data transmissions    
   int ntot=1;                                           //Used to count total attempted transmissions
   bool goodLog = false;                                 //Used to check if data is actually being logged

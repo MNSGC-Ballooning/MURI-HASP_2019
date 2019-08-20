@@ -46,8 +46,8 @@ void systemUpdate(){
      flightCheck();                                     //The flight check variable will identify when the payload is in flight.
   
     //Data Log Update
-     pmsUpdate();                                      //This will update the Plantower data 
-     writeSensorsSD();
+     pmsUpdate();                                       //This will update the Plantower data 
+     writeSensorsSD();                                  //This will log the data to the SD card
 
     //Serial Update
      Data_Downlink();                                   //Send down packet of data
@@ -65,7 +65,7 @@ void systemUpdate(){
 }
 
 ///// Command Functions /////
-void systemReset(){                                     //This will reset the system
+void systemReset(){                                     //This will reset the system                   NOTE: There is nothing fancy here. It Turns the system off and back on.
   standbyMode();
   heater.setState(0);
   delay (1000);
@@ -86,9 +86,9 @@ void activeMode(){                                      //This will activate all
   
   if ((inFlight)&&(danger)) {                           //If active mode is called while the system is active, then the system will run
     overRide = true;                                    //an automatic override of the automatic shutdown for a given time.
-    overrideTimer = millis();
-  }
-}
+    overrideTimer = millis();                           //                                            NOTE: I should have just added more commands, rather than making existing
+  }                                                     //                                            NOTE: commands do more than one thing. Adding commands and downlink is
+}                                                       //                                            NOTE: easy and can be done up until the end of integration.
 
 void standbyMode(){                                     //This will shut down all of the particle detectors.
   dataCollection = false;

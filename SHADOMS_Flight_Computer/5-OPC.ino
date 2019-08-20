@@ -1,5 +1,5 @@
-// Arduino code for Plantower (PT) opc operation.
-//
+// Arduino code for Plantower (PT) opc operation.                                   //NOTE: PLease just use the prewritten library called OPCSensor in the OPC Library folder
+//                                                                                  //NOTE: on MNSGC github. If you need access, contact Phari009@umn.edu or any member of the team.
 // Summary: 
 //  -- Prepares data for logging  
 //  -- Bin numbers correspond to:

@@ -1,3 +1,14 @@
+//HASP Serial Data Parser
+//HASP 2019 Flight
+
+//Written Summer 2019
+
+/*This code is utilize to parse the data string file recieved from HASP into
+a CSV format that can be opened on Excel. In order to parse the data, it is
+recommended that the .raw file supplied by HASP is opened using Microsoft Word
+or its equivalent and saved as a .dat file. However, this code should work
+for any file type that can be read by C++.*/
+
 #include <iostream>
 #include <string>
 #include <fstream>

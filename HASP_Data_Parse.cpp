@@ -76,13 +76,13 @@ while (!end){
 		char OPC = '0';
 		char flight = '0';
 	
-		if (dataChar[52]){													//Set the latitude and longitude signs
+		if (dataChar[52] == '1'){											//Set the latitude and longitude signs
 			latitude = "-";
 		} else {
 			latitude = "";
 		}
 		
-		if (dataChar[53]){
+		if (dataChar[53] == '1'){
 			longitude = "-";
 		} else {
 			longitude = "";

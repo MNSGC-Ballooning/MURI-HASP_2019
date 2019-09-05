@@ -24,18 +24,7 @@ int main(){
 	ofstream file;
 	char testByte1, testByte2, dataChar[DATA_STRING], endChar;				//Raw Data
 	bool goodString = false, end = false;
-	int fn = 1;
-
-	file.open("data.csv");													//Logging File Setup
-	if (file.fail()){
-		cout<< "Error opening file!";
-		exit(1);
-	}
-    cout << "logging file opened!" << endl;
-    
-    file<<"Time,Latitude,Longitude,Altitude,Temp 1,Temp N3,Temp PCB,PMS Bin,Flight State,OPC State"<<endl;
-
-	cout << "header written!" << endl;									
+	int fn = 1;								
 
 while (!end){	
 	cout<< "Enter data file name: ";							        	//Data File Setup
@@ -48,6 +37,22 @@ while (!end){
 		exit(1);
 	}
 	cout << "data file opened!" << endl;
+
+	if (fn == 1){															//First time only
+		logfile = datafile.erase((datafile.length()-3),(datafile.length()-1));
+		logfile = logfile + "csv";
+		file.open(logfile.c_str());											//Logging File Setup
+		if (file.fail()){
+			cout<< "Error opening file!";
+			exit(1);
+		}
+		cout << "logging file opened!" << endl;
+    
+		file<<"Time,Latitude,Longitude,Altitude,Temp 1,Temp N3,Temp PCB,PMS Bin,Flight State,OPC State"<<endl;
+
+		cout << "header written!" << endl;	
+	}
+	
 	file << "file number: " << fn << endl;
 	fn++;
 
@@ -109,9 +114,9 @@ while (!end){
 	
 	}
 	
-	cout << endl << "exited loop!" << endl;
 	data.close();
 	
+	cout << "Data file converted!" << endl;
 	cout << "Do you want to convert another data file?" << endl;
 	cout << "Press \"y\" to insert another file or \"n\" to end the program: ";
 	cin >> endChar;
